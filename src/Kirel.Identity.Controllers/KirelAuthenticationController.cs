@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Kirel.Identity.Core.DTOs;
+using Kirel.Identity.DTOs;
 using Kirel.Identity.Core.Interfaces;
 using Kirel.Identity.Core.Services;
 using Microsoft.AspNetCore.Authorization;

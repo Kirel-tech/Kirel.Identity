@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Kirel.Identity.Core.DTOs;
+using Kirel.Identity.DTOs;
 using Kirel.Identity.Core.Interfaces;
 using Kirel.Identity.Core.Services;
 using Microsoft.AspNetCore.Identity;
@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Kirel.Identity.Controllers;
 
-/// <summary>
+/// <summary> 
 /// Controller for authorized user account management
 /// </summary>
 /// <typeparam name="TAuthorizedUserService">Authorized user service. Must be a descendant of the KirelAuthorizedUserService class</typeparam>
