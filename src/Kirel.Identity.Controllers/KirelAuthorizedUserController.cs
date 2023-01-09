@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.ComponentModel.DataAnnotations;
+using AutoMapper;
 using Kirel.Identity.DTOs;
 using Kirel.Identity.Core.Interfaces;
 using Kirel.Identity.Core.Services;
@@ -97,7 +98,9 @@ public class KirelAuthorizedUserController<TAuthorizedUserService, TKey, TUser, 
     /// <param name="currentPassword">Current user password</param>
     /// <param name="newPassword">New user password</param>
     [HttpPut("password")]
-    public virtual async Task<ActionResult> ChangePassword(string currentPassword, string newPassword)
+    public virtual async Task<ActionResult> ChangePassword(
+        [Required] string currentPassword, 
+        [Required] string newPassword)
     {
         await Service.ChangeUserPassword(GetAuthorizedUserId(), currentPassword, newPassword);
         return NoContent();

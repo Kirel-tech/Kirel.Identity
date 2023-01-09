@@ -41,7 +41,9 @@ public class KirelAuthenticationController<TAuthenticationService, TKey, TUser, 
     /// <param name="password">User password</param>
     /// <returns>Token dto</returns>
     [HttpGet]
-    public virtual async Task<ActionResult<JwtTokenDto>> GetJwtToken([Required] string login,[Required] string password)
+    public virtual async Task<ActionResult<JwtTokenDto>> GetJwtToken(
+        [Required] string login,
+        [Required] string password)
     {
         var token = await AuthenticationService.GetJwtToken(login, password);
         if (token == null) return BadRequest();
