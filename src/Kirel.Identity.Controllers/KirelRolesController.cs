@@ -1,5 +1,5 @@
 ﻿using Kirel.DTO;
-using Kirel.Identity.Core.DTOs;
+using Kirel.Identity.DTOs;
 using Kirel.Identity.Core.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
