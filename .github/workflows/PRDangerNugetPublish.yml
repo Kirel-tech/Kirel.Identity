@@ -1,0 +1,108 @@
+---
+name: PRNugetPublish
+on:
+  pull_request:
+    branches:
+      - "main"
+
+jobs:
+  build:
+    name: Build and publish nuget packages
+    runs-on: ubuntu-22.04
+    permissions:
+      pull-requests: read
+    strategy:
+      fail-fast: false
+    steps:
+    - name: Checkout main
+      uses: actions/checkout@v3
+      with:
+        ref: 'main'
+        path: 'main'
+    - name: Checkout PR
+      uses: actions/checkout@v3
+      with:
+        path: 'pr'
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '6.0.x'
+    - name: Determine versions
+      run: |
+        curr_ver=$(cat main/src/Kirel.Identity.Core/Kirel.Identity.Core.csproj | grep PackageVersion |sed s/'\s'//g | sed 's/<\/PackageVersion>//g' | sed 's/<PackageVersion>//g')
+        ver_suffix=-DANGER-pr${{ github.event.pull_request.number }}-${{github.run_number}}
+        echo "CURRENT_VER=${curr_ver}" >> "$GITHUB_ENV"
+        echo "PR_VERSION=${curr_ver}${ver_suffix}" >> "$GITHUB_ENV"
+        echo "PR_SUFFIX=${ver_suffix}" >> "$GITHUB_ENV"
+    - uses: dorny/paths-filter@v2
+      id: changes
+      with:
+        filters: |
+          core:
+            - 'src/Kirel.Identity.Core/**'
+          dtos:
+            - 'src/Kirel.Identity.DTOs/**'
+          controllers:
+            - 'src/Kirel.Identity.Controllers/**'
+    - name: Make dirs
+      run: |
+        mkdir out
+    - name: NuGet Publish DTO's
+      if: steps.changes.outputs.dtos == 'true'
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+      run: |
+        dotnet restore pr/src/Kirel.Identity.DTOs/Kirel.Identity.DTOs.csproj
+        dotnet build --version-suffix ${PR_SUFFIX} pr/src/Kirel.Identity.DTOs/Kirel.Identity.DTOs.csproj
+        dotnet pack -o ./out --version-suffix ${PR_SUFFIX} pr/src/Kirel.Identity.DTOs/Kirel.Identity.DTOs.csproj
+        dotnet nuget push ./out/Kirel.Identity.DTOs.${PR_VERSION}.nupkg -k ${NUGET_API_KEY} -s nuget.org
+    - name: Await publishing DTO's nuget package
+      if: steps.changes.outputs.dtos == 'true'
+      timeout-minutes: 10
+      run: |
+        while true
+        do
+          sleep 10
+          statusCode=$(curl -LI https://api.nuget.org/v3-flatcontainer/Kirel.Identity.DTOs/${PR_VERSION}/Kirel.Identity.DTOs.nuspec -o /dev/null -w '%{http_code}\n' -s)
+          if [ "$statusCode" = "200" ]; then break; fi
+        done
+        sleep 60
+    - name: Update DTOs package version in Core
+      if: steps.changes.outputs.dtos == 'true'
+      run: |
+        dotnet remove pr/src/Kirel.Identity.Core package Kirel.Identity.DTOs
+        dotnet add pr/src/Kirel.Identity.Core package Kirel.Identity.DTOs --version ${PR_VERSION}
+    - name: NuGet Publish Core nuget package
+      if: steps.changes.outputs.dtos == 'true' || steps.changes.outputs.core == 'true'
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+      run: |
+        dotnet restore pr/src/Kirel.Identity.Core/Kirel.Identity.Core.csproj
+        dotnet build --version-suffix ${PR_SUFFIX} pr/src/Kirel.Identity.Core/Kirel.Identity.Core.csproj
+        dotnet pack -o ./out --version-suffix ${PR_SUFFIX} pr/src/Kirel.Identity.Core/Kirel.Identity.Core.csproj
+        dotnet nuget push ./out/Kirel.Identity.Core.${PR_VERSION}.nupkg -k ${NUGET_API_KEY} -s nuget.org
+    - name: Await publishing Core nuget package
+      if: steps.changes.outputs.dtos == 'true'
+      timeout-minutes: 10
+      run: |
+        while true
+        do
+          sleep 10
+          statusCode=$(curl -LI https://api.nuget.org/v3-flatcontainer/Kirel.Identity.Core/${PR_VERSION}/Kirel.Identity.Core.nuspec -o /dev/null -w '%{http_code}\n' -s)
+          if [ "$statusCode" = "200" ]; then break; fi
+          sleep 60
+        done
+    - name: Update Core package version in Controllers
+      if: steps.changes.outputs.dtos == 'true' || steps.changes.outputs.core == 'true'
+      run: |
+        dotnet remove pr/src/Kirel.Identity.Controllers package Kirel.Identity.Core
+        dotnet add pr/src/Kirel.Identity.Controllers package Kirel.Identity.Core --version ${PR_VERSION}
+    - name: NuGet Publish Controllers nuget package
+      if: steps.changes.outputs.dtos == 'true' || steps.changes.outputs.core == 'true'
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+      run: |
+        dotnet restore pr/src/Kirel.Identity.Controllers/Kirel.Identity.Controllers.csproj
+        dotnet build --version-suffix ${PR_SUFFIX} pr/src/Kirel.Identity.Controllers/Kirel.Identity.Controllers.csproj
+        dotnet pack -o ./out --version-suffix ${PR_SUFFIX} pr/src/Kirel.Identity.Controllers/Kirel.Identity.Controllers.csproj
+        dotnet nuget push ./out/Kirel.Identity.Controllers.${PR_VERSION}.nupkg -k ${NUGET_API_KEY} -s nuget.org
