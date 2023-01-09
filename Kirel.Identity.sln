@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kirel.Identity.Core", "Kirel.Identity.Core\Kirel.Identity.Core.csproj", "{FC471085-86DB-4BD3-8EFA-4BCB9D458960}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kirel.Identity.Controllers", "Kirel.Identity.Controllers\Kirel.Identity.Controllers.csproj", "{6DB52252-E8C5-4C2C-BE6C-58281A35E38C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kirel.Identity.DTOs", "Kirel.Identity.DTOs\Kirel.Identity.DTOs.csproj", "{E1CDFC76-ADCE-414F-9646-862D175DCFC6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FC471085-86DB-4BD3-8EFA-4BCB9D458960}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC471085-86DB-4BD3-8EFA-4BCB9D458960}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC471085-86DB-4BD3-8EFA-4BCB9D458960}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC471085-86DB-4BD3-8EFA-4BCB9D458960}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DB52252-E8C5-4C2C-BE6C-58281A35E38C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DB52252-E8C5-4C2C-BE6C-58281A35E38C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DB52252-E8C5-4C2C-BE6C-58281A35E38C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DB52252-E8C5-4C2C-BE6C-58281A35E38C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1CDFC76-ADCE-414F-9646-862D175DCFC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1CDFC76-ADCE-414F-9646-862D175DCFC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1CDFC76-ADCE-414F-9646-862D175DCFC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1CDFC76-ADCE-414F-9646-862D175DCFC6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
