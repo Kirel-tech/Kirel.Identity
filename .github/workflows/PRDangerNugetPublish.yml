@@ -29,7 +29,7 @@ jobs:
         dotnet-version: '6.0.x'
     - name: Determine versions
       run: |
-        curr_ver=$(cat main/src/Kirel.Identity.Core/Kirel.Identity.Core.csproj | grep PackageVersion |sed s/'\s'//g | sed 's/<\/PackageVersion>//g' | sed 's/<PackageVersion>//g')
+        curr_ver=$(cat main/src/Kirel.Identity.Core/Kirel.Identity.Core.csproj | grep PackageVersion |sed s/'\s'//g | sed 's/<\/PackageVersion>//g' | sed 's/<PackageVersion>//g' | sed 's/$(VersionSuffix)//g')
         ver_suffix=-DANGER-pr${{ github.event.pull_request.number }}-${{github.run_number}}
         echo "CURRENT_VER=${curr_ver}" >> "$GITHUB_ENV"
         echo "PR_VERSION=${curr_ver}${ver_suffix}" >> "$GITHUB_ENV"
