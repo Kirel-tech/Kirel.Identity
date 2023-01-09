@@ -6,6 +6,7 @@
         <Nullable>disable</Nullable>
         <PackageVersion>0.0.4</PackageVersion>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
