@@ -100,22 +100,14 @@ jobs:
           dotnet restore src/Kirel.Identity.DTOs/Kirel.Identity.DTOs.csproj
           dotnet build --version-suffix ${PR_SUFFIX} src/Kirel.Identity.DTOs/Kirel.Identity.DTOs.csproj
           dotnet pack -o ./packages --version-suffix ${PR_SUFFIX} src/Kirel.Identity.DTOs/Kirel.Identity.DTOs.csproj
-      - name: Update DTOs version in Core
-        run: |
-          dotnet restore src/Kirel.Identity.Core/Kirel.Identity.Core.csproj
-          dotnet remove src/Kirel.Identity.Core package Kirel.Identity.DTOs
-          dotnet add src/Kirel.Identity.Core package Kirel.Identity.DTOs --version ${DTOS_VER}${PR_SUFFIX} -s ./packages
       - name: Build Core
         run: |
+          dotnet restore src/Kirel.Identity.Core/Kirel.Identity.Core.csproj
           dotnet build --version-suffix ${PR_SUFFIX} src/Kirel.Identity.Core/Kirel.Identity.Core.csproj
           dotnet pack -o ./packages --version-suffix ${PR_SUFFIX} src/Kirel.Identity.Core/Kirel.Identity.Core.csproj
-      - name: Update Core version in Controllers
-        run: |
-          dotnet restore src/Kirel.Identity.Controllers/Kirel.Identity.Controllers.csproj
-          dotnet remove src/Kirel.Identity.Controllers package Kirel.Identity.Core
-          dotnet add src/Kirel.Identity.Controllers package Kirel.Identity.Core --version ${CORE_VER}${PR_SUFFIX} -s ./packages
       - name: Build Controllers
         run: |
+          dotnet restore src/Kirel.Identity.Controllers/Kirel.Identity.Controllers.csproj
           dotnet build --version-suffix ${PR_SUFFIX} src/Kirel.Identity.Controllers/Kirel.Identity.Controllers.csproj
           dotnet pack -o ./packages --version-suffix ${PR_SUFFIX} src/Kirel.Identity.Controllers/Kirel.Identity.Controllers.csproj
       - name: Publish NuGet packages
