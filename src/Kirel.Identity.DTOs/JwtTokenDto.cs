@@ -1,7 +1,7 @@
 ﻿namespace Kirel.Identity.DTOs;
 
 /// <summary>
-/// Jwt token dto class
+/// Jwt token dto class 
 /// </summary>
 public class JwtTokenDto
 {
