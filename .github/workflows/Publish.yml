@@ -1,7 +1,9 @@
 ﻿---
-name: Release
+name: Publish
 on:
   push:
+    branches:
+      - "main"
     tags:
       - "[0-9]+.[0-9]+.[0-9]+"
 
@@ -20,11 +22,18 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '6.0.x'
-      - name: Build
+      - name: Push tag
+        if: ${{ github.ref }} != 'refs/heads/main'
         run: |
           dotnet restore src/Kirel.Identity.${{ matrix.package }}/Kirel.Identity.${{ matrix.package }}.csproj
           dotnet build src/Kirel.Identity.${{ matrix.package }}/Kirel.Identity.${{ matrix.package }}.csproj
           dotnet pack -o ./packages src/Kirel.Identity.${{ matrix.package }}/Kirel.Identity.${{ matrix.package }}.csproj
+      - name: Push main
+        if: ${{ github.ref }} == 'refs/heads/main'
+        run: |
+          dotnet restore src/Kirel.Identity.${{ matrix.package }}/Kirel.Identity.${{ matrix.package }}.csproj
+          dotnet build --version-suffix "-main-$(echo ${GITHUB_SHA} | cut -c1-8)" src/Kirel.Identity.${{ matrix.package }}/Kirel.Identity.${{ matrix.package }}.csproj
+          dotnet pack --version-suffix "-main-$(echo ${GITHUB_SHA} | cut -c1-8)" -o ./packages src/Kirel.Identity.${{ matrix.package }}/Kirel.Identity.${{ matrix.package }}.csproj
       - name: Push
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
