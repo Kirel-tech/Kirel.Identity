@@ -3,7 +3,7 @@ name: PRPreClean
 on:
   pull_request:
     branches:
-      - "main"
+      - "projects_references"
     types: [ closed ]
 
 jobs:

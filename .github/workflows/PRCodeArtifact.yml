@@ -3,7 +3,7 @@ name: PRCodeArtifact
 on:
   pull_request:
     branches:
-      - "main"
+      - "projects_references"
 
 jobs:
   pack:
