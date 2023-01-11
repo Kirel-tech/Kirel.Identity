@@ -8,40 +8,48 @@ on:
       - completed
 
 jobs:
+  pr_info:
+    name: Determine PR number and SHA
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+    outputs:
+      pr_num: ${{ steps.vars.outputs.pr_num }}
+      pr_sha: ${{ steps.vars.outputs.pr_sha }}
+    steps:
+      - name: Download PR clean artifact
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh run --repo ${{ github.repository }} download ${{ github.event.workflow_run.id }}
+      - name: Display structure of downloaded files
+        run: ls -R
+      - name: Setup output vars
+        id: vars
+        run: |
+          echo "pr_num=$(cat cleanup-pr*/pr_number)" >> $GITHUB_OUTPUT
+          echo "pr_sha=$(cat cleanup-pr*/pr_sha)" >> $GITHUB_OUTPUT
   build:
-    name: Remove uploaded PR nuget packages
+    name: Remove nuget package
     permissions:
       checks: write
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
-    env:
-      RUN_ID: ${{ github.event.workflow_run.id }}
+      matrix:
+        package: [ DTOs, Core, Controllers ]
+    needs: pr_info
     steps:
-      - name: Download PR clean artifact
-        id: download-pr-artifact
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh run --repo ${{ github.repository }} download ${RUN_ID}
-      - name: Display structure of downloaded files
-        run: ls -R
-      - name: Setup env vars
-        run: |
-          mv cleanup-pr* pr_info
-          echo "PR_NUM=$(cat pr_info/pr_number)" >> "$GITHUB_ENV"
       - name: Link PR Check
         id: pr_check
         uses: actions/github-script@v6
         with:
           script: |
-            const fs = require('fs'),
-            sha = fs.readFileSync('pr_info/pr_sha', 'utf8'),
             args = {
               owner: context.repo.owner,
               repo: context.repo.repo,
-              head_sha: sha,
-              name: 'NuGet / Cleanup',
+              head_sha: "${{ needs.pr_info.outputs.pr_sha }}",
+              name: "NuGet / ${{ matrix.package }} Cleanup",
               status: 'in_progress',
             };
             console.log("Arguments:", args);
@@ -54,20 +62,10 @@ jobs:
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
         run: |
-          dtos_versions=$(curl -s https://azuresearch-usnc.nuget.org/query\?q\=packageid:Kirel.Identity.DTOs\&prerelease\=true | jq -r ".data[0].versions[].version" | grep "DANGER-pr${PR_NUM}" || :)
-          core_versions=$(curl -s https://azuresearch-usnc.nuget.org/query\?q\=packageid:Kirel.Identity.Core\&prerelease\=true | jq -r ".data[0].versions[].version" | grep "DANGER-pr${PR_NUM}" || :)
-          controllers_versions=$(curl -s https://azuresearch-usnc.nuget.org/query\?q\=packageid:Kirel.Identity.Controllers\&prerelease\=true | jq -r ".data[0].versions[].version" | grep "DANGER-pr${PR_NUM}" || :)
-          for version in $dtos_versions 
+          versions=$(curl -s https://azuresearch-usnc.nuget.org/query\?q\=packageid:Kirel.Identity.${{ matrix.package }}\&prerelease\=true | jq -r ".data[0].versions[].version" | grep "DANGER-pr${{ needs.pr_info.outputs.pr_num }}" || :)
+          for version in $versions 
           do
-            dotnet nuget delete Kirel.Identity.DTOs $version --non-interactive -k ${NUGET_API_KEY} -s nuget.org
-          done
-          for version in $core_versions 
-          do
-            dotnet nuget delete Kirel.Identity.Core $version --non-interactive -k ${NUGET_API_KEY} -s nuget.org
-          done
-          for version in $controllers_versions
-          do
-            dotnet nuget delete Kirel.Identity.Controllers $version --non-interactive -k ${NUGET_API_KEY} -s nuget.org
+            dotnet nuget delete Kirel.Identity.${{ matrix.package }} $version --non-interactive -k ${NUGET_API_KEY} -s nuget.org
           done
       - name: Update PR Check
         uses: actions/github-script@v6
