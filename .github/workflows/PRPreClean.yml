@@ -1,0 +1,25 @@
+﻿---
+name: PRPreClean
+on:
+  pull_request:
+    branches:
+      - "main"
+    types: [ closed ]
+
+jobs:
+  pre_cleanup:
+    name: Prepare for cleanup
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Pack PR info
+        run: |
+          mkdir out
+          echo "${{ github.event.pull_request.number }}" >> out/pr_number
+          echo -n ${{ github.event.pull_request.head.sha }} > out/pr_sha
+      - name: Upload PR cleanup data as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: cleanup-pr${{ github.event.pull_request.number }}
+          path: out/*

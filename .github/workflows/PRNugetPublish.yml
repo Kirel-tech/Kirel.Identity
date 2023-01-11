@@ -1,0 +1,142 @@
+---
+name: PRNugetPublish
+on:
+  workflow_run:
+    workflows:
+      - "PRCodeArtifact"
+    types:
+      - completed
+
+jobs:
+  build:
+    name: Build and publish nuget packages
+    permissions:
+      checks: write
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+    env:
+      RUN_ID: ${{ github.event.workflow_run.id }}
+    steps:
+      - name: Download PR code artifact
+        id: download-pr-artifact
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh run --repo ${{ github.repository }} download ${RUN_ID}
+      - name: Display structure of downloaded files
+        run: ls -R
+      - name: Replace PR code to build dir
+        run: |
+          mkdir pr
+          mkdir packages
+          mv Kirel.Identity*/src src
+          mv Kirel.Identity*/pr* pr
+          rm -rf Kirel.Identity*
+      - name: Display structure of downloaded files
+        run: ls -R
+      - name: Set PR env
+        id: pr_env
+        run: |
+          pr_number=$(cat pr/pr_number)
+          pr_run_number=$(cat pr/pr_run_number)
+          pr_sha=$(cat pr/pr_sha)
+          pr_suffix=-DANGER-pr"${pr_number}"-"${pr_run_number}"
+          echo "PR_NUM=${pr_number}" >> $GITHUB_ENV
+          echo "PR_RUN_NUM=${pr_run_number}" >> $GITHUB_ENV
+          echo "PR_SUFFIX=${pr_suffix}" >> $GITHUB_ENV
+          echo "PR_SHA=${pr_sha}" >> $GITHUB_ENV
+          echo "pr_sha=${pr_sha}" >> $GITHUB_OUTPUT
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0.x'
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: |
+          echo "$GITHUB_CONTEXT"
+      - name: Link PR Check
+        id: pr_check
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs'),
+            sha = fs.readFileSync('pr/pr_sha', 'utf8'),
+            args = {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head_sha: sha,
+              name: 'NuGet / Upload',
+              status: 'in_progress',
+            };
+            console.log("Arguments:", args);
+            let result = await github.rest.checks.create(args);
+            console.log("Result:", result);
+            return {
+              check_run_id: result.data.id
+            };
+      - name: Checkout main
+        uses: actions/checkout@v3
+        with:
+          ref: 'main'
+          path: 'main'
+      - name: Security checks
+        run: |
+          core_ver=$(cat main/src/Kirel.Identity.Core/Kirel.Identity.Core.csproj | grep PackageVersion |sed s/'\s'//g | sed 's/<\/PackageVersion>//g' | sed 's/<PackageVersion>//g')
+          dtos_ver=$(cat main/src/Kirel.Identity.DTOs/Kirel.Identity.DTOs.csproj | grep PackageVersion |sed s/'\s'//g | sed 's/<\/PackageVersion>//g' | sed 's/<PackageVersion>//g')
+          controllers_ver=$(cat main/src/Kirel.Identity.DTOs/Kirel.Identity.DTOs.csproj | grep PackageVersion |sed s/'\s'//g | sed 's/<\/PackageVersion>//g' | sed 's/<PackageVersion>//g')
+          echo "CORE_VER=$(echo $core_ver | sed 's/$(VersionSuffix)//g')" >> "$GITHUB_ENV"
+          echo "DTOS_VER=$(echo $dtos_ver | sed 's/$(VersionSuffix)//g')" >> "$GITHUB_ENV"
+          echo "CONTROLLERS_VER=$(echo $controllers_ver | sed 's/$(VersionSuffix)//g')" >> "$GITHUB_ENV"
+          pr_core_ver=$(cat src/Kirel.Identity.Core/Kirel.Identity.Core.csproj | grep PackageVersion |sed s/'\s'//g | sed 's/<\/PackageVersion>//g' | sed 's/<PackageVersion>//g')
+          pr_dtos_ver=$(cat src/Kirel.Identity.DTOs/Kirel.Identity.DTOs.csproj | grep PackageVersion |sed s/'\s'//g | sed 's/<\/PackageVersion>//g' | sed 's/<PackageVersion>//g')
+          pr_controllers_ver=$(cat src/Kirel.Identity.DTOs/Kirel.Identity.DTOs.csproj | grep PackageVersion |sed s/'\s'//g | sed 's/<\/PackageVersion>//g' | sed 's/<PackageVersion>//g')
+          if [[ "$core_ver" != "$pr_core_ver" ]]; then echo "::error::Core: incorrect version" && exit 1; fi
+          if [[ "$dtos_ver" != "$pr_dtos_ver" ]]; then echo "::error::DTOs: incorrect version" && exit 1; fi
+          if [[ "$controllers_ver" != "$pr_controllers_ver" ]]; then echo "::error::Controllers: incorrect version" && exit 1; fi
+      - name: Build DTOs
+        run: |
+          dotnet restore src/Kirel.Identity.DTOs/Kirel.Identity.DTOs.csproj
+          dotnet build --version-suffix ${PR_SUFFIX} src/Kirel.Identity.DTOs/Kirel.Identity.DTOs.csproj
+          dotnet pack -o ./packages --version-suffix ${PR_SUFFIX} src/Kirel.Identity.DTOs/Kirel.Identity.DTOs.csproj
+      - name: Update DTOs version in Core
+        run: |
+          dotnet restore src/Kirel.Identity.Core/Kirel.Identity.Core.csproj
+          dotnet remove src/Kirel.Identity.Core package Kirel.Identity.DTOs
+          dotnet add src/Kirel.Identity.Core package Kirel.Identity.DTOs --version ${DTOS_VER}${PR_SUFFIX} -s ./packages
+      - name: Build Core
+        run: |
+          dotnet build --version-suffix ${PR_SUFFIX} src/Kirel.Identity.Core/Kirel.Identity.Core.csproj
+          dotnet pack -o ./packages --version-suffix ${PR_SUFFIX} src/Kirel.Identity.Core/Kirel.Identity.Core.csproj
+      - name: Update Core version in Controllers
+        run: |
+          dotnet restore src/Kirel.Identity.Controllers/Kirel.Identity.Controllers.csproj
+          dotnet remove src/Kirel.Identity.Controllers package Kirel.Identity.Core
+          dotnet add src/Kirel.Identity.Controllers package Kirel.Identity.Core --version ${CORE_VER}${PR_SUFFIX} -s ./packages
+      - name: Build Controllers
+        run: |
+          dotnet build --version-suffix ${PR_SUFFIX} src/Kirel.Identity.Controllers/Kirel.Identity.Controllers.csproj
+          dotnet pack -o ./packages --version-suffix ${PR_SUFFIX} src/Kirel.Identity.Controllers/Kirel.Identity.Controllers.csproj
+      - name: Publish NuGet packages
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          dotnet nuget push packages/Kirel.Identity.DTOs.${DTOS_VER}${PR_SUFFIX}.nupkg -k ${NUGET_API_KEY} -s nuget.org
+          dotnet nuget push packages/Kirel.Identity.Core.${CORE_VER}${PR_SUFFIX}.nupkg -k ${NUGET_API_KEY} -s nuget.org
+          dotnet nuget push packages/Kirel.Identity.Controllers.${CONTROLLERS_VER}${PR_SUFFIX}.nupkg -k ${NUGET_API_KEY} -s nuget.org
+      - name: Update PR Check
+        uses: actions/github-script@v6
+        if: always()
+        with:
+          script: |
+            let args = {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              check_run_id: ${{ fromJSON(steps.pr_check.outputs.result).check_run_id }},
+              status: 'completed',
+              conclusion: '${{ job.status }}'
+            };
+            console.log("Arguments:", args);
+            let result = await github.rest.checks.update(args);
+            console.log("Result:", result);
