@@ -18,9 +18,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Kirel.Identity.Core" Version="0.0.30" />
       <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
       <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Kirel.Identity.Core\Kirel.Identity.Core.csproj" />
     </ItemGroup>
 
 </Project>
