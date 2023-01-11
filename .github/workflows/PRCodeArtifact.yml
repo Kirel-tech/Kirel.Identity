@@ -6,8 +6,28 @@ on:
       - "main"
 
 jobs:
+  pr_build_check:
+    name: PR build checks
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        package: [ DTOs, Core, Controllers ]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0.x'
+      - name: Build
+        run: |
+          dotnet restore src/Kirel.Identity.${{ matrix.package }}/Kirel.Identity.${{ matrix.package }}.csproj
+          dotnet build src/Kirel.Identity.${{ matrix.package }}/Kirel.Identity.${{ matrix.package }}.csproj
   pack:
     name: Pack source code
+    needs: pr_build_check
     runs-on: ubuntu-22.04
     permissions:
       pull-requests: read
