@@ -2,7 +2,7 @@
 
 /// <summary>
 /// Jwt token dto class
-/// </summary>
+/// </summary> 
 public class JwtTokenDto
 {
     /// <summary>
