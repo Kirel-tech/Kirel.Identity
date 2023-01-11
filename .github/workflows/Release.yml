@@ -1,0 +1,58 @@
+﻿---
+name: Release
+on:
+  push:
+    tags:
+      - "[0-9]+.[0-9]+.[0-9]+"
+
+jobs:
+  publish:
+    name: Build and publish
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v3
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0.x'
+      - name: Determine versions
+        run: |
+          core_ver=$(cat src/Kirel.Identity.Core/Kirel.Identity.Core.csproj | grep PackageVersion |sed s/'\s'//g | sed 's/<\/PackageVersion>//g' | sed 's/<PackageVersion>//g')
+          dtos_ver=$(cat src/Kirel.Identity.DTOs/Kirel.Identity.DTOs.csproj | grep PackageVersion |sed s/'\s'//g | sed 's/<\/PackageVersion>//g' | sed 's/<PackageVersion>//g')
+          controllers_ver=$(cat src/Kirel.Identity.DTOs/Kirel.Identity.DTOs.csproj | grep PackageVersion |sed s/'\s'//g | sed 's/<\/PackageVersion>//g' | sed 's/<PackageVersion>//g')
+          echo "CORE_VER=$(echo $core_ver | sed 's/$(VersionSuffix)//g')" >> $GITHUB_ENV
+          echo "DTOS_VER=$(echo $dtos_ver | sed 's/$(VersionSuffix)//g')" >> $GITHUB_ENV
+          echo "CONTROLLERS_VER=$(echo $controllers_ver | sed 's/$(VersionSuffix)//g')" >> $GITHUB_ENV
+      - name: Build DTOs
+        run: |
+          dotnet restore src/Kirel.Identity.DTOs/Kirel.Identity.DTOs.csproj
+          dotnet build src/Kirel.Identity.DTOs/Kirel.Identity.DTOs.csproj
+          dotnet pack -o ./packages src/Kirel.Identity.DTOs/Kirel.Identity.DTOs.csproj
+      - name: Update DTOs version in Core
+        run: |
+          dotnet restore src/Kirel.Identity.Core/Kirel.Identity.Core.csproj
+          dotnet remove src/Kirel.Identity.Core package Kirel.Identity.DTOs
+          dotnet add src/Kirel.Identity.Core package Kirel.Identity.DTOs --version ${DTOS_VER} -s ./packages
+      - name: Build Core
+        run: |
+          dotnet build src/Kirel.Identity.Core/Kirel.Identity.Core.csproj
+          dotnet pack -o ./packages src/Kirel.Identity.Core/Kirel.Identity.Core.csproj
+      - name: Update Core version in Controllers
+        run: |
+          dotnet restore src/Kirel.Identity.Controllers/Kirel.Identity.Controllers.csproj
+          dotnet remove src/Kirel.Identity.Controllers package Kirel.Identity.Core
+          dotnet add src/Kirel.Identity.Controllers package Kirel.Identity.Core --version ${CORE_VER} -s ./packages
+      - name: Build Controllers
+        run: |
+          dotnet build src/Kirel.Identity.Controllers/Kirel.Identity.Controllers.csproj
+          dotnet pack -o ./packages src/Kirel.Identity.Controllers/Kirel.Identity.Controllers.csproj
+      - name: Publish NuGet packages
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          dotnet nuget push packages/Kirel.Identity.DTOs.${DTOS_VER}.nupkg -k ${NUGET_API_KEY} -s nuget.org
+          dotnet nuget push packages/Kirel.Identity.Core.${CORE_VER}.nupkg -k ${NUGET_API_KEY} -s nuget.org
+          dotnet nuget push packages/Kirel.Identity.Controllers.${CONTROLLERS_VER}.nupkg -k ${NUGET_API_KEY} -s nuget.org

@@ -1,0 +1,86 @@
+﻿---
+name: PRNugetClean
+on:
+  workflow_run:
+    workflows:
+      - "PRPreClean"
+    types:
+      - completed
+
+jobs:
+  build:
+    name: Remove uploaded PR nuget packages
+    permissions:
+      checks: write
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+    env:
+      RUN_ID: ${{ github.event.workflow_run.id }}
+    steps:
+      - name: Download PR clean artifact
+        id: download-pr-artifact
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh run --repo ${{ github.repository }} download ${RUN_ID}
+      - name: Display structure of downloaded files
+        run: ls -R
+      - name: Setup env vars
+        run: |
+          mv cleanup-pr* pr_info
+          echo "PR_NUM=$(cat pr_info/pr_number)" >> "$GITHUB_ENV"
+      - name: Link PR Check
+        id: pr_check
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs'),
+            sha = fs.readFileSync('pr_info/pr_sha', 'utf8'),
+            args = {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head_sha: sha,
+              name: 'NuGet / Cleanup',
+              status: 'in_progress',
+            };
+            console.log("Arguments:", args);
+            let result = await github.rest.checks.create(args);
+            console.log("Result:", result);
+            return {
+              check_run_id: result.data.id
+            };
+      - name: Remove uploaded PR versions
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          dtos_versions=$(curl -s https://azuresearch-usnc.nuget.org/query\?q\=packageid:Kirel.Identity.DTOs\&prerelease\=true | jq -r ".data[0].versions[].version" | grep "DANGER-pr${PR_NUM}" || :)
+          core_versions=$(curl -s https://azuresearch-usnc.nuget.org/query\?q\=packageid:Kirel.Identity.Core\&prerelease\=true | jq -r ".data[0].versions[].version" | grep "DANGER-pr${PR_NUM}" || :)
+          controllers_versions=$(curl -s https://azuresearch-usnc.nuget.org/query\?q\=packageid:Kirel.Identity.Controllers\&prerelease\=true | jq -r ".data[0].versions[].version" | grep "DANGER-pr${PR_NUM}" || :)
+          for version in $dtos_versions 
+          do
+            dotnet nuget delete Kirel.Identity.DTOs $version --non-interactive -k ${NUGET_API_KEY} -s nuget.org
+          done
+          for version in $core_versions 
+          do
+            dotnet nuget delete Kirel.Identity.Core $version --non-interactive -k ${NUGET_API_KEY} -s nuget.org
+          done
+          for version in $controllers_versions
+          do
+            dotnet nuget delete Kirel.Identity.Controllers $version --non-interactive -k ${NUGET_API_KEY} -s nuget.org
+          done
+      - name: Update PR Check
+        uses: actions/github-script@v6
+        if: always()
+        with:
+          script: |
+            let args = {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              check_run_id: ${{ fromJSON(steps.pr_check.outputs.result).check_run_id }},
+              status: 'completed',
+              conclusion: '${{ job.status }}'
+            };
+            console.log("Arguments:", args);
+            let result = await github.rest.checks.update(args);
+            console.log("Result:", result);

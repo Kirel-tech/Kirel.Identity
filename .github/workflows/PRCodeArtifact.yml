@@ -1,0 +1,33 @@
+﻿---
+name: PRCodeArtifact
+on:
+  pull_request:
+    branches:
+      - "main"
+
+jobs:
+  pack:
+    name: Pack source code
+    runs-on: ubuntu-22.04
+    permissions:
+      pull-requests: read
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v3
+        with:
+          path: 'pr'
+      - name: Replace source code to out
+        run: |
+          mkdir out && mv pr/src out/src
+      - name: Pack PR info
+        run: |
+          echo "${{ github.run_number }}"  >> out/pr_run_number
+          echo "${{ github.event.pull_request.number }}" >> out/pr_number
+          echo -n ${{ github.event.pull_request.head.sha }} > out/pr_sha
+      - name: Upload Kirel.Identity PR source code as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Kirel.Identity-DANGER-pr${{ github.event.pull_request.number }}
+          path: out/*
