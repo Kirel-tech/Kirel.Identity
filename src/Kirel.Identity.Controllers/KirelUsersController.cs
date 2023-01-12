@@ -1,6 +1,7 @@
 ﻿using Kirel.DTO;
 using Kirel.Identity.DTOs;
 using Kirel.Identity.Core.Interfaces;
+using Kirel.Identity.Core.Models;
 using Kirel.Identity.Core.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +23,7 @@ namespace Kirel.Identity.Controllers;
 public class KirelUsersController<TUserService,TKey,TUser,TUserDto,TUserCreateDto,TUserUpdateDto,TClaimDto,TClaimCreateDto,TClaimUpdateDto> : Controller
     where TUserService : KirelUserService<TKey,TUser,TUserDto,TUserCreateDto,TUserUpdateDto,TClaimDto,TClaimCreateDto,TClaimUpdateDto>
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey> 
-    where TUser : IdentityUser<TKey>, IKirelUser<TKey> 
+    where TUser : KirelIdentityUser<TKey>
     where TUserDto : KirelUserDto<TKey, TKey, TClaimDto>
     where TUserCreateDto : KirelUserCreateDto<TKey, TClaimCreateDto>
     where TUserUpdateDto : KirelUserUpdateDto<TKey, TClaimUpdateDto>

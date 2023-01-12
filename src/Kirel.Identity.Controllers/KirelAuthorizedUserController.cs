@@ -2,6 +2,7 @@
 using AutoMapper;
 using Kirel.Identity.DTOs;
 using Kirel.Identity.Core.Interfaces;
+using Kirel.Identity.Core.Models;
 using Kirel.Identity.Core.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +20,7 @@ namespace Kirel.Identity.Controllers;
 public class KirelAuthorizedUserController<TAuthorizedUserService, TKey, TUser, TAuthorizedUserDto, TAuthorizedUserUpdateDto> : Controller
     where TAuthorizedUserService : KirelAuthorizedUserService<TKey, TUser, TAuthorizedUserDto, TAuthorizedUserUpdateDto>
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
-    where TUser : IdentityUser<TKey>, IKirelUser<TKey>
+    where TUser : KirelIdentityUser<TKey>
     where TAuthorizedUserDto : KirelAuthorizedUserDto
     where TAuthorizedUserUpdateDto : KirelAuthorizedUserUpdateDto
 {
