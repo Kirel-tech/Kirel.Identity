@@ -18,7 +18,7 @@ namespace Kirel.Identity.Core.Services;
 /// <typeparam name="TRegisterDto">User register dto type</typeparam>
 public class KirelAuthenticationService<TKey, TUser, TRegisterDto> 
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey> 
-    where TUser : IdentityUser<TKey>, IKirelUser<TKey> 
+    where TUser : KirelIdentityUser<TKey>
     where TRegisterDto : KirelUserRegisterDto
 {
     /// <summary>
@@ -32,7 +32,7 @@ public class KirelAuthenticationService<TKey, TUser, TRegisterDto>
     /// <summary>
     /// Token auth options
     /// </summary>
-    protected readonly AuthOptions AuthOptions;
+    protected readonly KirelAuthOptions AuthOptions;
     /// <summary>
     /// AutoMapper instance
     /// </summary>
@@ -45,7 +45,7 @@ public class KirelAuthenticationService<TKey, TUser, TRegisterDto>
     /// <param name="roleManager">Identity role manager</param>
     /// <param name="authOptions">Token auth options</param>
     /// <param name="mapper">AutoMapper instance</param>
-    public KirelAuthenticationService(UserManager<TUser> userManager, RoleManager<IdentityRole<TKey>> roleManager, AuthOptions authOptions, IMapper mapper)
+    public KirelAuthenticationService(UserManager<TUser> userManager, RoleManager<IdentityRole<TKey>> roleManager, KirelAuthOptions authOptions, IMapper mapper)
     {
         UserManager = userManager;
         RoleManager = roleManager;

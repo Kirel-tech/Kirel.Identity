@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using AutoMapper;
 using Kirel.DTO;
+using Kirel.Identity.Core.Models;
 using Kirel.Identity.DTOs;
 using Kirel.Shared;
 using Microsoft.AspNetCore.Identity;
@@ -22,7 +23,7 @@ namespace Kirel.Identity.Core.Services;
 /// <typeparam name="TClaimUpdateDto">Claim update dto. Must be a descendant of the KirelClaimUpdateDto class</typeparam>
 public class KirelRoleService<TKey, TRole, TRoleDto, TRoleCreateDto, TRoleUpdateDto, TClaimDto, TClaimCreateDto, TClaimUpdateDto> 
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey> 
-    where TRole : IdentityRole<TKey>
+    where TRole : KirelIdentityRole<TKey>
     where TRoleDto : KirelRoleDto<TKey, TClaimDto>
     where TRoleCreateDto : KirelRoleCreateDto<TClaimCreateDto>
     where TRoleUpdateDto : KirelRoleUpdateDto<TClaimUpdateDto>

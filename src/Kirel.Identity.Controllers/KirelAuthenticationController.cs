@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Kirel.Identity.DTOs;
 using Kirel.Identity.Core.Interfaces;
+using Kirel.Identity.Core.Models;
 using Kirel.Identity.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -18,7 +19,7 @@ namespace Kirel.Identity.Controllers;
 public class KirelAuthenticationController<TAuthenticationService, TKey, TUser, TRegisterDto> : Controller
     where TAuthenticationService : KirelAuthenticationService<TKey, TUser, TRegisterDto> 
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey> 
-    where TUser : IdentityUser<TKey>, IKirelUser<TKey> 
+    where TUser : KirelIdentityUser<TKey>
     where TRegisterDto : KirelUserRegisterDto
 {
     /// <summary>

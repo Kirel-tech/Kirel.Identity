@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Kirel.Identity.DTOs;
 using Kirel.Identity.Core.Interfaces;
+using Kirel.Identity.Core.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace Kirel.Identity.Core.Validators;
@@ -10,8 +11,8 @@ namespace Kirel.Identity.Core.Validators;
 /// </summary>
 public class KirelUserCreateDtoValidator<TKey, TUser, TRole, TUserCreateDto, TClaimCreateDto> : AbstractValidator<TUserCreateDto> 
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
-    where TUser : IdentityUser<TKey>, IKirelUser<TKey> 
-    where TRole : IdentityRole<TKey>
+    where TUser : KirelIdentityUser<TKey>
+    where TRole : KirelIdentityRole<TKey>
     where TUserCreateDto : KirelUserCreateDto<TKey, TClaimCreateDto>
     where TClaimCreateDto : KirelClaimCreateDto
 {

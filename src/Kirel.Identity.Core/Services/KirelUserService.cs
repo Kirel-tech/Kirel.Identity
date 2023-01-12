@@ -6,6 +6,7 @@ using Kirel.DTO;
 using Kirel.Identity.Core.Context;
 using Kirel.Identity.DTOs;
 using Kirel.Identity.Core.Interfaces;
+using Kirel.Identity.Core.Models;
 using Kirel.Shared;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +26,7 @@ namespace Kirel.Identity.Core.Services;
 /// <typeparam name="TClaimUpdateDto">Claim update dto. Must be a descendant of the KirelClaimUpdateDto class</typeparam>
 public class KirelUserService<TKey, TUser, TUserDto, TUserCreateDto, TUserUpdateDto, TClaimDto, TClaimCreateDto, TClaimUpdateDto> 
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey> 
-    where TUser : IdentityUser<TKey>, IKirelUser<TKey> 
+    where TUser : KirelIdentityUser<TKey>
     where TUserDto : KirelUserDto<TKey, TKey, TClaimDto>
     where TUserCreateDto : KirelUserCreateDto<TKey, TClaimCreateDto>
     where TUserUpdateDto : KirelUserUpdateDto<TKey, TClaimUpdateDto>
@@ -40,11 +41,11 @@ public class KirelUserService<TKey, TUser, TUserDto, TUserCreateDto, TUserUpdate
     /// <summary>
     /// Identity role manager
     /// </summary>
-    protected readonly RoleManager<IdentityRole<TKey>> RoleManager;
+    protected readonly RoleManager<KirelIdentityRole<TKey>> RoleManager;
     /// <summary>
     /// Identity database context
     /// </summary>
-    protected IdentityContext<TKey, TUser> Context;
+    protected KirelIdentityContext<TKey, TUser> Context;
     /// <summary>
     /// AutoMapper instance
     /// </summary>
@@ -57,7 +58,7 @@ public class KirelUserService<TKey, TUser, TUserDto, TUserCreateDto, TUserUpdate
     /// <param name="roleManager">Identity role manager</param>
     /// <param name="context">Identity database context</param>
     /// <param name="mapper">AutoMapper instance</param>
-    public KirelUserService(UserManager<TUser> userManager, RoleManager<IdentityRole<TKey>> roleManager, IdentityContext<TKey, TUser> context, IMapper mapper)
+    public KirelUserService(UserManager<TUser> userManager, RoleManager<KirelIdentityRole<TKey>> roleManager, KirelIdentityContext<TKey, TUser> context, IMapper mapper)
     {
         UserManager = userManager;
         RoleManager = roleManager;

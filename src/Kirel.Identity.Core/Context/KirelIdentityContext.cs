@@ -1,5 +1,5 @@
 ﻿using Kirel.Identity.Core.Interfaces;
-using Microsoft.AspNetCore.Identity;
+using Kirel.Identity.Core.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,16 +8,16 @@ namespace Kirel.Identity.Core.Context;
 /// <summary>
 /// Class for the Identity Framework database context used for Guid identity.
 /// </summary>
-public class IdentityContext<TKey, TUser> : IdentityDbContext<TUser, IdentityRole<TKey>, TKey, 
-    IdentityUserClaim<TKey>,IdentityUserRole<TKey>,IdentityUserLogin<TKey>,IdentityRoleClaim<TKey>,IdentityUserToken<TKey>> 
-    where TUser : IdentityUser<TKey>, IKirelUser<TKey> 
+public class KirelIdentityContext<TKey, TUser> : IdentityDbContext<TUser, KirelIdentityRole<TKey>, TKey, 
+    KirelIdentityUserClaim<TKey>,KirelIdentityUserRole<TKey>,KirelIdentityUserLogin<TKey>,KirelIdentityRoleClaim<TKey>,KirelIdentityUserToken<TKey>> 
+    where TUser : KirelIdentityUser<TKey>
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
 {
     /// <summary>
     /// Identity context constructor
     /// </summary>
     /// <param name="options">is DbContextOptions</param>
-    public IdentityContext(DbContextOptions options) : base(options)
+    public KirelIdentityContext(DbContextOptions options) : base(options)
     {
     }
     

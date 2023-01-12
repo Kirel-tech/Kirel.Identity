@@ -1,4 +1,5 @@
 ﻿using Kirel.DTO;
+using Kirel.Identity.Core.Models;
 using Kirel.Identity.DTOs;
 using Kirel.Identity.Core.Services;
 using Microsoft.AspNetCore.Identity;
@@ -21,7 +22,7 @@ namespace Kirel.Identity.Controllers;
 public class KirelRolesController<TRoleService, TKey, TRole, TRoleDto, TRoleCreateDto, TRoleUpdateDto, TClaimDto, TClaimCreateDto, TClaimUpdateDto> : Controller
     where TRoleService : KirelRoleService<TKey, TRole, TRoleDto, TRoleCreateDto, TRoleUpdateDto, TClaimDto, TClaimCreateDto, TClaimUpdateDto> 
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey> 
-    where TRole : IdentityRole<TKey>
+    where TRole : KirelIdentityRole<TKey>
     where TRoleDto : KirelRoleDto<TKey, TClaimDto>
     where TRoleCreateDto : KirelRoleCreateDto<TClaimCreateDto>
     where TRoleUpdateDto : KirelRoleUpdateDto<TClaimUpdateDto>
