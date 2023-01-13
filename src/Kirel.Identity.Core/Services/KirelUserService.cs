@@ -292,9 +292,10 @@ public class KirelUserService<TKey, TUser, TUserDto, TUserCreateDto, TUserUpdate
             throw new KeyNotFoundException($"User with specified id {userId} was not found");
         var updatedUser = Mapper.Map(updateDto, user);
         var result = await UserManager.UpdateAsync(updatedUser);
+        if (!result.Succeeded) 
+            throw new Exception($"Failed to update user with {userId} id");
         await SyncUserClaims(userId, updateDto.Claims);
         await SyncUserRoles(userId, updateDto.Roles);
-        if (!result.Succeeded) return null;
         if (!string.IsNullOrEmpty(updateDto.Password))
         {
             await UserManager.RemovePasswordAsync(user);
