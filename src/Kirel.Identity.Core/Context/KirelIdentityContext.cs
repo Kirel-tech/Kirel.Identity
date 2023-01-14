@@ -6,15 +6,23 @@ using Microsoft.EntityFrameworkCore;
 namespace Kirel.Identity.Core.Context;
 
 /// <summary>
-/// Class for the Identity Framework database context used for Guid identity.
+/// Kirel base class for the Identity Framework database context.
 /// </summary>
-public class KirelIdentityContext<TKey, TUser> : IdentityDbContext<TUser, KirelIdentityRole<TKey>, TKey, 
-    KirelIdentityUserClaim<TKey>,KirelIdentityUserRole<TKey>,KirelIdentityUserLogin<TKey>,KirelIdentityRoleClaim<TKey>,KirelIdentityUserToken<TKey>> 
+public class KirelIdentityContext<TUser, TRole, TKey, TIdentityUserClaim, TIdentityUserRole, TIdentityUserLogin, 
+    TIdentityRoleClaim, TIdentityUserToken> 
+    : IdentityDbContext<TUser, TRole, TKey, 
+        TIdentityUserClaim,TIdentityUserRole,TIdentityUserLogin,TIdentityRoleClaim,TIdentityUserToken> 
     where TUser : KirelIdentityUser<TKey>
+    where TRole : KirelIdentityRole<TKey>
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
+    where TIdentityUserClaim : KirelIdentityUserClaim<TKey>
+    where TIdentityUserRole : KirelIdentityUserRole<TKey>
+    where TIdentityUserLogin : KirelIdentityUserLogin<TKey>
+    where TIdentityRoleClaim : KirelIdentityRoleClaim<TKey>
+    where TIdentityUserToken : KirelIdentityUserToken<TKey>
 {
     /// <summary>
-    /// Identity context constructor
+    /// Kirel base class for the Identity Framework database context constructor
     /// </summary>
     /// <param name="options">is DbContextOptions</param>
     public KirelIdentityContext(DbContextOptions options) : base(options)
