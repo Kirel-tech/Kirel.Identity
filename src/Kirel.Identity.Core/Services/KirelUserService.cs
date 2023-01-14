@@ -3,9 +3,7 @@ using System.Linq.Expressions;
 using System.Security.Claims;
 using AutoMapper;
 using Kirel.DTO;
-using Kirel.Identity.Core.Context;
 using Kirel.Identity.DTOs;
-using Kirel.Identity.Core.Interfaces;
 using Kirel.Identity.Core.Models;
 using Kirel.Shared;
 using Microsoft.AspNetCore.Identity;
@@ -43,10 +41,6 @@ public class KirelUserService<TKey, TUser, TUserDto, TUserCreateDto, TUserUpdate
     /// </summary>
     protected readonly RoleManager<KirelIdentityRole<TKey>> RoleManager;
     /// <summary>
-    /// Identity database context
-    /// </summary>
-    protected KirelIdentityContext<TKey, TUser> Context;
-    /// <summary>
     /// AutoMapper instance
     /// </summary>
     protected readonly IMapper Mapper;
@@ -56,13 +50,11 @@ public class KirelUserService<TKey, TUser, TUserDto, TUserCreateDto, TUserUpdate
     /// </summary>
     /// <param name="userManager">Identity user manager</param>
     /// <param name="roleManager">Identity role manager</param>
-    /// <param name="context">Identity database context</param>
     /// <param name="mapper">AutoMapper instance</param>
-    public KirelUserService(UserManager<TUser> userManager, RoleManager<KirelIdentityRole<TKey>> roleManager, KirelIdentityContext<TKey, TUser> context, IMapper mapper)
+    public KirelUserService(UserManager<TUser> userManager, RoleManager<KirelIdentityRole<TKey>> roleManager, IMapper mapper)
     {
         UserManager = userManager;
         RoleManager = roleManager;
-        Context = context;
         Mapper = mapper;
     }
     
@@ -98,10 +90,14 @@ public class KirelUserService<TKey, TUser, TUserDto, TUserCreateDto, TUserUpdate
         return await UserManager.GetClaimsAsync(user);
     }
 
-    private IList<TKey> GetUserRoles(TKey userId)
+    private async Task<List<TKey>> GetUserRolesIds(TKey userId)
     {
-        var userRoles = Context.UserRoles.Where(userRole => userRole.UserId.Equals(userId));
-        return userRoles.Select(role => role.RoleId).ToList();
+        var user = await UserManager.FindByIdAsync(userId.ToString());
+        if (user == null)
+            throw new KeyNotFoundException($"User with specified id {userId} was not found");
+        var roles = await UserManager.GetRolesAsync(user);
+        return await RoleManager.Roles.Where(r => roles.Contains(r.Name))
+            .Select(r => r.Id).ToListAsync();
     }
     
     /// <summary>
@@ -174,7 +170,7 @@ public class KirelUserService<TKey, TUser, TUserDto, TUserCreateDto, TUserUpdate
         var claims = await GetUserClaims(userId);
         var userDto = Mapper.Map<TUserDto>(user);
         userDto.Claims = Mapper.Map<List<TClaimDto>>(claims);
-        userDto.Roles = GetUserRoles(userId).ToList();
+        userDto.Roles = await GetUserRolesIds(userId);
         return userDto;
     }
 
@@ -230,7 +226,7 @@ public class KirelUserService<TKey, TUser, TUserDto, TUserCreateDto, TUserUpdate
         {
             var userClaims = await GetUserClaims(userDto.Id);
             userDto.Claims = Mapper.Map<List<TClaimDto>>(userClaims);
-            userDto.Roles = GetUserRoles(userDto.Id).ToList();
+            userDto.Roles = await GetUserRolesIds(userDto.Id);
         }
         
         return new PaginatedResult<List<TUserDto>>
@@ -271,7 +267,7 @@ public class KirelUserService<TKey, TUser, TUserDto, TUserCreateDto, TUserUpdate
         if (passwordResult.Succeeded)
         {
             var newUser = Mapper.Map<TUserDto>(appUser);
-            newUser.Roles = GetUserRoles(appUser.Id).ToList();
+            newUser.Roles = await GetUserRolesIds(appUser.Id);
             newUser.Claims = Mapper.Map<List<TClaimDto>>(claims);
             return newUser;
         }
@@ -304,7 +300,7 @@ public class KirelUserService<TKey, TUser, TUserDto, TUserCreateDto, TUserUpdate
         }
         var returnDto = Mapper.Map<TUserDto>(updatedUser);
         returnDto.Claims = Mapper.Map<List<TClaimDto>>(await GetUserClaims(userId));
-        returnDto.Roles = GetUserRoles(userId).ToList();
+        returnDto.Roles = await GetUserRolesIds(userId);
         return returnDto;
     }
 
