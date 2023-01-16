@@ -3,7 +3,7 @@
 /// <summary>
 /// Data transfer object for user registration
 /// </summary>
-public class KirelUserRegisterDto
+public class KirelUserRegistrationDto
 {
     /// <summary>
     /// Username

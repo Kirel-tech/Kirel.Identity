@@ -1,7 +1,9 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+using AutoMapper;
 using Kirel.Identity.DTOs;
 using Kirel.Identity.Core.Interfaces;
 using Kirel.Identity.Core.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 namespace Kirel.Identity.Core.Services;
@@ -27,44 +29,74 @@ public class KirelAuthorizedUserService<TKey, TUser, TAuthorizedUserDto, TAuthor
     /// AutoMapper instance
     /// </summary>
     protected readonly IMapper Mapper;
-    
+    /// <summary>
+    /// HttpContextAccessor
+    /// </summary>
+    protected readonly IHttpContextAccessor HttpContextAccessor;
+
     /// <summary>
     /// KirelAuthorizedUserService constructor
     /// </summary>
+    /// <param name="httpContextAccessor">Http context accessor</param>
     /// <param name="userManager">Identity user manager</param>
     /// <param name="mapper">AutoMapper instance</param>
-    public KirelAuthorizedUserService(UserManager<TUser> userManager, IMapper mapper)
+    public KirelAuthorizedUserService(IHttpContextAccessor httpContextAccessor, UserManager<TUser> userManager, IMapper mapper)
     {
         UserManager = userManager;
         Mapper = mapper;
+        HttpContextAccessor = httpContextAccessor;
+    }
+
+    private string GetUserName()
+    {
+        var userName = HttpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimsIdentity.DefaultNameClaimType);
+        if (string.IsNullOrEmpty(userName)) 
+            throw new UnauthorizedAccessException($"User not authorized");
+        return userName;
     }
     
     /// <summary>
-    /// Gets a user by id
+    /// Gets a authorized user dto
     /// </summary>
-    /// <param name="userId">User id</param>
     /// <returns>User dto</returns>
-    /// <exception cref="KeyNotFoundException">If user with given id was not found</exception>
-    public virtual async Task<TAuthorizedUserDto> GetById(TKey userId)
+    /// <exception cref="UnauthorizedAccessException">if user is unauthorized</exception>
+    /// <exception cref="KeyNotFoundException">if user not fount in users store</exception>
+    public virtual async Task<TAuthorizedUserDto> GetDto()
     {
-        var user = await UserManager.FindByIdAsync(userId.ToString());
+        var userName = GetUserName();
+        var user = await UserManager.FindByNameAsync(userName);
         if (user == null)
-            throw new KeyNotFoundException($"User with specified id {userId} was not found");
+            throw new KeyNotFoundException($"User with username {userName} was not found");
         return Mapper.Map<TAuthorizedUserDto>(user);
     }
     
     /// <summary>
-    /// Updates new user
+    /// Gets authorized user
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="UnauthorizedAccessException">if user is unauthorized</exception>
+    /// <exception cref="KeyNotFoundException">if user not fount in users store</exception>
+    public virtual async Task<TUser> Get()
+    {
+        var userName = GetUserName();
+        var user = await UserManager.FindByNameAsync(userName);
+        if (user == null)
+            throw new KeyNotFoundException($"User with username {userName} was not found");
+        return user;
+    }
+    
+    /// <summary>
+    /// Updates authorized user
     /// </summary>
     /// <param name="updateDto">Update dto</param>
-    /// <param name="userId">User id</param>
     /// <returns>Updated user dto</returns>
     /// <exception cref="KeyNotFoundException">If user with given id was not found</exception>
-    public virtual async Task<TAuthorizedUserDto> UpdateUser(TKey userId, TAuthorizedUserUpdateDto updateDto)
+    public virtual async Task<TAuthorizedUserDto> Update(TAuthorizedUserUpdateDto updateDto)
     {
-        var user = await UserManager.FindByIdAsync(userId.ToString());
+        var userName = GetUserName();
+        var user = await UserManager.FindByNameAsync(userName);
         if (user == null)
-            throw new KeyNotFoundException($"User with specified id {userId} was not found");
+            throw new KeyNotFoundException($"User with username {userName} was not found");
         var updatedUser = Mapper.Map(updateDto, user);
         var result = await UserManager.UpdateAsync(updatedUser);
         if (!result.Succeeded) throw new Exception("User manager failed to update user");
@@ -74,15 +106,15 @@ public class KirelAuthorizedUserService<TKey, TUser, TAuthorizedUserDto, TAuthor
     /// <summary>
     /// Changes user password
     /// </summary>
-    /// <param name="userId">User id</param>
     /// <param name="currentPassword">Current user password</param>
     /// <param name="newPassword">New user password</param>
     /// <exception cref="KeyNotFoundException">If user with given id was not found</exception>
-    public virtual async Task ChangeUserPassword(TKey userId, string currentPassword, string newPassword)
+    public virtual async Task ChangeUserPassword(string currentPassword, string newPassword)
     {
-        var user = await UserManager.FindByIdAsync(userId.ToString());
+        var username = GetUserName();
+        var user = await UserManager.FindByNameAsync(username);
         if (user == null)
-            throw new KeyNotFoundException($"User with specified id {userId} was not found");
+            throw new KeyNotFoundException($"User with username {username} was not found");
         await UserManager.ChangePasswordAsync(user, currentPassword, newPassword);
     }
 }

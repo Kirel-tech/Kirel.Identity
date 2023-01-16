@@ -25,12 +25,12 @@ public class KirelAuthorizedUserController<TAuthorizedUserService, TKey, TUser, 
     /// <summary>
     /// Authorized user service. Must be a descendant of the KirelAuthorizedUserService class
     /// </summary>
-    protected readonly TAuthorizedUserService Service;
+    protected readonly TAuthorizedUserService AuthorizedUserService;
     /// <summary>
     /// AutoMapper instance
     /// </summary>
     protected readonly IMapper Mapper;
-    
+
     /// <summary>
     /// KirelAuthorizedUserController constructor
     /// </summary>
@@ -38,30 +38,10 @@ public class KirelAuthorizedUserController<TAuthorizedUserService, TKey, TUser, 
     /// <param name="mapper">AutoMapper instance</param>
     public KirelAuthorizedUserController(TAuthorizedUserService service, IMapper mapper)
     {
-        Service = service;
+        AuthorizedUserService = service;
         Mapper = mapper;
     }
 
-    private TKey GetAuthorizedUserId()
-    {
-        var authorizedUserId = User.Claims.First(claim => claim.Type == "uid").Value;
-        if (typeof(TKey) == typeof(Guid))
-        {
-            object guidId = Guid.Parse(authorizedUserId);
-            return (TKey)guidId;
-        }
-        if (typeof(TKey) == typeof(int))
-        {
-            var intId = int.Parse(authorizedUserId);
-            return (TKey)(object)intId;
-        }
-        if (typeof(TKey) == typeof(string))
-        {
-            return (TKey)(object)authorizedUserId;
-        }
-        throw new Exception("Unsupported TKey type");
-    }
-    
     /// <summary>
     /// Gets authorized user account info
     /// </summary>
@@ -69,7 +49,7 @@ public class KirelAuthorizedUserController<TAuthorizedUserService, TKey, TUser, 
     [HttpGet]
     public virtual async Task<ActionResult<TAuthorizedUserDto>> GetInfo()
     {
-        var result = await Service.GetById(GetAuthorizedUserId());
+        var result = await AuthorizedUserService.GetDto();
         if (result != null) return Ok(result);
         return NotFound();
     }
@@ -77,16 +57,12 @@ public class KirelAuthorizedUserController<TAuthorizedUserService, TKey, TUser, 
     /// <summary>
     /// Update authorized user account info
     /// </summary>
-    /// <param name="authUpdateDto">Authorized user update dto</param>
+    /// <param name="updateDto">Authorized user update dto</param>
     /// <returns>Authorized user dto</returns>
     [HttpPut]
-    public virtual async Task<ActionResult<KirelAuthorizedUserDto>> Update([FromBody] TAuthorizedUserUpdateDto authUpdateDto)
+    public virtual async Task<ActionResult<TAuthorizedUserDto>> Update([FromBody] TAuthorizedUserUpdateDto updateDto)
     {
-        var authorizedUserId = GetAuthorizedUserId();
-        var user = await Service.GetById(authorizedUserId);
-        var updateDto = Mapper.Map<TAuthorizedUserUpdateDto>(user);
-        Mapper.Map(authUpdateDto, updateDto);
-        var dto =  await Service.UpdateUser(authorizedUserId, updateDto);
+        var dto =  await AuthorizedUserService.Update(updateDto);
         if (dto != null) return Ok(dto);
         return BadRequest();
     }
@@ -101,7 +77,7 @@ public class KirelAuthorizedUserController<TAuthorizedUserService, TKey, TUser, 
         [Required] string currentPassword, 
         [Required] string newPassword)
     {
-        await Service.ChangeUserPassword(GetAuthorizedUserId(), currentPassword, newPassword);
+        await AuthorizedUserService.ChangeUserPassword(currentPassword, newPassword);
         return NoContent();
     }
 }
