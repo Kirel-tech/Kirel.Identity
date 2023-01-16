@@ -9,15 +9,15 @@ namespace Kirel.Identity.Controllers;
 /// <summary>
 /// Controller for user roles management
 /// </summary>
-/// <typeparam name="TRoleService">Service for roles management</typeparam>
+/// <typeparam name="TRoleService">Service for roles management type</typeparam>
 /// <typeparam name="TKey">Id type</typeparam>
 /// <typeparam name="TRole">Role type</typeparam>
-/// <typeparam name="TRoleDto">Role response dto</typeparam>
-/// <typeparam name="TRoleCreateDto">Role create dto. Must be a descendant of the RoleCreateDto class</typeparam>
-/// <typeparam name="TRoleUpdateDto">Role update dto. Must be a descendant of the RoleUpdateDto class</typeparam>
-/// <typeparam name="TClaimDto">Claim dto. Must be a descendant of the KirelClaimDto class</typeparam>
-/// <typeparam name="TClaimCreateDto">Claim create dto. Must be a descendant of the KirelClaimCreateDto class</typeparam>
-/// <typeparam name="TClaimUpdateDto">Claim update dto. Must be a descendant of the KirelClaimUpdateDto class</typeparam>
+/// <typeparam name="TRoleDto">Role response dto type</typeparam>
+/// <typeparam name="TRoleCreateDto">Role create dto type. Must be a descendant of the RoleCreateDto class</typeparam>
+/// <typeparam name="TRoleUpdateDto">Role update dto type. Must be a descendant of the RoleUpdateDto class</typeparam>
+/// <typeparam name="TClaimDto">Claim dto type. Must be a descendant of the KirelClaimDto class</typeparam>
+/// <typeparam name="TClaimCreateDto">Claim create dto type. Must be a descendant of the KirelClaimCreateDto class</typeparam>
+/// <typeparam name="TClaimUpdateDto">Claim update dto type. Must be a descendant of the KirelClaimUpdateDto class</typeparam>
 public class KirelRolesController<TRoleService, TKey, TRole, TRoleDto, TRoleCreateDto, TRoleUpdateDto, TClaimDto, TClaimCreateDto, TClaimUpdateDto> : Controller
     where TRoleService : KirelRoleService<TKey, TRole, TRoleDto, TRoleCreateDto, TRoleUpdateDto, TClaimDto, TClaimCreateDto, TClaimUpdateDto> 
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey> 
