@@ -37,7 +37,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        package: [ DTOs, Core, Controllers ]
+        package: [ DTOs, Core, Controllers, Jwt.DTOs, Jwt.Core, Jwt.Controllers ]
     needs: pr_info
     steps:
       - name: Link PR Check
