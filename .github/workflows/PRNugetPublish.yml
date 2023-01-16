@@ -59,7 +59,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        package: [ DTOs, Core, Controllers ]
+        package: [ DTOs, Core, Controllers, Jwt.DTOs, Jwt.Core, Jwt.Controllers ]
     env:
       RUN_ID: ${{ github.event.workflow_run.id }}
     steps:
