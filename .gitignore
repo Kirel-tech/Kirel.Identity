@@ -386,3 +386,8 @@ FodyWeavers.xsd
 # JetBrains Rider
 .idea/
 *.sln.iml
+
+# sqlite
+*.db
+*.db-wal
+*.db-shm
