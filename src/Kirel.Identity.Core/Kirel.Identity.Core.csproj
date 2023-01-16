@@ -22,6 +22,7 @@
       <PackageReference Include="FluentValidation" Version="11.4.0" />
       <PackageReference Include="Kirel.DTO" Version="0.0.1" />
       <PackageReference Include="Kirel.Shared" Version="0.0.1" />
+      <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
       <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.12" />
       <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.25.1" />
       <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.25.1" />
