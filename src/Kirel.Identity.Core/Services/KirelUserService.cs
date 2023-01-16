@@ -15,16 +15,18 @@ namespace Kirel.Identity.Core.Services;
 /// Service for management users and their claims
 /// </summary>
 /// <typeparam name="TKey">Id type</typeparam>
-/// <typeparam name="TUser">User type. Must be an implementation of the IApplicationUser interface</typeparam>
+/// <typeparam name="TUser">User type. Must be an implementation of the KirelIdentityUser class</typeparam>
+/// <typeparam name="TRole">Role type. Must be an implementation of the KirelIdentityRole class</typeparam>
 /// <typeparam name="TUserDto">User dto</typeparam>
 /// <typeparam name="TUserCreateDto">User create dto. Must be a descendant of the UserCreateDto class</typeparam>
 /// <typeparam name="TUserUpdateDto">User update dto. Must be a descendant of the UserUpdateDto class</typeparam>
 /// <typeparam name="TClaimDto">Claim dto. Must be a descendant of the KirelClaimDto class</typeparam>
 /// <typeparam name="TClaimCreateDto">Claim create dto. Must be a descendant of the KirelClaimCreateDto class</typeparam>
 /// <typeparam name="TClaimUpdateDto">Claim update dto. Must be a descendant of the KirelClaimUpdateDto class</typeparam>
-public class KirelUserService<TKey, TUser, TUserDto, TUserCreateDto, TUserUpdateDto, TClaimDto, TClaimCreateDto, TClaimUpdateDto> 
+public class KirelUserService<TKey, TUser, TRole, TUserDto, TUserCreateDto, TUserUpdateDto, TClaimDto, TClaimCreateDto, TClaimUpdateDto> 
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey> 
     where TUser : KirelIdentityUser<TKey>
+    where TRole : KirelIdentityRole<TKey>
     where TUserDto : KirelUserDto<TKey, TKey, TClaimDto>
     where TUserCreateDto : KirelUserCreateDto<TKey, TClaimCreateDto>
     where TUserUpdateDto : KirelUserUpdateDto<TKey, TClaimUpdateDto>
@@ -39,7 +41,7 @@ public class KirelUserService<TKey, TUser, TUserDto, TUserCreateDto, TUserUpdate
     /// <summary>
     /// Identity role manager
     /// </summary>
-    protected readonly RoleManager<KirelIdentityRole<TKey>> RoleManager;
+    protected readonly RoleManager<TRole> RoleManager;
     /// <summary>
     /// AutoMapper instance
     /// </summary>
@@ -51,7 +53,7 @@ public class KirelUserService<TKey, TUser, TUserDto, TUserCreateDto, TUserUpdate
     /// <param name="userManager">Identity user manager</param>
     /// <param name="roleManager">Identity role manager</param>
     /// <param name="mapper">AutoMapper instance</param>
-    public KirelUserService(UserManager<TUser> userManager, RoleManager<KirelIdentityRole<TKey>> roleManager, IMapper mapper)
+    public KirelUserService(UserManager<TUser> userManager, RoleManager<TRole> roleManager, IMapper mapper)
     {
         UserManager = userManager;
         RoleManager = roleManager;
