@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kirel.Identity.Exceptions",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kirel.Identity.Middlewares", "Kirel.Identity.Middlewares\Kirel.Identity.Middlewares.csproj", "{0A41F376-9847-4973-97A7-5832098B851B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleBlazorGUI", "ExampleBlazorGUI\ExampleBlazorGUI.csproj", "{748ECEA7-E499-43E2-90A3-5BFC4DA6A85F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,5 +62,9 @@ Global
 		{0A41F376-9847-4973-97A7-5832098B851B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A41F376-9847-4973-97A7-5832098B851B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A41F376-9847-4973-97A7-5832098B851B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{748ECEA7-E499-43E2-90A3-5BFC4DA6A85F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{748ECEA7-E499-43E2-90A3-5BFC4DA6A85F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{748ECEA7-E499-43E2-90A3-5BFC4DA6A85F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{748ECEA7-E499-43E2-90A3-5BFC4DA6A85F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
