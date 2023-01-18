@@ -1,8 +1,11 @@
-﻿using FluentValidation;
+﻿using System.Text.RegularExpressions;
+using FluentValidation;
 using Kirel.Identity.DTOs;
 using Kirel.Identity.Core.Interfaces;
 using Kirel.Identity.Core.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.VisualBasic;
 
 namespace Kirel.Identity.Core.Validators;
 
@@ -18,16 +21,20 @@ public class KirelUserUpdateDtoValidator<TKey, TUser, TRole, TUserUpdateDto, TCl
 {
     private readonly UserManager<TUser> _userManager;
     private readonly RoleManager<TRole> _roleManager;
+    private readonly IHttpContextAccessor _httpContextAccessor;
     
     /// <summary>
     /// Constructor for UserUpdateDtoValidator
     /// </summary>
     /// <param name="userManager">Identity user manager</param>
     /// <param name="roleManager">Identity role manager</param>
-    public KirelUserUpdateDtoValidator(UserManager<TUser> userManager, RoleManager<TRole> roleManager)
+    /// <param name="httpContextAccessor">Http context accessor used for getting path</param>
+    public KirelUserUpdateDtoValidator(UserManager<TUser> userManager, RoleManager<TRole> roleManager, IHttpContextAccessor httpContextAccessor)
     {
         _userManager = userManager;
         _roleManager = roleManager;
+        _httpContextAccessor = httpContextAccessor;
+        
         var message = "";
 
         When(dto => !string.IsNullOrEmpty(dto.Password), () =>
@@ -39,7 +46,7 @@ public class KirelUserUpdateDtoValidator<TKey, TUser, TRole, TUserUpdateDto, TCl
                 .Matches(@"[0-9]+").WithMessage("Your password must contain at least one number.");
         });
         RuleFor(dto => dto.Email)
-            .Matches(@"^[\w._-]{4,}@+\w{2,}(.com|.co|.uk|.ru)$").WithMessage("Email must be abc@def.com|ru")
+            .EmailAddress().WithMessage("'Email' is an invalid email address.")
             .Must((dto, _) => EmailUnique(dto.Email, out message)).WithMessage(_ => message);
         RuleFor(dto => dto.PhoneNumber)
             .Matches(@"(\d{1,3})?\d{3}?\d{3}?\d{4}").WithMessage("Enter a valid phone number." +
@@ -60,7 +67,13 @@ public class KirelUserUpdateDtoValidator<TKey, TUser, TRole, TUserUpdateDto, TCl
     private bool EmailUnique(string email, out string errorMessage)
     {
         errorMessage = "";
-        var unique = !_userManager.Users.Any(user => user.Email == email);
+        var path = _httpContextAccessor.HttpContext.Request.Path.Value;
+        var regex = new Regex("users/([0-9A-Za-z-]*)");
+        var match = regex.Match(path);
+        if (!match.Success) return false;
+        var userId = match.Groups[1].Value;
+        var user = _userManager.FindByIdAsync(userId).Result;
+        var unique = !_userManager.Users.Any(u => u.Email == email && !u.Id.Equals(user.Id));
         if (unique) return true;
         errorMessage = $"This email {email} is already taken";
         return false;

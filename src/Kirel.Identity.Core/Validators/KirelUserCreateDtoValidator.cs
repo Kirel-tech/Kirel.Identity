@@ -40,7 +40,7 @@ public class KirelUserCreateDtoValidator<TKey, TUser, TRole, TUserCreateDto, TCl
             .Matches(@"^(?=.*[a-zA-Z]{1,})(?=.*[\d]{0,})[a-zA-Z0-9.]{4,20}$").WithMessage("Username can only contains letters, numbers and dots")
             .Must((dto, _) => UserNameUnique(dto.UserName, out message)).WithMessage(_ => message);
         RuleFor(dto => dto.Email)
-            .Matches(@"^[\w._-]{4,}@+\w{2,}(.com|.co|.uk|.ru)$").WithMessage("Email must be abc@def.com|ru")
+            .EmailAddress().WithMessage("'Email' is an invalid email address.")
             .Must((dto, _) => EmailUnique(dto.Email, out message)).WithMessage(_ => message);
         RuleFor(dto => dto.PhoneNumber)
             .Matches(@"(\d{1,3})?\d{3}?\d{3}?\d{4}").WithMessage("Enter a valid phone number." +
