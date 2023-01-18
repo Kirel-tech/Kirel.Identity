@@ -5,6 +5,7 @@ using AutoMapper;
 using Kirel.DTO;
 using Kirel.Identity.DTOs;
 using Kirel.Identity.Core.Models;
+using Kirel.Identity.Exceptions;
 using Kirel.Shared;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -65,16 +66,16 @@ public class KirelUserService<TKey, TUser, TRole, TUserDto, TUserCreateDto, TUse
     /// </summary>
     /// <param name="claim">Claim to delete</param>
     /// <param name="userId">User id</param>
-    /// <exception cref="KeyNotFoundException">If user or claim was not found</exception>
+    /// <exception cref="KirelNotFoundException">If user or claim was not found</exception>
     private async Task DeleteClaimFromUser(Claim claim, TKey userId)
     {
         var user = await UserManager.FindByIdAsync(userId.ToString());
         if (user == null)
-            throw new KeyNotFoundException($"User with specified id {userId} was not found");
+            throw new KirelNotFoundException($"User with specified id {userId} was not found");
 
         var userClaims = await UserManager.GetClaimsAsync(user);
         if (!userClaims.Any(userClaim => userClaim.Type == claim.Type && userClaim.Value == claim.Value))
-            throw new KeyNotFoundException($"This claim {claim.Type} was not found for the specified user {userId}");
+            throw new KirelNotFoundException($"This claim {claim.Type} was not found for the specified user {userId}");
         await UserManager.RemoveClaimAsync(user, claim);
     }
  
@@ -83,12 +84,12 @@ public class KirelUserService<TKey, TUser, TRole, TUserDto, TUserCreateDto, TUse
     /// </summary>
     /// <param name="userId">User id</param>
     /// <returns>List of user claims</returns>
-    /// <exception cref="KeyNotFoundException">If user with given id was not found</exception>
+    /// <exception cref="KirelNotFoundException">If user with given id was not found</exception>
     private async Task<IList<Claim>> GetUserClaims(TKey userId)
     {
         var user = await UserManager.FindByIdAsync(userId.ToString());
         if (user == null)
-            throw new KeyNotFoundException($"User with specified id {userId} was not found");
+            throw new KirelNotFoundException($"User with specified id {userId} was not found");
         return await UserManager.GetClaimsAsync(user);
     }
 
@@ -96,7 +97,7 @@ public class KirelUserService<TKey, TUser, TRole, TUserDto, TUserCreateDto, TUse
     {
         var user = await UserManager.FindByIdAsync(userId.ToString());
         if (user == null)
-            throw new KeyNotFoundException($"User with specified id {userId} was not found");
+            throw new KirelNotFoundException($"User with specified id {userId} was not found");
         var roles = await UserManager.GetRolesAsync(user);
         return await RoleManager.Roles.Where(r => roles.Contains(r.Name))
             .Select(r => r.Id).ToListAsync();
@@ -107,12 +108,12 @@ public class KirelUserService<TKey, TUser, TRole, TUserDto, TUserCreateDto, TUse
     /// </summary>
     /// <param name="claim">Claim</param>
     /// <param name="userId">User id</param>
-    /// <exception cref="KeyNotFoundException">If user with given id was not found</exception>
+    /// <exception cref="KirelNotFoundException">If user with given id was not found</exception>
     private async Task AddClaimToUser(Claim claim, TKey userId)
     {
         var user = await UserManager.FindByIdAsync(userId.ToString());
         if (user == null)
-            throw new KeyNotFoundException($"User with specified id {userId} was not found");
+            throw new KirelNotFoundException($"User with specified id {userId} was not found");
         await UserManager.AddClaimAsync(user, claim);
     }
     
@@ -163,12 +164,12 @@ public class KirelUserService<TKey, TUser, TRole, TUserDto, TUserCreateDto, TUse
     /// </summary>
     /// <param name="userId">User id</param>
     /// <returns>User dto</returns>
-    /// <exception cref="KeyNotFoundException">If user with given id was not found</exception>
+    /// <exception cref="KirelNotFoundException">If user with given id was not found</exception>
     public virtual async Task<TUserDto> GetById(TKey userId)
     {
         var user = await UserManager.FindByIdAsync(userId.ToString());
         if (user == null)
-            throw new KeyNotFoundException($"User with specified id {userId} was not found");
+            throw new KirelNotFoundException($"User with specified id {userId} was not found");
         var claims = await GetUserClaims(userId);
         var userDto = Mapper.Map<TUserDto>(user);
         userDto.Claims = Mapper.Map<List<TClaimDto>>(claims);
@@ -243,14 +244,14 @@ public class KirelUserService<TKey, TUser, TRole, TUserDto, TUserCreateDto, TUse
     /// </summary>
     /// <param name="createDto">User create dto</param>
     /// <returns>New user dto</returns>
-    /// <exception cref="Exception">If user manager failed to create a new user</exception>
-    /// <exception cref="ValidationException">If password validation failed</exception>
+    /// <exception cref="KirelIdentityStoreException">If user or role managers fails on store based operations</exception>
+    /// <exception cref="KirelValidationException">If password validation failed</exception>
     public virtual async Task<TUserDto> CreateUser(TUserCreateDto createDto)
     {
         var appUser = Mapper.Map<TUser>(createDto);
         var result = await UserManager.CreateAsync(appUser);
         if(!result.Succeeded)  
-            throw new Exception("Failed to create new user");
+            throw new KirelIdentityStoreException("Failed to create new user");
         foreach (var roleId in createDto.Roles)
         {
             var role = await RoleManager.FindByIdAsync(roleId.ToString());
@@ -274,7 +275,7 @@ public class KirelUserService<TKey, TUser, TRole, TUserDto, TUserCreateDto, TUse
             return newUser;
         }
         await UserManager.DeleteAsync(appUser);
-        throw new ValidationException("Failed to add password");
+        throw new KirelValidationException("Failed to add password");
     }
     
     /// <summary>
@@ -283,16 +284,17 @@ public class KirelUserService<TKey, TUser, TRole, TUserDto, TUserCreateDto, TUse
     /// <param name="updateDto">Update dto</param>
     /// <param name="userId">User id</param>
     /// <returns>Updated user dto</returns>
-    /// <exception cref="KeyNotFoundException">If user with given id was not found</exception>
+    /// <exception cref="KirelNotFoundException">If user with given id was not found</exception>
+    /// <exception cref="KirelIdentityStoreException">If user manager fails to update user</exception>
     public virtual async Task<TUserDto> UpdateUser(TKey userId, TUserUpdateDto updateDto)
     {
         var user = await UserManager.FindByIdAsync(userId.ToString());
         if (user == null)
-            throw new KeyNotFoundException($"User with specified id {userId} was not found");
+            throw new KirelNotFoundException($"User with specified id {userId} was not found");
         var updatedUser = Mapper.Map(updateDto, user);
         var result = await UserManager.UpdateAsync(updatedUser);
         if (!result.Succeeded) 
-            throw new Exception($"Failed to update user with {userId} id");
+            throw new KirelIdentityStoreException($"Failed to update user with {userId} id");
         await SyncUserClaims(userId, updateDto.Claims);
         await SyncUserRoles(userId, updateDto.Roles);
         if (!string.IsNullOrEmpty(updateDto.Password))
@@ -310,12 +312,12 @@ public class KirelUserService<TKey, TUser, TRole, TUserDto, TUserCreateDto, TUse
     /// Deletes user by id
     /// </summary>
     /// <param name="id">User id</param>
-    /// <exception cref="KeyNotFoundException">If user with given id was not found</exception>
+    /// <exception cref="KirelNotFoundException">If user with given id was not found</exception>
     public virtual async Task DeleteUser(TKey id)
     {
         var user = await UserManager.FindByIdAsync(id.ToString());
         if (user == null)
-            throw new KeyNotFoundException($"User with specified id {id} was not found");
+            throw new KirelNotFoundException($"User with specified id {id} was not found");
         await UserManager.DeleteAsync(user);
     }
 
@@ -324,15 +326,15 @@ public class KirelUserService<TKey, TUser, TRole, TUserDto, TUserCreateDto, TUse
     /// </summary>
     /// <param name="userId">User id</param>
     /// <param name="roleId">Role id</param>
-    /// <exception cref="KeyNotFoundException">if role or user was not found</exception>
+    /// <exception cref="KirelNotFoundException">if role or user was not found</exception>
     public virtual async Task AddUserToRole(TKey userId, TKey roleId)
     {
         var role = await RoleManager.FindByIdAsync(roleId.ToString());
         if (role == null)
-            throw new KeyNotFoundException($"Role with given id {roleId} was not found");
+            throw new KirelNotFoundException($"Role with given id {roleId} was not found");
         var user = await UserManager.FindByIdAsync(userId.ToString());
         if (user == null)
-            throw new KeyNotFoundException($"User with specified id {userId} was not found");
+            throw new KirelNotFoundException($"User with specified id {userId} was not found");
         await UserManager.AddToRoleAsync(user, role.Name);
     }
     
@@ -341,15 +343,15 @@ public class KirelUserService<TKey, TUser, TRole, TUserDto, TUserCreateDto, TUse
     /// </summary>
     /// <param name="userId">User id</param>
     /// <param name="roleId">Role id</param>
-    /// <exception cref="KeyNotFoundException">If role or user was not found</exception>
+    /// <exception cref="KirelNotFoundException">If role or user was not found</exception>
     public virtual async Task DeleteUserFromRole(TKey userId, TKey roleId)
     {
         var role = await RoleManager.FindByIdAsync(roleId.ToString());
         if (role == null)
-            throw new KeyNotFoundException($"Role with given id {roleId} was not found");
+            throw new KirelNotFoundException($"Role with given id {roleId} was not found");
         var user = await UserManager.FindByIdAsync(userId.ToString());
         if (user == null)
-            throw new KeyNotFoundException($"User with specified id {userId} was not found");
+            throw new KirelNotFoundException($"User with specified id {userId} was not found");
         await UserManager.RemoveFromRoleAsync(user, role.Name);
     }
 }

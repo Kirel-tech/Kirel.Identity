@@ -2,6 +2,7 @@
 using AutoMapper;
 using Kirel.Identity.Core.Models;
 using Kirel.Identity.DTOs;
+using Kirel.Identity.Exceptions;
 using Microsoft.AspNetCore.Identity;
 
 namespace Kirel.Identity.Core.Services;
@@ -41,19 +42,17 @@ public class KirelRegistrationService<TKey, TUser, TRegistrationDto>
     /// User registration method
     /// </summary>
     /// <param name="registrationDto">registration data transfer object</param>
-    /// <exception cref="AuthenticationException">if user creation failed</exception>
+    /// <exception cref="KirelIdentityStoreException">If user or role managers fails on store based operations</exception>
     public virtual async Task Registration(TRegistrationDto registrationDto)
     {
         var appUser = Mapper.Map<TUser>(registrationDto);
         var result = await UserManager.CreateAsync(appUser);
-        //TODO: change exception types
-        if(!result.Succeeded)  throw new AuthenticationException("Failed to create new user");
+        if(!result.Succeeded)  throw new KirelIdentityStoreException("Failed to create new user");
         var passwordResult = await UserManager.AddPasswordAsync(appUser, registrationDto.Password);
         if (!passwordResult.Succeeded)
         {
             await UserManager.DeleteAsync(appUser);
-            //TODO: change exception types
-            throw new AuthenticationException("Failed to add password");
+            throw new KirelIdentityStoreException("Failed to add password");
         }
     }
 }

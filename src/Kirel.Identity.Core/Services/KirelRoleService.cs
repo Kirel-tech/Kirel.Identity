@@ -4,6 +4,7 @@ using AutoMapper;
 using Kirel.DTO;
 using Kirel.Identity.Core.Models;
 using Kirel.Identity.DTOs;
+using Kirel.Identity.Exceptions;
 using Kirel.Shared;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -76,12 +77,12 @@ public class KirelRoleService<TKey, TRole, TRoleDto, TRoleCreateDto, TRoleUpdate
     /// </summary>
     /// <param name="claim">Claim</param>
     /// <param name="roleId">Role id</param>
-    /// <exception cref="KeyNotFoundException">If role was not found</exception>
+    /// <exception cref="KirelNotFoundException">If role was not found</exception>
     private async Task AddClaimToRole(Claim claim, TKey roleId)
     {
         var role = await RoleManager.FindByIdAsync(roleId.ToString());
         if (role == null)
-            throw new KeyNotFoundException($"Role with given id {roleId} was not found");
+            throw new KirelNotFoundException($"Role with given id {roleId} was not found");
         await RoleManager.AddClaimAsync(role, claim); 
     }
     
@@ -90,12 +91,12 @@ public class KirelRoleService<TKey, TRole, TRoleDto, TRoleCreateDto, TRoleUpdate
     /// </summary>
     /// <param name="claim">Claim to delete</param>
     /// <param name="roleId">Role id</param>
-    /// <exception cref="KeyNotFoundException">If role was not found</exception>
+    /// <exception cref="KirelNotFoundException">If role was not found</exception>
     private async Task DeleteClaimFromRole(Claim claim, TKey roleId)
     {
         var role = await RoleManager.FindByIdAsync(roleId.ToString());
         if (role == null)
-            throw new KeyNotFoundException($"Role with given id {roleId} was not found");
+            throw new KirelNotFoundException($"Role with given id {roleId} was not found");
         await RoleManager.RemoveClaimAsync(role, claim);
     }
 
@@ -104,12 +105,12 @@ public class KirelRoleService<TKey, TRole, TRoleDto, TRoleCreateDto, TRoleUpdate
     /// </summary>
     /// <param name="roleId">Role id</param>
     /// <returns>List of role claims</returns>
-    /// <exception cref="KeyNotFoundException">If role with given name was not found</exception>
+    /// <exception cref="KirelNotFoundException">If role with given name was not found</exception>
     public virtual async Task<IList<Claim>> GetRoleClaims(TKey roleId)
     {
         var role = await RoleManager.FindByIdAsync(roleId.ToString());
         if (role == null)
-            throw new KeyNotFoundException($"Role with given id {roleId} was not found");
+            throw new KirelNotFoundException($"Role with given id {roleId} was not found");
         return await RoleManager.GetClaimsAsync(role);
     }
     
@@ -117,15 +118,16 @@ public class KirelRoleService<TKey, TRole, TRoleDto, TRoleCreateDto, TRoleUpdate
     /// Creates a new role
     /// </summary>
     /// <param name="createDto">Role create dto</param>
-    /// <exception cref="Exception">If role already exists or role manager failed to create role</exception>
+    /// <exception cref="KirelAlreadyExistException">If role already exists</exception>
+    /// <exception cref="KirelIdentityStoreException">If role manager fails to create role</exception>
     public virtual async Task<TRoleDto> CreateRole(TRoleCreateDto createDto)
     {
         if (await RoleManager.RoleExistsAsync(createDto.Name))
-            throw new Exception($"Role with given name {createDto.Name} already exist");
+            throw new KirelAlreadyExistException($"Role with given name {createDto.Name} already exist");
         var role = Mapper.Map<TRole>(createDto);
         var result = await RoleManager.CreateAsync(role);
         if (!result.Succeeded)
-            throw new Exception("Failed to create new role");
+            throw new KirelIdentityStoreException("Failed to create new role");
         var newRole = await RoleManager.FindByNameAsync(createDto.Name);
         var claims = Mapper.Map<List<Claim>>(createDto.Claims);
         foreach (var claim in claims)
@@ -143,15 +145,15 @@ public class KirelRoleService<TKey, TRole, TRoleDto, TRoleCreateDto, TRoleUpdate
     /// <param name="roleId">Role id</param>
     /// <param name="updateDto">Role update dto</param>
     /// <returns>Updated role dto</returns>
-    /// <exception cref="KeyNotFoundException">If role was not found</exception>
-    /// <exception cref="Exception">If role with given name already exists</exception>
+    /// <exception cref="KirelNotFoundException">If role was not found</exception>
+    /// <exception cref="KirelAlreadyExistException">If role with given name already exists</exception>
     public virtual async Task<TRoleDto> UpdateRole(TKey roleId, TRoleUpdateDto updateDto)
     {
         var role = await RoleManager.FindByIdAsync(roleId.ToString());
         if (role == null)
-            throw new KeyNotFoundException($"Role with specified id {roleId} was not found");
+            throw new KirelNotFoundException($"Role with specified id {roleId} was not found");
         if (await RoleManager.RoleExistsAsync(updateDto.Name))
-            throw new Exception($"Role with given name {updateDto.Name} already exist");
+            throw new KirelAlreadyExistException($"Role with given name {updateDto.Name} already exist");
         role.Name = updateDto.Name;
         await RoleManager.UpdateAsync(role);
         await SyncRoleClaims(roleId, updateDto.Claims);
@@ -165,12 +167,12 @@ public class KirelRoleService<TKey, TRole, TRoleDto, TRoleCreateDto, TRoleUpdate
     /// </summary>
     /// <param name="roleId">Role id</param>
     /// <returns>Role dto</returns>
-    /// <exception cref="KeyNotFoundException">If role was not found</exception>
+    /// <exception cref="KirelNotFoundException">If role was not found</exception>
     public virtual async Task<TRoleDto> GetRole(TKey roleId)
     {
         var role = await RoleManager.FindByIdAsync(roleId.ToString());
         if (role == null)
-            throw new KeyNotFoundException($"Role with specified id {roleId} was not found");
+            throw new KirelNotFoundException($"Role with specified id {roleId} was not found");
         var roleDto = Mapper.Map<TRoleDto>(role);
         roleDto.Claims = Mapper.Map<List<TClaimDto>>((await GetRoleClaims(roleId)).ToList());
         return roleDto;

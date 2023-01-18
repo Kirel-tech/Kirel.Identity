@@ -2,6 +2,7 @@
 using System.Security.Authentication;
 using System.Security.Claims;
 using Kirel.Identity.Core.Models;
+using Kirel.Identity.Exceptions;
 using Kirel.Identity.Jwt.DTOs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -82,7 +83,7 @@ public class KirelJwtTokenService<TKey, TUser, TRole>
     private async Task<JwtTokenDto> GenerateTokensPair(TUser user)
     {
         var userClaims = await GetUserIdentityClaims(user);
-        if (userClaims == null) throw new AuthenticationException($"User with login {user.UserName} is not found");
+        if (userClaims == null) throw new KirelAuthenticationException($"User with login {user.UserName} is not found");
         
         var accessToken = CreateJwtToken(userClaims, AuthOptions.AccessLifetime);
 
