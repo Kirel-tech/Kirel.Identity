@@ -1,5 +1,6 @@
 ﻿using System.Security.Authentication;
 using Kirel.Identity.Core.Models;
+using Kirel.Identity.Exceptions;
 using Microsoft.AspNetCore.Identity;
 
 namespace Kirel.Identity.Core.Services;
@@ -33,15 +34,16 @@ public class KirelAuthenticationService<TKey, TUser>
     /// <param name="login">User login</param>
     /// <param name="password">User password</param>
     /// <returns>User class instance</returns>
-    /// <exception cref="AuthenticationException">Returned if the user is not found or if the password is incorrect</exception>
+    /// <exception cref="KirelAuthenticationException">Returned if the user is not found or if the password is incorrect</exception>
+    /// <exception cref="KirelIdentityStoreException">If user or role managers fails on store based operations</exception>
     public async Task<TUser> LoginByPassword(string login, string password)
     {
         if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password))
-            throw new AuthenticationException("Login or password cannot be empty");
+            throw new KirelAuthenticationException("Login or password cannot be empty");
         var user = await UserManager.FindByNameAsync(login);
-        if (user == null) throw new AuthenticationException($"User with login {login} is not found");
+        if (user == null) throw new KirelIdentityStoreException($"User with login {login} is not found");
         var result = await UserManager.CheckPasswordAsync(user, password);
-        if (!result) throw new AuthenticationException("Wrong password");
+        if (!result) throw new KirelAuthenticationException("Wrong password");
         return user;
     }
 }
