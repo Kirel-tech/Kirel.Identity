@@ -1,0 +1,89 @@
+﻿@startuml
+
+!include ../../Kirel.Identity.Core/Models/KirelIdentityRole.puml
+!include ../../Kirel.Identity.DTOs/KirelRoleDto.puml
+!include ../../Kirel.Identity.DTOs/KirelRoleCreateDto.puml
+!include ../../Kirel.Identity.DTOs/KirelRoleUpdateDto.puml
+!include ../../Kirel.Identity.DTOs/KirelClaimDto.puml
+!include ../../Kirel.Identity.DTOs/KirelClaimCreateDto.puml
+!include ../../Kirel.Identity.DTOs/KirelClaimUpdateDto.puml
+
+class KirelRoleService<TKey, TRole, TRoleDto, TRoleCreateDto, TRoleUpdateDto, TClaimDto, TClaimCreateDto, TClaimUpdateDto>{
+    #RoleManager<TRole> RoleManager
+    --
+    #IMapper Mapper
+    --
+    -Task SyncRoleClaims(TKey roleId, ICollection<TClaimUpdateDto> claims)
+    --
+    -Task AddClaimToRole(Claim claim, TKey roleId)
+    --
+    -Task DeleteClaimFromRole(Claim claim, TKey roleId)
+    --
+    +Task<IList<Claim>> GetRoleClaims(TKey roleId)
+    --
+    +Task<TRoleDto> CreateRole(TRoleCreateDto createDto)
+    --
+    +Task<TRoleDto> UpdateRole(TKey roleId, TRoleUpdateDto updateDto)
+    --
+    +Task<TRoleDto> GetRole(TKey roleId)
+    --
+    +Task<PaginatedResult<List<TRoleDto>>> GetRolesList(int page, int pageSize, string search, string orderBy, SortDirection orderDirection)
+}
+
+note left of KirelRoleService::RoleManager
+  Identity role manager
+end note
+
+note left of KirelRoleService::Mapper
+  AutoMapper instance
+end note
+
+note left of KirelRoleService::AddClaimToRole
+  Adds a claim to the specified role
+end note
+
+note left of KirelRoleService::DeleteClaimFromRole
+  Deletes claim from role
+end note
+
+note left of KirelRoleService::GetRoleClaims
+  Get claims of specified role
+end note
+
+note left of KirelRoleService::CreateRole
+  Creates a new role
+end note
+
+note left of KirelRoleService::UpdateRole
+  Updates role by id
+end note
+
+note left of KirelRoleService::"GetRole(TKey roleId)"
+  Get role by id
+end note
+
+note left of KirelRoleService::GetRolesList
+  Gets a list of roles with search and pagination
+end note
+
+ note as KirelRoleServiceTypes
+    IdentityRoleType is KirelIdentityRole
+    RoleDtoType is KirelRoleDto
+    RoleCreateDtoType is KirelRoleCreateDto
+    RoleUpdateDtoType is KirelRoleUpdateDto
+    ClaimDtoType is KirelClaimDto
+    ClaimCreateDtoType is KirelClaimCreateDto
+    ClaimUpdateDtoType is KirelClaimUpdateDto
+ end note
+ 
+ KirelRoleService .down. KirelRoleServiceTypes
+ 
+ KirelRoleServiceTypes .. KirelIdentityRole
+ KirelRoleServiceTypes .. KirelRoleDto
+ KirelRoleServiceTypes .. KirelRoleCreateDto
+ KirelRoleServiceTypes .. KirelRoleUpdateDto
+ KirelRoleServiceTypes .. KirelClaimDto
+ KirelRoleServiceTypes .. KirelClaimCreateDto
+ KirelRoleServiceTypes .. KirelClaimUpdateDto
+
+@enduml

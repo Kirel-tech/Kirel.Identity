@@ -1,0 +1,27 @@
+﻿@startuml
+
+!include ../Models/KirelIdentityUser.puml
+
+class KirelAuthenticationService<TKey, TUser>{
+    #UserManager<TUser>
+    --
+    +Task<TUser> LoginByPassword(string login, string password)
+} 
+
+note left of KirelAuthenticationService::UserManager
+  Identity user manager
+end note
+
+note left of KirelAuthenticationService::LoginByPassword
+  Provides the ability to get the identity user after checking the login and password
+end note
+
+ note as KirelAuthenticationServiceTypes
+    IdentityUserType is KirelIdentityUser
+ end note
+ 
+ KirelAuthenticationService .down. KirelAuthenticationServiceTypes
+ 
+ KirelAuthenticationServiceTypes .. KirelIdentityUser
+
+@enduml

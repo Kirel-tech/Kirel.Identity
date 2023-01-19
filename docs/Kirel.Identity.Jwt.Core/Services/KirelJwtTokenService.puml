@@ -1,0 +1,57 @@
+﻿@startuml
+
+!include ../../Kirel.Identity.Core/Models/KirelIdentityUser.puml
+!include ../../Kirel.Identity.Core/Models/KirelIdentityRole.puml
+!include ../../Kirel.Identity.Jwt.DTOs/JwtTokenDto.puml
+
+class KirelJwtTokenService<TKey, TUser, TRole>{
+    #UserManager<TUser> UserManager
+    --
+    #RoleManager<TRole> RoleManager
+    --
+    #KirelAuthOptions AuthOptions
+    --
+    +KirelJwtTokenService(UserManager<TUser> userManager, RoleManager<TRole> roleManager, KirelAuthOptions authOptions)
+    --
+    -Task<ClaimsIdentity> GetUserIdentityClaims(TUser user)
+    --
+    -string CreateJwtToken(ClaimsIdentity claims, int lifetime)
+    --
+    -Task<JwtTokenDto> GenerateTokensPair(TUser user)
+    --
+    +Task<JwtTokenDto> GenerateJwtTokenDto(TUser user)
+}
+
+note left of KirelJwtTokenService::UserManager
+  Identity user manager
+end note
+
+note left of KirelJwtTokenService::RoleManager
+  Identity role manager
+end note
+
+note left of KirelJwtTokenService::AuthOptions
+  Token auth options
+end note
+
+note left of KirelJwtTokenService::KirelJwtTokenService
+  KirelAuthenticationService constructor
+end note
+
+note left of KirelJwtTokenService::GenerateJwtTokenDto
+  Method for getting JWT token DTO for authenticated user
+end note
+
+ note as KirelJwtTokenServiceTypes
+    IdentityUserType is KirelIdentityUser
+    KirelIdentityType is KirelIdentityRole
+    JwtTokenDtoType is JwtTokenDto
+ end note
+ 
+ KirelJwtTokenService .down. KirelJwtTokenServiceTypes
+ 
+ KirelJwtTokenServiceTypes ... KirelIdentityUser
+ KirelJwtTokenServiceTypes ... KirelIdentityRole
+ KirelJwtTokenServiceTypes ... JwtTokenDto
+
+@enduml

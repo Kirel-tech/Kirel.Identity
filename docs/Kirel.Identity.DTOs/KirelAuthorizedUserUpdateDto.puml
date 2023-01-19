@@ -1,0 +1,16 @@
+﻿@startuml
+
+class KirelAuthorizedUserUpdateDto{
+    +string Name
+    --
+    +string LastName
+}
+
+note left of KirelAuthorizedUserUpdateDto::Name
+  First name of the user
+end note
+
+note left of KirelAuthorizedUserUpdateDto::LastName
+  Last name of the user
+end note
+@enduml

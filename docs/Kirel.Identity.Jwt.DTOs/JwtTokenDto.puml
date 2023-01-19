@@ -1,0 +1,17 @@
+﻿@startuml
+
+class JwtTokenDto{
+    +string AccessToken
+    --
+    +string RefreshToken
+}
+
+note left of JwtTokenDto::AccessToken
+  Access jwt token
+end note
+
+note left of JwtTokenDto::RefreshToken
+  Refresh jwt token
+end note
+
+@enduml

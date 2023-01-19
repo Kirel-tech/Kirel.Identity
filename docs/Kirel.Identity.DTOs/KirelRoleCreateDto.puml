@@ -1,0 +1,17 @@
+﻿@startuml
+
+class KirelRoleCreateDto<TClaimCreateDto>{
+    +string Name
+    --
+    +List<TClaimCreateDto> Claims
+}
+
+note left of KirelRoleCreateDto::Name
+  Role name
+end note
+
+note left of KirelRoleCreateDto::Claims
+  List of user claims
+end note
+
+@enduml

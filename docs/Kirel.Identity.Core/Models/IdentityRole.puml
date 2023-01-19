@@ -1,0 +1,47 @@
+﻿@startuml
+
+class IdentityRole<TKey>{
+    +IdentityRole()
+    --
+    +IdentityRole(string roleName)
+    --
+    +TKey Id 
+    --
+    +string Name
+    --
+    +string NormalizedName
+    --
+    +string ConcurrencyStamp
+    --
+    +string ToString()
+}
+
+note left of IdentityRole::IdentityRole
+  Initializes a new instance of IdentityRole{TKey}
+end note
+
+note left of IdentityRole::"IdentityRole(string roleName)"
+  Initializes a new instance of IdentityRole{TKey}
+end note
+
+note left of IdentityRole::"TKey Id"
+  Gets or sets the primary key for this role
+end note
+
+note left of IdentityRole::"string Name"
+  Gets or sets the name for this role
+end note
+
+note left of IdentityRole::NormalizedName
+  Gets or sets the normalized name for this role
+end note
+
+note left of IdentityRole::ConcurrencyStamp
+  A random value that should change whenever a role is persisted to the store
+end note
+
+note left of IdentityRole::ToString
+  Returns the name of the role
+end note
+
+@enduml

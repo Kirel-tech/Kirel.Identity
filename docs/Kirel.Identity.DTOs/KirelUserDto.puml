@@ -1,0 +1,81 @@
+﻿@startuml
+
+class KirelUserDto<TKey, TRoleKey, TClaimDto>{
+   +TKey Id
+   --
+   +DateTime Created
+   --
+   +DateTime? Updated
+   --
+   +string UserName
+   --
+   +string Name
+   --
+   +string LastName 
+   --
+   +string Email
+   --
+   +bool EmailConfirmed
+   --
+   +string PhoneNumber
+   --
+   +bool PhoneNumberConfirmed
+   --
+   +bool LockoutEnabled
+   --
+   +List<TRoleKey> Roles
+   --
+   +List<TClaimCreateDto> Claims
+}
+note left of KirelUserDto::Id
+  User id
+end note
+
+note left of KirelUserDto::Created
+  User create date and time
+end note
+
+note left of KirelUserDto::Updated
+  User last update date and time
+end note
+
+note left of KirelUserDto::UserName
+  Username
+end note
+
+note left of KirelUserDto::"string Name"
+  First name of the user
+end note
+
+note left of KirelUserDto::LastName
+  Last name of the user
+end note
+
+note left of KirelUserDto::Email
+  User email
+end note
+
+note left of KirelUserDto::EmailConfirmed
+  Flag whether the email was verified
+end note
+
+note left of KirelUserDto::PhoneNumber
+  User phone number
+end note
+
+note left of KirelUserDto::PhoneNumberConfirmed
+  Flag whether the phone number was verified
+end note
+
+note left of KirelUserDto::LockoutEnabled
+  Gets or sets a flag indicating if the user could be locked out
+end note
+
+note left of KirelUserDto::Roles
+  List of user roles
+end note
+
+note left of KirelUserDto::Claims
+  List of user claims
+end note
+@enduml

@@ -1,0 +1,17 @@
+﻿@startuml
+
+class IdentityUserRole<TKey>{
+    +TKey UserId
+    --
+    +TKey RoleId 
+}
+
+note left of IdentityUserRole::UserId
+    Gets or sets the primary key of the user that is linked to a role
+end note
+
+note left of IdentityUserRole::RoleId
+    Gets or sets the primary key of the role that is linked to the user
+end note
+
+@enduml

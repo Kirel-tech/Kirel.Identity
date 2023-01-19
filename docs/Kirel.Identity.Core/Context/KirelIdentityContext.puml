@@ -1,0 +1,56 @@
+﻿@startuml
+
+!include ../Models/KirelIdentityUser.puml
+!include ../Models/KirelIdentityRole.puml
+!include ../Models/KirelIdentityUserClaim.puml
+!include ../Models/KirelIdentityUserRole.puml
+!include ../Models/KirelIdentityUserLogin.puml
+!include ../Models/KirelIdentityRoleClaim.puml
+!include ../Models/KirelIdentityUserToken.puml
+!include ../Interfaces/IKirelUser.puml
+
+class KirelIdentityContext<TUser, TRole, TKey, TIdentityUserClaim, TIdentityUserRole, TIdentityUserLogin, TIdentityRoleClaim, TIdentityUserToken>{
+        +Task<int> SaveChangesAsync(CancellationToken cancellationToken)
+        --
+        +int SaveChanges()
+        --
+        -void DateTracking()
+}
+
+KirelIdentityContext -down-|> IdentityDbContext
+
+note left of KirelIdentityContext::SaveChangesAsync
+  Method which called when entity saved
+end note
+
+note left of KirelIdentityContext::"int SaveChanges()"
+  Method which called when entity saved
+end note
+
+note left of KirelIdentityContext::DateTracking
+  Method for setting the desired date format
+end note
+
+ note as KirelIdentityContextTypes
+    IdentityUserType is KirelIdentityUser
+    IdentityRoleType is KirelIdentityRole
+    IdentityUserClaimType is KirelIdentityUserClaim
+    IdentityUserRoleType is KirelIdentityUserRole
+    IdentityUserLoginType is KirelIdentityUserLogin
+    IdentityRoleClaimType is KirelIdentityRoleClaim
+    IdentityUserTokenType is KirelIdentityUserToken 
+    IUserType is IKirelUser       
+ end note
+ 
+ KirelIdentityContext .down. KirelIdentityContextTypes
+ 
+ KirelIdentityContextTypes .. KirelIdentityUser
+ KirelIdentityContextTypes .. KirelIdentityRole
+ KirelIdentityContextTypes .. KirelIdentityUserClaim
+ KirelIdentityContextTypes .. KirelIdentityUserRole
+ KirelIdentityContextTypes .. KirelIdentityUserLogin
+ KirelIdentityContextTypes .. KirelIdentityRoleClaim
+ KirelIdentityContextTypes .. KirelIdentityUserToken
+ KirelIdentityContextTypes .. IKirelUser
+
+@enduml

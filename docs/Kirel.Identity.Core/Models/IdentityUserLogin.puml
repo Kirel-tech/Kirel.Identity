@@ -1,0 +1,29 @@
+﻿@startuml
+
+class IdentityUserLogin<TKey>{
+    +string LoginProvider
+    --
+    +string ProviderKey
+    --
+    +string ProviderDisplayName
+    --
+    +TKey UserId
+}
+
+note left of IdentityUserLogin::LoginProvider
+    Gets or sets the login provider for the login (e.g. facebook, google)
+end note
+
+note left of IdentityUserLogin::ProviderKey
+    Gets or sets the unique provider identifier for this login
+end note
+
+note left of IdentityUserLogin::ProviderDisplayName
+    Gets or sets the friendly name used in a UI for this login
+end note
+
+note left of IdentityUserLogin::UserId
+    Gets or sets the primary key of the user associated with this login
+end note
+
+@enduml

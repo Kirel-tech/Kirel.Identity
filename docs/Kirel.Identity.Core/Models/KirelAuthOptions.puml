@@ -1,0 +1,42 @@
+﻿@startuml
+
+class KirelAuthOptions{
+    +string Issuer
+    --
+    +string Audience
+    --
+    +string Key
+    --
+    +int AccessLifetime
+    --
+    +int RefreshLifetime
+    --
+    +SymmetricSecurityKey GetSymmetricSecurityKey(string key)
+}
+
+note left of KirelAuthOptions::Issuer
+  Token publisher
+end note
+
+note left of KirelAuthOptions::Audience
+  Token consumer
+end note
+
+note left of KirelAuthOptions::Key
+  Encryption key
+end note
+
+note left of KirelAuthOptions::AccessLifetime
+  Access token lifetime(in minutes)
+end note
+
+note left of KirelAuthOptions::RefreshLifetime
+  Refresh token lifetime(in minutes)
+end note
+
+note left of KirelAuthOptions::GetSymmetricSecurityKey
+  Method for getting symmetric security key
+end note
+
+
+@enduml

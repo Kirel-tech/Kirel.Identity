@@ -1,0 +1,29 @@
+﻿@startuml
+
+class IdentityUserToken<TKey>{
+    +TKey UserId
+    --
+    +string LoginProvider
+    --
+    +string Name
+    --
+    +string Value
+}
+
+note left of IdentityUserToken::UserId
+    Gets or sets the primary key of the user that the token belongs to
+end note
+
+note left of IdentityUserToken::LoginProvider
+    Gets or sets the LoginProvider this token is from
+end note
+
+note left of IdentityUserToken::Name
+    Gets or sets the name of the token
+end note
+
+note left of IdentityUserToken::Value
+    Gets or sets the token value
+end note
+
+@enduml

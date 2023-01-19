@@ -1,0 +1,9 @@
+﻿@startuml
+
+!include IdentityUserToken.puml
+
+class KirelIdentityUserToken<TKey>
+
+KirelIdentityUserToken -down-|> IdentityUserToken
+
+@enduml

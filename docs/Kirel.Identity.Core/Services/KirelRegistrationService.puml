@@ -1,0 +1,35 @@
+﻿@startuml
+
+!include ../Models/KirelIdentityUser.puml
+
+class KirelRegistrationService<TKey, TUser, TRegistrationDto>{
+    #UserManager<TUser> UserManager
+    --
+    #IMapper Mapper
+    --
+    +Task Registration(TRegistrationDto registrationDto)
+}
+
+note left of KirelRegistrationService::UserManager
+  Identity user manager
+end note
+
+note left of KirelRegistrationService::Mapper
+  AutoMapper instance
+end note
+
+note left of KirelRegistrationService::"Registration(TRegistrationDto registrationDto)"
+  User registration method
+end note
+
+ note as KirelRegistrationServiceTypes
+    IdentityUserType is KirelIdentityUser
+    UserRegistrationDtoType is KirelUserRegistrationDto
+ end note
+ 
+ KirelRegistrationService .down. KirelRegistrationServiceTypes
+ 
+ KirelRegistrationServiceTypes .. KirelIdentityUser
+ KirelRegistrationServiceTypes .. KirelUserRegistrationDto
+
+@enduml

@@ -1,0 +1,9 @@
+﻿@startuml
+
+!include IdentityRoleClaim.puml
+
+class KirelIdentityRoleClaim<TKey>
+
+KirelIdentityRoleClaim -down-|> IdentityRoleClaim
+
+@enduml

@@ -1,0 +1,41 @@
+﻿@startuml
+
+class IdentityUserClaim<TKey>{
+    +int Id
+    --
+    +TKey UserId
+    --
+    +string ClaimType
+    --
+    +string ClaimValue
+    --
+    +Claim ToClaim()
+    --
+    +InitializeFromClaim(Claim claim)
+}
+
+note left of IdentityUserClaim::Id
+    Gets or sets the identifier for this user claim
+end note
+
+note left of IdentityUserClaim::UserId
+  Gets or sets the primary key of the user associated with this claim
+end note
+
+note left of IdentityUserClaim::ClaimType
+    Gets or sets the claim type for this claim
+end note
+
+note left of IdentityUserClaim::ClaimValue
+    Gets or sets the claim value for this claim
+end note
+
+note left of IdentityUserClaim::ToClaim
+    Converts the entity into a Claim instance
+end note
+
+note left of IdentityUserClaim::InitializeFromClaim
+    Reads the type and value from the Claim
+end note
+
+@enduml

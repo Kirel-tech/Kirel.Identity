@@ -1,0 +1,64 @@
+﻿@startuml
+!include ../Kirel.Identity.Jwt.Core/Services/KirelJwtTokenService.puml
+!include ../Kirel.Identity.Core/Services/KirelAuthenticationService.puml
+!include ../Kirel.Identity.Core/Services/KirelAuthorizedUserService.puml
+
+class KirelJwtAuthenticationController<TTokenService, TAuthenticationService, TAuthorizedUserService, TKey, TUser, TRole, TAuthorizedUserDto, TAuthorizedUserUpdateDto>{
+        #TAuthenticationService AuthenticationService
+        --
+        #TTokenService TokenService
+        --
+        #TAuthorizedUserService AuthorizedUserService
+        --
+        +KirelJwtAuthenticationController(TAuthenticationService authService, TTokenService tokenService,TAuthorizedUserService authorizedUserProvider)
+        --
+        +Task<ActionResult<JwtTokenDto>> GetJwtToken([Required] string login,[Required] string password) 
+        --
+        +Task<ActionResult<JwtTokenDto>> RefreshToken()
+}       
+
+note left of KirelJwtAuthenticationController::AuthenticationService
+  Authentication service
+end note
+
+note left of KirelJwtAuthenticationController::TokenService
+  Service for generating JWT token and JWT Refresh tokens for the user
+end note
+
+note left of KirelJwtAuthenticationController::AuthorizedUserService
+  Provider to get the current authorized user
+end note
+
+note left of KirelJwtAuthenticationController::KirelJwtAuthenticationController
+  KirelAuthenticationController constructor
+end note
+
+note left of KirelJwtAuthenticationController::GetJwtToken
+  Getting Jwt token
+end note
+
+note left of KirelJwtAuthenticationController::RefreshToken
+  Getting new JWT token via refresh token
+end note
+
+note as KirelJwtAuthenticationControllerTypes
+    JwtTokenServiceType is KirelJwtTokenService
+    AuthenticationServiceType is KirelAuthenticationService
+    AuthorizedUserServiceType is KirelAuthorizedUserService
+end note
+
+KirelJwtAuthenticationController .down. KirelJwtAuthenticationControllerTypes
+
+KirelJwtAuthenticationControllerTypes ... KirelJwtTokenService
+KirelJwtAuthenticationControllerTypes ... KirelAuthenticationService
+KirelJwtAuthenticationControllerTypes ... KirelAuthorizedUserService
+
+KirelJwtTokenService ....[hidden]l.... KirelAuthenticationService
+KirelAuthenticationService ....[hidden]r.... KirelAuthorizedUserService
+IdentityRole .[hidden]. IdentityUser
+IdentityRole .[hidden]. IdentityUser
+KirelAuthorizedUserDto .[hidden]. KirelAuthorizedUserUpdateDto
+
+
+
+@enduml

@@ -1,0 +1,113 @@
+﻿@startuml
+
+class IdentityUser<TKey>{
+    +IdentityUser()
+    --
+    +IdentityUser_(string userName)
+    --
+    +TKey Id
+    --
+    +string UserName
+    --
+    +string NormalizedUserName
+    --
+    +string Email
+    --
+    +string NormalizedEmail
+    --
+    +bool EmailConfirmed
+    --
+    +string PasswordHash
+    --
+    +string SecurityStamp
+    --
+    +string ConcurrencyStamp
+    --
+    +string PhoneNumber
+    --
+    +bool PhoneNumberConfirmed
+    --
+    +bool TwoFactorEnabled
+    --
+    +DateTimeOffset? LockoutEnd
+    --
+    +bool LockoutEnabled
+    --
+    +int AccessFailedCount
+    --
+    +string ToString()
+}
+
+note left of IdentityUser::IdentityUser
+  Initializes a new instance of IdentityUser{TKey}
+end note
+
+note left of IdentityUser::IdentityUser_
+  Initializes a new instance of IdentityUser{TKey}
+end note
+
+note left of IdentityUser::"TKey Id"
+  Gets or sets the primary key for this user
+end note
+
+note left of IdentityUser::UserName
+  Gets or sets the user name for this user
+end note
+
+note left of IdentityUser::NormalizedUserName
+  Gets or sets the normalized user name for this user
+end note
+
+note left of IdentityUser::Email
+  Gets or sets the email address for this user
+end note
+
+note left of IdentityUser::NormalizedEmail
+  Gets or sets the normalized email address for this user
+end note
+
+note left of IdentityUser::EmailConfirmed
+  Gets or sets a flag indicating if a user has confirmed their email address
+end note
+
+note left of IdentityUser::PasswordHash
+  Gets or sets a salted and hashed representation of the password for this user
+end note
+
+note left of IdentityUser::SecurityStamp
+  A random value that must change whenever a users credentials change (password changed, login removed)
+end note
+
+note left of IdentityUser::ConcurrencyStamp
+  A random value that must change whenever a user is persisted to the store
+end note
+
+note left of IdentityUser::PhoneNumber
+Gets or sets a telephone number for the user
+end note
+
+note left of IdentityUser::PhoneNumberConfirmed
+  Gets or sets a flag indicating if a user has confirmed their telephone address
+end note
+
+note left of IdentityUser::TwoFactorEnabled
+  Gets or sets a flag indicating if two factor authentication is enabled for this user
+end note
+
+note left of IdentityUser::LockoutEnd
+  Gets or sets the date and time, in UTC, when any user lockout ends
+end note
+
+note left of IdentityUser::LockoutEnabled
+  Gets or sets a flag indicating if the user could be locked out
+end note
+
+note left of IdentityUser::AccessFailedCount
+  Gets or sets the number of failed login attempts for the current user
+end note
+
+note left of IdentityUser::ToString
+  Returns the username for this user
+end note
+
+@enduml

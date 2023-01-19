@@ -1,0 +1,65 @@
+﻿@startuml
+
+class KirelUserCreateDto<TRoleKey, TClaimCreateDto>{
+    +string UserName
+    --
+    +string Name
+    --
+    +string LastName 
+    --
+    +string Email
+    --
+    +bool EmailConfirmed
+    --
+    +string PhoneNumber
+    --
+    +bool PhoneNumberConfirmed
+    --
+    +string Password
+    --
+    +List<TRoleKey> Roles
+    --
+    +List<TClaimCreateDto> Claims
+}
+
+note left of KirelUserCreateDto::UserName
+  Unique user name
+end note
+
+note left of KirelUserCreateDto::"string Name"
+  First name of the user
+end note
+
+note left of KirelUserCreateDto::LastName
+  Last name of the user
+end note
+
+note left of KirelUserCreateDto::Email
+  User email
+end note
+
+note left of KirelUserCreateDto::EmailConfirmed
+  Flag whether the email was verified
+end note
+
+note left of KirelUserCreateDto::PhoneNumber
+  User phone number
+end note
+
+note left of KirelUserCreateDto::PhoneNumberConfirmed
+  Flag whether the phone number was verified
+end note
+
+note left of KirelUserCreateDto::Password
+  User password
+end note
+
+note left of KirelUserCreateDto::Roles
+  List of user roles
+end note
+
+note left of KirelUserCreateDto::Claims
+  List of user claims
+end note
+
+@enduml

@@ -1,0 +1,59 @@
+﻿@startuml
+
+class KirelUserUpdateDto<TRoleKey, TClaimUpdateDto>{
+    +string Name
+    --
+    +string LastName 
+    --
+    +string Email
+    --
+    +bool EmailConfirmed
+    --
+    +string PhoneNumber
+    --
+    +bool PhoneNumberConfirmed
+    --
+    +string bool LockoutEnabled
+    --
+    +List<TRoleKey> Roles
+    --
+    +List<TClaimCreateDto> Claims
+}
+
+note left of KirelUserUpdateDto::Name
+  First name of the user
+end note
+
+note left of KirelUserUpdateDto::LastName
+  Last name of the user
+end note
+
+note left of KirelUserUpdateDto::Email
+  User email
+end note
+
+note left of KirelUserUpdateDto::EmailConfirmed
+  Flag whether the email was verified
+end note
+
+note left of KirelUserUpdateDto::PhoneNumber
+  User phone number
+end note
+
+note left of KirelUserUpdateDto::PhoneNumberConfirmed
+  Flag whether the phone number was verified
+end note
+
+note left of KirelUserUpdateDto::LockoutEnabled
+  User password
+end note
+
+note left of KirelUserUpdateDto::Roles
+  List of user roles
+end note
+
+note left of KirelUserUpdateDto::Claims
+  List of user claims
+end note
+
+@enduml

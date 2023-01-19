@@ -1,0 +1,45 @@
+﻿@startuml
+
+!include ../Kirel.Identity.Core/Services/KirelRoleService.puml
+
+class KirelRolesController<TRoleService, TKey, TRole, TRoleDto, TRoleCreateDto, TRoleUpdateDto, TClaimDto, TClaimCreateDto, TClaimUpdateDto>{
+    #TRoleService Service
+    --
+    +Task<ActionResult<TRoleDto>> Create([FromBody] TRoleCreateDto createDto)
+    --
+    +Task<ActionResult<TRoleDto>> Update([FromBody] TRoleUpdateDto updateDto, TKey id)
+    --
+    +Task<ActionResult<TRoleDto>> GetById(TKey id)
+    --
+    +Task<PaginatedResult<List<TRoleDto>>> GetList([FromQuery] int pageNumber, int pageSize, string orderBy, string orderDirection, string search)
+}
+
+note left of KirelRolesController::Service
+    Service for roles management
+end note
+
+note left of KirelRolesController::Create
+    Create new role
+end note
+
+note left of KirelRolesController::Update
+    Update new role
+end note
+
+note left of KirelRolesController::GetById
+    Get role by id
+end note
+
+note left of KirelRolesController::GetList
+    Get list of roles
+end note
+
+ note as KirelRolesControllerTypes
+    RoleServiceType is KirelRoleService      
+ end note
+ 
+ KirelRolesController .down. KirelRolesControllerTypes
+ 
+ KirelRolesControllerTypes .. KirelRoleService
+
+@enduml
