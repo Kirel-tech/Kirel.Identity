@@ -1,0 +1,27 @@
+﻿@startuml
+
+!include ../Kirel.Identity.Core/Services/KirelRegistrationService.puml
+
+class KirelRegistrationController<TRegistrationService, TRegistrationDto, TKey, TUser>{
+    #TRegistrationService Service
+    --
+    +Task<ActionResult> Registration(TRegistrationDto registrationDto)
+}
+
+note left of KirelRegistrationController::Service
+    Authorized user service
+end note
+
+note left of KirelRegistrationController::"Registration(TRegistrationDto registrationDto)"
+  User registration
+end note
+
+note as KirelRegistrationControllerTypes
+    RegistrationServiceType is KirelRegistrationService
+end note
+ 
+KirelRegistrationController .down. KirelRegistrationControllerTypes
+ 
+KirelRegistrationControllerTypes .. KirelRegistrationService
+ 
+@enduml

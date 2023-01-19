@@ -1,0 +1,59 @@
+﻿@startuml
+
+class KirelAuthorizedUserDto{
+    +DateTime Created 
+    --
+    +DateTime? Updated
+    --
+    +string UserName
+    --
+    +string Name
+    --
+    +string LastName
+    --
+    +string Email 
+    --
+    +bool EmailConfirmed
+    --
+    +string PhoneNumber
+    --
+    +bool PhoneNumberConfirmed
+}
+
+note left of KirelAuthorizedUserDto::Created
+  User creation date and time
+end note
+
+note left of KirelAuthorizedUserDto::Updated
+  User last update date and time
+end note
+
+note left of KirelAuthorizedUserDto::UserName
+  Username
+end note
+
+note left of KirelAuthorizedUserDto::"string Name"
+  First name of the user
+end note
+
+note left of KirelAuthorizedUserDto::LastName
+  Last name of the user
+end note
+
+note left of KirelAuthorizedUserDto::Email
+  User email
+end note
+
+note left of KirelAuthorizedUserDto::EmailConfirmed
+  Flag whether the email was verified
+end note
+
+note left of KirelAuthorizedUserDto::PhoneNumber
+  User phone number
+end note
+
+note left of KirelAuthorizedUserDto::PhoneNumberConfirmed
+  Flag whether the phone number was verified
+end note
+
+@enduml

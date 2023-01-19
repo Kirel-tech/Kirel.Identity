@@ -1,0 +1,47 @@
+﻿@startuml
+
+!include ../Kirel.Identity.Core/Services/KirelUserService.puml
+
+class KirelUsersController<TUserService,TKey,TUser, TRole,TUserDto,TUserCreateDto,TUserUpdateDto,TClaimDto,TClaimCreateDto,TClaimUpdateDto>{
+    #TUserService Service
+    --
+    +Task<ActionResult<TUserDto>> Create([FromBody] TUserCreateDto createDto)
+    --
+    +Task<ActionResult<TUserDto>> Update([FromBody] TUserUpdateDto updateDto, TKey id)
+    --
+    +Task<ActionResult<TUserDto>> GetById(TKey id)
+    --
+    +Task<PaginatedResult<List<TUserDto>>> GetList([FromQuery] int pageNumber, int pageSize,string orderBy, string orderDirection, string search)
+}
+
+note left of KirelUsersController::Service
+    User management service
+end note
+
+note left of KirelUsersController::Create
+    Create new user
+end note
+
+note left of KirelUsersController::Update
+    Update user
+end note
+
+note left of KirelUsersController::GetById
+    Gets user by id
+end note
+
+note left of KirelUsersController::GetList
+    Gets user paginated list
+end note
+
+ note as KirelUsersControllerTypes
+    UserServiceType is KirelUserService         
+ end note
+ 
+ KirelUsersController .down. KirelUsersControllerTypes
+ 
+ KirelUsersControllerTypes .. KirelUserService
+ 
+ 
+
+@enduml

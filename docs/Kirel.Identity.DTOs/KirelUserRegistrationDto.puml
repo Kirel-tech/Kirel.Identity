@@ -1,0 +1,41 @@
+﻿@startuml
+
+class KirelUserRegistrationDto{
+    +string UserName
+    --
+    +string Name
+    --
+    +string LastName 
+    --
+    +string Email
+    --
+    +string PhoneNumber
+    --
+    +string Password
+}
+
+note left of KirelUserRegistrationDto::UserName
+  Username
+end note
+
+note left of KirelUserRegistrationDto::"string Name"
+  First name of the user
+end note
+
+note left of KirelUserRegistrationDto::LastName
+  Last name of the user
+end note
+
+note left of KirelUserRegistrationDto::Email
+  User email
+end note
+
+note left of KirelUserRegistrationDto::PhoneNumber
+  User phone number
+end note
+
+note left of KirelUserRegistrationDto::Password
+  User password
+end note
+
+@enduml

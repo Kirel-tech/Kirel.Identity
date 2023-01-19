@@ -1,0 +1,23 @@
+﻿@startuml
+
+class KirelRoleDto<TKey, TClaimDto>{
+    +TKey Id
+    --
+    +string Name
+    --
+    +List<TClaimDto> Claims
+}
+
+note left of KirelRoleDto::Id
+  Role Id
+end note
+
+note left of KirelRoleDto::Name
+  Role name
+end note
+
+note left of KirelRoleDto::Claims
+  List of user claims
+end note
+
+@enduml

@@ -1,0 +1,120 @@
+﻿@startuml
+
+!include ../Models/KirelIdentityUser.puml
+!include ../Models/KirelIdentityRole.puml
+!include ../../Kirel.Identity.DTOs/KirelUserDto.puml
+!include ../../Kirel.Identity.DTOs/KirelUserCreateDto.puml
+!include ../../Kirel.Identity.DTOs/KirelUserUpdateDto.puml
+!include ../../Kirel.Identity.DTOs/KirelClaimDto.puml
+!include ../../Kirel.Identity.DTOs/KirelClaimCreateDto.puml
+!include ../../Kirel.Identity.DTOs/KirelClaimUpdateDto.puml
+
+class KirelUserService<TKey, TUser, TRole, TUserDto, TUserCreateDto, TUserUpdateDto, TClaimDto, TClaimCreateDto, TClaimUpdateDto>{
+    #UserManager<TUser> UserManager
+    --
+    #RoleManager<TRole> RoleManager
+    --
+    #IMapper Mapper
+    --
+    -Task DeleteClaimFromUser(Claim claim, TKey userId)
+    --
+    -Task<IList<Claim>> GetUserClaims(TKey userId)
+    --
+    -Task<List<TKey>> GetUserRolesIds(TKey userId)
+    --
+    -Task AddClaimToUser(Claim claim, TKey userId)
+    --
+    -Task SyncUserRoles(TKey userId, List<TKey> roles)
+    --
+    -Task SyncUserClaims(TKey userId, List<TClaimUpdateDto> dtoClaims)
+    --
+    +Task<TUserDto> GetById(TKey userId)
+    --
+    +Task<PaginatedResult<List<TUserDto>>> GetUsersList(int page, int pageSize, string search, string orderBy, SortDirection orderDirection)
+    --
+    +Task<TUserDto> CreateUser(TUserCreateDto createDto)
+    --
+    +Task<TUserDto> UpdateUser(TKey userId, TUserUpdateDto updateDto)
+    --
+    +Task DeleteUser(TKey id)
+    --
+    +Task AddUserToRole(TKey userId, TKey roleId)
+    --
+    +Task DeleteUserFromRole(TKey userId, TKey roleId)
+}
+
+note left of KirelUserService::UserManager
+  Identity user manager
+end note
+
+note left of KirelUserService::RoleManager
+  Identity role manager
+end note
+
+note left of KirelUserService::Mapper
+  AutoMapper instance
+end note
+
+note left of KirelUserService::DeleteClaimFromUser
+  Deletes given claim from the user
+end note
+
+note left of KirelUserService::GetUserClaims
+  Gets list of user claims
+end note
+
+note left of KirelUserService::AddClaimToUser
+  Adds new claim to the user
+end note
+
+note left of KirelUserService::GetById
+  Gets a user by id
+end note
+
+note left of KirelUserService::GetUsersList
+  Gets a list of users with search and pagination
+end note
+
+note left of KirelUserService::CreateUser
+  Creates new user
+end note
+
+note left of KirelUserService::UpdateUser
+  Updates new user
+end note
+
+note left of KirelUserService::DeleteUser
+  Deletes user by id
+end note
+
+note left of KirelUserService::AddUserToRole
+  Adds a user to the specified role
+end note
+
+note left of KirelUserService::DeleteUserFromRole
+  Deletes a user from the specified role
+end note
+
+ note as KirelUserServiceTypes
+    IdentityUserType is KirelIdentityUser
+    IdentityRoleType is KirelIdentityRole
+    UserDtoType is KirelUserDto
+    UserCreateDtoType is KirelUserCreateDto
+    UserUpdateDtoType is KirelUserUpdateDto
+    ClaimDtoType is KirelClaimDto
+    ClaimUpdateDtoType is KirelClaimUpdateDto 
+    CreateDtoType is KirelClaimCreateDto           
+ end note
+ 
+ KirelUserService .down. KirelUserServiceTypes
+ 
+ KirelUserServiceTypes ... KirelIdentityUser
+ KirelUserServiceTypes ... KirelIdentityRole
+ KirelUserServiceTypes ... KirelUserDto
+ KirelUserServiceTypes ... KirelUserCreateDto
+ KirelUserServiceTypes ... KirelUserUpdateDto
+ KirelUserServiceTypes ... KirelClaimDto
+ KirelUserServiceTypes ... KirelClaimUpdateDto
+ KirelUserServiceTypes ... KirelClaimCreateDto
+
+@enduml

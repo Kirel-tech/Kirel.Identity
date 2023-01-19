@@ -1,0 +1,45 @@
+﻿@startuml
+
+!include ../Kirel.Identity.Core/Services/KirelAuthorizedUserService.puml
+
+class KirelAuthorizedUserController<TAuthorizedUserService, TKey, TUser, TAuthorizedUserDto, TAuthorizedUserUpdateDto>{
+    #TAuthorizedUserService AuthorizedUserService
+    --
+    #IMapper Mapper
+    --
+    +Task<ActionResult<TAuthorizedUserDto>> GetInfo()
+    --
+    +Task<ActionResult<TAuthorizedUserDto>> Update([FromBody] TAuthorizedUserUpdateDto updateDto)
+    --
+    +Task<ActionResult> ChangePassword([Required] string currentPassword,[Required] string newPassword)
+}
+
+note left of KirelAuthorizedUserController::AuthorizedUserService
+  Authorized user service. Must be a descendant of the KirelAuthorizedUserService class
+end note
+
+note left of KirelAuthorizedUserController::Mapper
+  AutoMapper instance
+end note
+
+note left of KirelAuthorizedUserController::GetInfo
+  Gets authorized user account info
+end note
+
+note left of KirelAuthorizedUserController::Update
+  Update authorized user account info
+end note
+
+note left of KirelAuthorizedUserController::ChangePassword
+  Change authorized user password
+end note
+
+note as KirelAuthorizedUserControllerTypes
+   AuthorizedUserServiceType is KirelAuthorizedUserService
+end note
+ 
+KirelAuthorizedUserController .down. KirelAuthorizedUserControllerTypes
+
+KirelAuthorizedUserControllerTypes .. KirelAuthorizedUserService
+
+@enduml

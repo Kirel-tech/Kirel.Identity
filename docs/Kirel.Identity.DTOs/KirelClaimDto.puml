@@ -1,0 +1,17 @@
+﻿@startuml
+
+class KirelClaimDto{
+    +string Type
+    --
+    +string Value
+}
+
+note left of KirelClaimDto::Type
+  Claim type
+end note
+
+note left of KirelClaimDto::Value
+  Claim value
+end note
+
+@enduml

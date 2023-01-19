@@ -1,0 +1,13 @@
+﻿@startuml
+
+!include IdentityUser.puml
+!include ../Interfaces/IKirelUser.puml
+
+class KirelIdentityUser<TKey>
+
+KirelIdentityUser -down-|> IdentityUser
+KirelIdentityUser ..down.|> IKirelUser
+
+IdentityUser .r[hidden]. IKirelUser
+
+@enduml

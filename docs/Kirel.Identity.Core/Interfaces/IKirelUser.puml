@@ -1,0 +1,35 @@
+﻿@startuml
+
+interface IKirelUser<TKey>{
+    +TKey Id
+    --
+    +string Name
+    --
+    +string LastName 
+    --
+    +DateTime Created
+    --
+    +DateTime? Updated
+}
+
+note left of IKirelUser::Id
+  User id
+end note
+
+note left of IKirelUser::Name
+  First name of the user
+end note
+
+note left of IKirelUser::LastName
+  Last name of the user
+end note
+
+note left of IKirelUser::Created
+  User create date and time
+end note
+
+note left of IKirelUser::Updated
+  User last update date and time
+end note
+
+@enduml

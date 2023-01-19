@@ -1,0 +1,17 @@
+﻿@startuml
+
+class KirelRoleUpdateDto<TClaimUpdateDto>{
+    +string Name
+    --
+    +List<TClaimUpdateDto> Claims
+}
+
+note left of KirelRoleUpdateDto::Name
+  Role name
+end note
+
+note left of KirelRoleUpdateDto::Claims
+  List of user claims
+end note
+
+@enduml

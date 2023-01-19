@@ -1,0 +1,65 @@
+﻿@startuml
+
+!include ../Models/KirelIdentityUser.puml
+!include ../../Kirel.Identity.DTOs/KirelAuthorizedUserUpdateDto.puml
+!include ../../Kirel.Identity.DTOs/KirelAuthorizedUserDto.puml
+
+class KirelAuthorizedUserService<TKey, TUser, TAuthorizedUserDto, TAuthorizedUserUpdateDto>{
+    #UserManager<TUser> UserManager
+    --
+    #IMapper Mapper
+    --
+    #IHttpContextAccessor HttpContextAccessor
+    --
+    -string GetUserName()
+    --
+    +Task<TAuthorizedUserDto> GetDto()
+    --
+    +Task<TUser> Get()
+    --
+    +Task<TAuthorizedUserDto> Update(TAuthorizedUserUpdateDto updateDto)
+    --
+    +Task ChangeUserPassword(string currentPassword, string newPassword)   
+}
+
+note left of KirelAuthorizedUserService::UserManager
+  Identity user manager
+end note
+
+note left of KirelAuthorizedUserService::Mapper
+  AutoMapper instance
+end note
+
+note left of KirelAuthorizedUserService::HttpContextAccessor
+  HttpContextAccessor
+end note
+
+note left of KirelAuthorizedUserService::GetDto
+  Gets a authorized user dto
+end note
+
+note left of KirelAuthorizedUserService::Get()
+  Gets authorized user
+end note
+
+note left of KirelAuthorizedUserService::Update
+  Updates authorized user
+end note
+
+note left of KirelAuthorizedUserService::ChangeUserPassword
+  Changes user password
+end note
+
+ note as KirelAuthorizedUserServiceTypes
+    IdentityUserType is KirelIdentityUser
+    AuthorizedUserDtoType is KirelAuthorizedUserDto
+    AuthorizedUserUpdateDtoType is KirelAuthorizedUserUpdateDto
+ end note
+ 
+ KirelAuthorizedUserService .down. KirelAuthorizedUserServiceTypes
+ 
+ KirelAuthorizedUserServiceTypes .. KirelIdentityUser
+ KirelAuthorizedUserServiceTypes .. KirelAuthorizedUserDto
+ KirelAuthorizedUserServiceTypes .. KirelAuthorizedUserUpdateDto
+
+@enduml
