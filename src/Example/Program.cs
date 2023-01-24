@@ -5,6 +5,7 @@ using Example.Services;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Kirel.Identity.Core.Models;
+using Kirel.Identity.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -139,4 +140,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// Middleware that handle all exceptions throws and set response code depends on exception type
+app.UseMiddleware<KirelErrorHandlerMiddleware>();
 app.Run();
