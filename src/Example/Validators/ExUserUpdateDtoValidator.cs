@@ -11,7 +11,7 @@ public class ExUserUpdateDtoValidator : KirelUserUpdateDtoValidator<Guid, ExUser
     KirelClaimUpdateDto>
 {
     /// <inheritdoc />
-    public ExUserUpdateDtoValidator(UserManager<ExUser> userManager, RoleManager<ExRole> roleManager) : base(userManager, roleManager)
+    public ExUserUpdateDtoValidator(UserManager<ExUser> userManager, RoleManager<ExRole> roleManager, IHttpContextAccessor httpContextAccessor) : base(userManager, roleManager, httpContextAccessor)
     {
     }
 }

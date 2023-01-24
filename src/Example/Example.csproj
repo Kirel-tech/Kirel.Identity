@@ -23,6 +23,7 @@
       <ProjectReference Include="..\Kirel.Identity.Core\Kirel.Identity.Core.csproj" />
       <ProjectReference Include="..\Kirel.Identity.Jwt.Controllers\Kirel.Identity.Jwt.Controllers.csproj" />
       <ProjectReference Include="..\Kirel.Identity.Jwt.Core\Kirel.Identity.Jwt.Core.csproj" />
+      <ProjectReference Include="..\Kirel.Identity.Middlewares\Kirel.Identity.Middlewares.csproj" />
     </ItemGroup>
 
 </Project>
