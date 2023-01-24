@@ -120,6 +120,20 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+//it is necessary for requests from the host locale,
+//to work without a signed certificate, and we allow the use of any HTTP methods and hiders
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("DevCorsPolicy", corsBuilder =>
+    {
+        corsBuilder
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .WithExposedHeaders();
+    });
+});
+
 var app = builder.Build();
 
 // Initialize database
@@ -130,6 +144,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseCors("DevCorsPolicy");
 }
 
 app.UseHttpsRedirection();
