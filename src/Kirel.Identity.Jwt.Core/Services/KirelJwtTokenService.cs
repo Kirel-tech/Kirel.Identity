@@ -63,7 +63,7 @@ public class KirelJwtTokenService<TKey, TUser, TRole>
             claims.Add(new Claim(ClaimTypes.Role, role.Name));
         }
             
-        return new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+        return new ClaimsIdentity(claims, "JwtToken", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
     }
 
     private string CreateJwtToken(ClaimsIdentity claims, int lifetime)
