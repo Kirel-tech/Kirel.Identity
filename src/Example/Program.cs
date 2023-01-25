@@ -137,7 +137,7 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Initialize database
-SeedDb.Initialize(app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope().ServiceProvider);
+await SeedDb.Initialize(app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope().ServiceProvider);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
