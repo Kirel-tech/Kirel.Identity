@@ -50,8 +50,13 @@ public class KirelJwtTokenService<TKey, TUser, TRole>
     {
         var claims = await UserManager.GetClaimsAsync(user);
         var userRoles = await UserManager.GetRolesAsync(user);
+
         claims.Add(new Claim(ClaimsIdentity.DefaultNameClaimType, user.UserName));
-        claims.Add(new Claim("uid", user.Id.ToString()!));
+        claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Email));
+        claims.Add(new Claim(JwtRegisteredClaimNames.Iss, AuthOptions.Issuer));
+        claims.Add(new Claim(JwtRegisteredClaimNames.Name, user.UserName));
+        claims.Add(new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()!));
+        claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
         foreach (var roleName in userRoles)
         {
             var role = await RoleManager.FindByNameAsync(roleName);
@@ -60,7 +65,7 @@ public class KirelJwtTokenService<TKey, TUser, TRole>
             foreach (var roleClaim in roleClaims)
                 claims.Add(roleClaim);
             
-            claims.Add(new Claim(ClaimTypes.Role, role.Name));
+            claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, role.Name));
         }
             
         return new ClaimsIdentity(claims, "JwtToken", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
@@ -89,8 +94,10 @@ public class KirelJwtTokenService<TKey, TUser, TRole>
 
         var claimsList = new List<Claim>
         {
-            new(ClaimTypes.Name, user.UserName),
-            new(ClaimTypes.Role, "RefreshToken")
+            new (ClaimsIdentity.DefaultNameClaimType, user.UserName),
+            new (ClaimsIdentity.DefaultRoleClaimType, "RefreshToken"),
+            new (JwtRegisteredClaimNames.Name, user.UserName),
+            new (JwtRegisteredClaimNames.NameId, user.Id.ToString()!),
         };
         var refreshClaims = new ClaimsIdentity(claimsList, "Token", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
         var refreshToken = CreateJwtToken(refreshClaims, AuthOptions.RefreshLifetime);
