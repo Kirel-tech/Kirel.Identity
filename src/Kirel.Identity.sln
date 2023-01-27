@@ -18,7 +18,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kirel.Identity.Exceptions",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kirel.Identity.Middlewares", "Kirel.Identity.Middlewares\Kirel.Identity.Middlewares.csproj", "{0A41F376-9847-4973-97A7-5832098B851B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleBlazorGUI", "ExampleBlazorGUI\ExampleBlazorGUI.csproj", "{748ECEA7-E499-43E2-90A3-5BFC4DA6A85F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example.Blazor.Jwt", "Example.Blazor.Jwt\Example.Blazor.Jwt.csproj", "{748ECEA7-E499-43E2-90A3-5BFC4DA6A85F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kirel.Identity.Client.Blazor", "Kirel.Identity.Client.Blazor\Kirel.Identity.Client.Blazor.csproj", "{C307A09E-7795-47DF-ADA2-ADE71857D9DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kirel.Identity.Client", "Kirel.Identity.Client\Kirel.Identity.Client.csproj", "{2E32FFA4-F453-4CF1-86C8-D1C9551F4BEE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kirel.Identity.Client.Jwt", "Kirel.Identity.Client.Jwt\Kirel.Identity.Client.Jwt.csproj", "{00BF4A44-F8E5-43E4-83C7-7B216242802B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -66,5 +72,17 @@ Global
 		{748ECEA7-E499-43E2-90A3-5BFC4DA6A85F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{748ECEA7-E499-43E2-90A3-5BFC4DA6A85F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{748ECEA7-E499-43E2-90A3-5BFC4DA6A85F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C307A09E-7795-47DF-ADA2-ADE71857D9DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C307A09E-7795-47DF-ADA2-ADE71857D9DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C307A09E-7795-47DF-ADA2-ADE71857D9DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C307A09E-7795-47DF-ADA2-ADE71857D9DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E32FFA4-F453-4CF1-86C8-D1C9551F4BEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E32FFA4-F453-4CF1-86C8-D1C9551F4BEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E32FFA4-F453-4CF1-86C8-D1C9551F4BEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E32FFA4-F453-4CF1-86C8-D1C9551F4BEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00BF4A44-F8E5-43E4-83C7-7B216242802B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00BF4A44-F8E5-43E4-83C7-7B216242802B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00BF4A44-F8E5-43E4-83C7-7B216242802B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00BF4A44-F8E5-43E4-83C7-7B216242802B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

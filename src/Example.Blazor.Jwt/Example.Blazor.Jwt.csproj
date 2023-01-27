@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>disable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Blazored.LocalStorage" Version="4.3.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.Abstractions" Version="2.2.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="6.0.13" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.13" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.13" PrivateAssets="all" />
+        <PackageReference Include="MudBlazor" Version="6.1.7" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Kirel.Identity.Client.Blazor\Kirel.Identity.Client.Blazor.csproj" />
+      <ProjectReference Include="..\Kirel.Identity.Client.Jwt\Kirel.Identity.Client.Jwt.csproj" />
+      <ProjectReference Include="..\Kirel.Identity.Client\Kirel.Identity.Client.csproj" />
+      <ProjectReference Include="..\Kirel.Identity.Jwt.DTOs\Kirel.Identity.Jwt.DTOs.csproj" />
+    </ItemGroup>
+
+</Project>

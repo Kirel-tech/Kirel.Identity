@@ -1,0 +1,46 @@
+﻿@using Kirel.Identity.Client.Interfaces
+@inherits LayoutComponentBase
+@inject IClientAuthenticationService AuthenticationService
+@inject AuthenticationStateProvider StateProvider
+
+<MudThemeProvider/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
+
+<AuthorizeView>
+    <Authorized>
+        <div class="page">
+            <div class="sidebar">
+                <NavMenu/>
+                Claims count: @context.User.Claims.Count() <br>
+                UserName: @context.User.Identity.Name<br>
+                Role Admin: @context.User.IsInRole("Admin")<br>
+                Role User: @context.User.IsInRole("User")<br>
+                Role Spider: @context.User.IsInRole("Spider")<br>
+            </div>
+
+            <main>
+                <div class="top-row px-4">
+                    <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+                    <a @onclick="Logout">Logout</a>
+                </div>
+                <article class="content px-4">
+                    @Body
+                </article>
+            </main>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <Login/>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code{
+
+    private async Task Logout()
+    {
+        await AuthenticationService.Logout();
+        // Notify Blazor that state changed
+        await StateProvider.GetAuthenticationStateAsync();
+    }
+} 
