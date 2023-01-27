@@ -1,5 +1,5 @@
 ﻿@page "/fetchdata"
-@inject HttpClient Http
+@inject IHttpClientFactory httpClientFactory
 
 <PageTitle>Weather forecast</PageTitle>
 
@@ -39,11 +39,12 @@ else
 }
 
 @code {
-    private WeatherForecast[]? forecasts;
+    private WeatherForecast[] forecasts;
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+        var httpClient = httpClientFactory.CreateClient();
+        forecasts = await httpClient.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
     }
 
     public class WeatherForecast
@@ -52,7 +53,7 @@ else
 
         public int TemperatureC { get; set; }
 
-        public string? Summary { get; set; }
+        public string Summary { get; set; }
 
         public int TemperatureF => 32 + (int) (TemperatureC / 0.5556);
     }
