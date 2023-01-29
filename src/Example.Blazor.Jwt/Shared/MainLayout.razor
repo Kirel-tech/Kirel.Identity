@@ -1,7 +1,6 @@
 ﻿@using Kirel.Identity.Client.Interfaces
 @inherits LayoutComponentBase
 @inject IClientAuthenticationService AuthenticationService
-@inject AuthenticationStateProvider StateProvider
 
 <MudThemeProvider/>
 <MudDialogProvider/>
@@ -12,11 +11,6 @@
         <div class="page">
             <div class="sidebar">
                 <NavMenu/>
-                Claims count: @context.User.Claims.Count() <br>
-                UserName: @context.User.Identity.Name<br>
-                Role Admin: @context.User.IsInRole("Admin")<br>
-                Role User: @context.User.IsInRole("User")<br>
-                Role Spider: @context.User.IsInRole("Spider")<br>
             </div>
 
             <main>
