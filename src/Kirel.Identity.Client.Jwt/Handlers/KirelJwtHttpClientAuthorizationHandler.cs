@@ -19,6 +19,9 @@ public class KirelJwtHttpClientAuthorizationHandler : DelegatingHandler
         HttpRequestMessage request, CancellationToken cancellationToken)
     {
         var jwtAccessToken = await _tokenService.GetAccessTokenAsync();
+        if (string.IsNullOrEmpty(jwtAccessToken))
+            return await base.SendAsync(request, cancellationToken);
+        
         if (KirelJwtTokenHelper.TokenIsExpired(jwtAccessToken))
         {
             await _authenticationService.ExtendSessionAsync();
