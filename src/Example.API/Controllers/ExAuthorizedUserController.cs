@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using Example.API.DTOs;
 using Example.API.Models;
 using Example.API.Services;
+using Example.DTOs;
 using Kirel.Identity.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

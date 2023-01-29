@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Example.API.DTOs;
 using Example.API.Models;
+using Example.DTOs;
 using Kirel.Identity.Core.Services;
 using Kirel.Identity.DTOs;
 using Microsoft.AspNetCore.Identity;

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Example.API.DTOs;
 using Example.API.Models;
+using Example.DTOs;
 
 namespace Example.API.Mappings;
 

@@ -12,7 +12,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kirel.Identity.Jwt.DTOs", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kirel.Identity.Jwt.Controllers", "Kirel.Identity.Jwt.Controllers\Kirel.Identity.Jwt.Controllers.csproj", "{3CBF6C12-03DD-4B2E-BF5C-4631FFBCBF08}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example", "Example\Example.csproj", "{27355F44-0D46-450E-BA7E-1DA7DF9FE4E2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example.API", "Example.API\Example.API.csproj", "{27355F44-0D46-450E-BA7E-1DA7DF9FE4E2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kirel.Identity.Exceptions", "Kirel.Identity.Exceptions\Kirel.Identity.Exceptions.csproj", "{F21D6BA2-B878-48D4-95FA-FC6AFF6840BB}"
 EndProject
@@ -25,6 +25,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kirel.Identity.Client", "Kirel.Identity.Client\Kirel.Identity.Client.csproj", "{2E32FFA4-F453-4CF1-86C8-D1C9551F4BEE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kirel.Identity.Client.Jwt", "Kirel.Identity.Client.Jwt\Kirel.Identity.Client.Jwt.csproj", "{00BF4A44-F8E5-43E4-83C7-7B216242802B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example.DTOs", "Example.DTOs\Example.DTOs.csproj", "{6B24D652-CA24-48DD-933F-327D3D78E60C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -84,5 +86,9 @@ Global
 		{00BF4A44-F8E5-43E4-83C7-7B216242802B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{00BF4A44-F8E5-43E4-83C7-7B216242802B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{00BF4A44-F8E5-43E4-83C7-7B216242802B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B24D652-CA24-48DD-933F-327D3D78E60C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B24D652-CA24-48DD-933F-327D3D78E60C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B24D652-CA24-48DD-933F-327D3D78E60C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B24D652-CA24-48DD-933F-327D3D78E60C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

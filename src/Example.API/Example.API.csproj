@@ -19,6 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Example.DTOs\Example.DTOs.csproj" />
       <ProjectReference Include="..\Kirel.Identity.Controllers\Kirel.Identity.Controllers.csproj" />
       <ProjectReference Include="..\Kirel.Identity.Core\Kirel.Identity.Core.csproj" />
       <ProjectReference Include="..\Kirel.Identity.Jwt.Controllers\Kirel.Identity.Jwt.Controllers.csproj" />

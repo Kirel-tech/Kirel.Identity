@@ -1,6 +1,6 @@
-﻿using Example.API.DTOs;
-using Example.API.Models;
+﻿using Example.API.Models;
 using Example.API.Services;
+using Example.DTOs;
 using Kirel.Identity.Controllers;
 using Kirel.Identity.DTOs;
 using Microsoft.AspNetCore.Authorization;
