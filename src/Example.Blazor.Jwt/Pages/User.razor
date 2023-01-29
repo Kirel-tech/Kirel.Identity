@@ -1,0 +1,62 @@
+﻿@page "/user"
+@using Example.DTOs
+@using Kirel.Identity.Client.Interfaces
+@using Kirel.Identity.Client.Jwt.Helpers
+@using System.Globalization
+@inject IHttpClientFactory HttpClientFactory
+@inject IClientTokenService ClientTokenService
+
+<h3>User</h3>
+<AuthorizeView>
+    <Authorized>
+        <b>JWT INFO:</b><br>
+        Claims count: @context.User.Claims.Count() <br>
+        UserName: @context.User.Identity!.Name<br>
+        Role Admin: @context.User.IsInRole("Admin")<br>
+        Role User: @context.User.IsInRole("User")<br>
+        Role Spider: @context.User.IsInRole("Spider")<br>
+        Access expires: @AccessExpirationTime.ToString(CultureInfo.CurrentCulture)<br>
+        Refresh expires: @RefreshExpirationTime.ToString(CultureInfo.CurrentCulture)<br>
+        <b> User info </b><br>
+        Login: @AuthorizedUserDto.UserName<br>
+        Email: @AuthorizedUserDto.Email<br>
+        Created: @AuthorizedUserDto.Created<br>
+        Name: @AuthorizedUserDto.Name<br>
+        Last Name: @AuthorizedUserDto.LastName<br>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    private HttpClient HttpClient { get; set; }
+    private ExAuthorizedUserDto AuthorizedUserDto { get; set; } = new ExAuthorizedUserDto();
+    private DateTime AccessExpirationTime { get; set; }
+    private DateTime RefreshExpirationTime { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        HttpClient = HttpClientFactory.CreateClient("IdentityAuthorized");
+        var request = new HttpRequestMessage(HttpMethod.Get, "authorized/user");
+        var resp = await HttpClient.SendAsync(request);
+        AuthorizedUserDto = await resp.Content.ReadFromJsonAsync<ExAuthorizedUserDto>();
+        AccessExpirationTime = await GetAccessExpirationTime();
+        RefreshExpirationTime = await GetRefreshExpirationTime();
+        await base.OnInitializedAsync();
+    }
+
+    private DateTime GetExpirationTime(string jwtToken)
+    {
+        var expirationTime = KirelJwtTokenHelper.GetExpirationTime(jwtToken);
+        return expirationTime.ToLocalTime();
+    }
+    
+    private async Task<DateTime> GetAccessExpirationTime()
+    {
+        var jwtToken = await ClientTokenService.GetAccessTokenAsync();
+        return !string.IsNullOrEmpty(jwtToken) ? GetExpirationTime(jwtToken) : DateTime.MinValue;
+    }
+    private async Task<DateTime> GetRefreshExpirationTime()
+    {
+        var jwtToken = await ClientTokenService.GetRefreshTokenAsync();
+        return !string.IsNullOrEmpty(jwtToken) ? GetExpirationTime(jwtToken) : DateTime.MinValue;
+    }
+}

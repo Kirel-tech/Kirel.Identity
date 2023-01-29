@@ -17,6 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Example.DTOs\Example.DTOs.csproj" />
       <ProjectReference Include="..\Kirel.Identity.Client.Blazor\Kirel.Identity.Client.Blazor.csproj" />
       <ProjectReference Include="..\Kirel.Identity.Client.Jwt\Kirel.Identity.Client.Jwt.csproj" />
       <ProjectReference Include="..\Kirel.Identity.Client\Kirel.Identity.Client.csproj" />
