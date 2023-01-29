@@ -40,7 +40,5 @@
     private async Task Logout()
     {
         await AuthenticationService.Logout();
-        // Notify Blazor that state changed
-        await StateProvider.GetAuthenticationStateAsync();
     }
 } 
