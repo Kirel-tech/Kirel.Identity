@@ -23,9 +23,16 @@ public class KirelJwtTokenAuthenticationStateProvider : AuthenticationStateProvi
         var token = await _tokenService.GetAccessTokenAsync();
         if (!string.IsNullOrEmpty(token))
             state = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(GetClaimsFromJwt(token), "JwtToken")));
-        
-        NotifyAuthenticationStateChanged(Task.FromResult(state));
+
         return state;
+    }
+    
+    /// <summary>
+    /// Notify authentication status changed
+    /// </summary>
+    public void NotifyStateChanged()
+    {
+        NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
     }
 
     private IEnumerable<Claim> GetClaimsFromJwt(string jwt)

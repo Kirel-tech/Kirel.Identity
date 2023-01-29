@@ -3,8 +3,8 @@ using System.Net.Http.Json;
 using Kirel.Identity.Client.Interfaces;
 using Kirel.Identity.Client.Jwt.Helpers;
 using Kirel.Identity.Client.Jwt.Options;
+using Kirel.Identity.Client.Jwt.Providers;
 using Kirel.Identity.Jwt.DTOs;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Options;
 
 namespace Kirel.Identity.Client.Jwt.Services;
@@ -12,12 +12,12 @@ namespace Kirel.Identity.Client.Jwt.Services;
 public class KirelClientJwtAuthenticationService : IClientAuthenticationService
 {
     private readonly IClientTokenService _tokenService;
-    private readonly AuthenticationStateProvider _stateProvider;
+    private readonly KirelJwtTokenAuthenticationStateProvider _stateProvider;
     private readonly HttpClient _httpClient;
     private readonly string _url;
     public KirelClientJwtAuthenticationService(
         IClientTokenService tokenService,
-        AuthenticationStateProvider stateProvider,
+        KirelJwtTokenAuthenticationStateProvider stateProvider,
         IHttpClientFactory httpClientFactory,
         IOptions<KirelClientJwtAuthenticationOptions> options)
     {
@@ -33,7 +33,7 @@ public class KirelClientJwtAuthenticationService : IClientAuthenticationService
     {
         await _tokenService.SetAccessTokenAsync(access);
         await _tokenService.SetRefreshTokenAsync(refresh);
-        await _stateProvider.GetAuthenticationStateAsync();
+        _stateProvider.NotifyStateChanged();
     }
 
     /// <inheritdoc />
