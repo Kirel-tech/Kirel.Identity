@@ -1,37 +1,29 @@
-﻿using System.Data;
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.Results;
-using Kirel.Identity.DTOs;
-using Kirel.Identity.Core.Interfaces;
 using Kirel.Identity.Core.Models;
+using Kirel.Identity.DTOs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 
 namespace Kirel.Identity.Core.Validators;
 
 /// <summary>
-/// Validation for KirelUserCreateDto
+/// Validation for KirelUserRegistrationDto
 /// </summary>
-public class KirelUserCreateDtoValidator<TKey, TUser, TRole, TUserCreateDto, TClaimCreateDto> : AbstractValidator<TUserCreateDto> 
+public class KirelUserRegistrationDtoValidator<TKey, TUser> : AbstractValidator<KirelUserRegistrationDto>
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
     where TUser : KirelIdentityUser<TKey>
-    where TRole : KirelIdentityRole<TKey>
-    where TUserCreateDto : KirelUserCreateDto<TKey, TClaimCreateDto>
-    where TClaimCreateDto : KirelClaimCreateDto
 {
     private readonly UserManager<TUser> _userManager;
-    private readonly RoleManager<TRole> _roleManager;
 
     /// <summary>
-    /// Constructor for KirelUserCreateDto
+    /// Constructor for KirelUserRegistrationDtoValidator
     /// </summary>
     /// <param name="identityOptions">Represents all the options you can use to configure the identity system</param>
     /// <param name="userManager">Identity user manager</param>
-    /// <param name="roleManager">Identity role manager</param>
-    public KirelUserCreateDtoValidator(IOptions<IdentityOptions> identityOptions, UserManager<TUser> userManager, RoleManager<TRole> roleManager)
+    public KirelUserRegistrationDtoValidator(IOptions<IdentityOptions> identityOptions, UserManager<TUser> userManager)
     {
         _userManager = userManager;
-        _roleManager = roleManager;
         var message = "";
         
         When(_ => identityOptions.Value.User.RequireUniqueEmail, () =>
@@ -44,15 +36,16 @@ public class KirelUserCreateDtoValidator<TKey, TUser, TRole, TUserCreateDto, TCl
             .MinimumLength(4).WithMessage("The username must be at least 4 characters long.")
             .Matches(@"^(?=.*[a-zA-Z]{1,})(?=.*[\d]{0,})[a-zA-Z0-9.]{4,20}$").WithMessage("Username can only contains letters, numbers and dots")
             .Must((dto, _) => UserNameUnique(dto.UserName, out message)).WithMessage(_ => message);
+        RuleFor(dto => dto.Email)
+            .EmailAddress().WithMessage("'Email' is an invalid email address.")
+            .Must((dto, _) => EmailUnique(dto.Email, out message)).WithMessage(_ => message);
         RuleFor(dto => dto.PhoneNumber)
             .Matches(@"(\d{1,3})?\d{3}?\d{3}?\d{4}").WithMessage("Enter a valid phone number." +
                 " You need to transfer 10 digits and you can transfer the country code");
-        RuleFor(dto => dto.Roles)
-            .Must((_, roles) => RolesExist(roles, out message)).WithMessage(_ => message);
     }
 
     /// <inheritdoc />
-    protected override bool PreValidate(ValidationContext<TUserCreateDto> context, ValidationResult result)
+    protected override bool PreValidate(ValidationContext<KirelUserRegistrationDto> context, ValidationResult result)
     {
         var passErrors = ValidatePassword(context.InstanceToValidate.Password);
         foreach (var error in passErrors)
@@ -61,7 +54,6 @@ public class KirelUserCreateDtoValidator<TKey, TUser, TRole, TUserCreateDto, TCl
         }
         return true;
     }
-    
 
     private IList<string> ValidatePassword(string password)
     {
@@ -75,16 +67,7 @@ public class KirelUserCreateDtoValidator<TKey, TUser, TRole, TUserCreateDto, TCl
         }
         return passErrors;
     }
-
-    private bool RolesExist(List<TKey> roles, out string errorMessage)
-    {
-        errorMessage = "";
-        var exists = _roleManager.Roles.Count(role => roles.Contains(role.Id)) == roles.Count;
-        if (exists) return true;
-        errorMessage = "One of the passed roles does not exist";
-        return false;
-    }
-
+    
     private bool UserNameUnique(string userName, out string errorMessage)
     {
         errorMessage = "";
