@@ -1,11 +1,11 @@
 ﻿using System.Text.RegularExpressions;
 using FluentValidation;
+using FluentValidation.Results;
 using Kirel.Identity.DTOs;
-using Kirel.Identity.Core.Interfaces;
 using Kirel.Identity.Core.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.VisualBasic;
+using Microsoft.Extensions.Options;
 
 namespace Kirel.Identity.Core.Validators;
 
@@ -22,37 +22,57 @@ public class KirelUserUpdateDtoValidator<TKey, TUser, TRole, TUserUpdateDto, TCl
     private readonly UserManager<TUser> _userManager;
     private readonly RoleManager<TRole> _roleManager;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    
+
     /// <summary>
     /// Constructor for UserUpdateDtoValidator
     /// </summary>
+    /// <param name="identityOptions">Represents all the options you can use to configure the identity system</param>
     /// <param name="userManager">Identity user manager</param>
     /// <param name="roleManager">Identity role manager</param>
     /// <param name="httpContextAccessor">Http context accessor used for getting path</param>
-    public KirelUserUpdateDtoValidator(UserManager<TUser> userManager, RoleManager<TRole> roleManager, IHttpContextAccessor httpContextAccessor)
+    public KirelUserUpdateDtoValidator(IOptions<IdentityOptions> identityOptions, UserManager<TUser> userManager, RoleManager<TRole> roleManager, IHttpContextAccessor httpContextAccessor)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _httpContextAccessor = httpContextAccessor;
-        
         var message = "";
 
-        When(dto => !string.IsNullOrEmpty(dto.Password), () =>
+        When(_ => identityOptions.Value.User.RequireUniqueEmail, () =>
         {
-            RuleFor(dto => dto.Password)
-                .MinimumLength(8).WithMessage("Your password length must be at least 8.")
-                .Matches(@"[A-Z]+").WithMessage("Your password must contain at least one uppercase letter.")
-                .Matches(@"[a-z]+").WithMessage("Your password must contain at least one lowercase letter.")
-                .Matches(@"[0-9]+").WithMessage("Your password must contain at least one number.");
+            RuleFor(dto => dto.Email)
+                .EmailAddress().WithMessage("'Email' is an invalid email address.")
+                .Must((dto, _) => EmailUnique(dto.Email, out message)).WithMessage(_ => message);
         });
-        RuleFor(dto => dto.Email)
-            .EmailAddress().WithMessage("'Email' is an invalid email address.")
-            .Must((dto, _) => EmailUnique(dto.Email, out message)).WithMessage(_ => message);
         RuleFor(dto => dto.PhoneNumber)
             .Matches(@"(\d{1,3})?\d{3}?\d{3}?\d{4}").WithMessage("Enter a valid phone number." +
                 " You need to transfer 10 digits and you can transfer the country code");
         RuleFor(dto => dto.Roles)
             .Must((_, roles) => RolesExist(roles, out message)).WithMessage(_ => message);
+    }
+
+    /// <inheritdoc />
+    protected override bool PreValidate(ValidationContext<TUserUpdateDto> context, ValidationResult result)
+    {
+        var passErrors = ValidatePassword(context.InstanceToValidate.Password);
+        foreach (var error in passErrors)
+        {
+            result.Errors.Add(new ValidationFailure("Password", error));
+        }
+        return true;
+    }
+    
+
+    private IList<string> ValidatePassword(string password)
+    {
+        var passErrors = new List<string>();
+        foreach (var validator in _userManager.PasswordValidators)
+        {
+            var task =  validator.ValidateAsync(_userManager, null, password);
+            var result = task.Result;
+            if (result.Succeeded) return passErrors;
+            passErrors.AddRange(result.Errors.Select(error => error.Description));
+        }
+        return passErrors;
     }
     
     private bool RolesExist(List<TKey> roles, out string errorMessage)

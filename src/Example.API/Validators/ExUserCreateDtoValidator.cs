@@ -3,6 +3,7 @@ using Example.DTOs;
 using Kirel.Identity.Core.Validators;
 using Kirel.Identity.DTOs;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 
 namespace Example.API.Validators;
 
@@ -11,7 +12,7 @@ public class ExUserCreateDtoValidator : KirelUserCreateDtoValidator<Guid, ExUser
     KirelClaimCreateDto>
 {
     /// <inheritdoc />
-    public ExUserCreateDtoValidator(UserManager<ExUser> userManager, RoleManager<ExRole> roleManager) : base(userManager, roleManager)
+    public ExUserCreateDtoValidator(IOptions<IdentityOptions> identityOptions, UserManager<ExUser> userManager, RoleManager<ExRole> roleManager) : base(identityOptions, userManager, roleManager)
     {
     }
 }
