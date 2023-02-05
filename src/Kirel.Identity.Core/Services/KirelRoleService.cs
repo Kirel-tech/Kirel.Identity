@@ -5,7 +5,6 @@ using Kirel.DTO;
 using Kirel.Identity.Core.Models;
 using Kirel.Identity.DTOs;
 using Kirel.Identity.Exceptions;
-using Kirel.Shared;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -152,9 +151,7 @@ public class KirelRoleService<TKey, TRole, TRoleDto, TRoleCreateDto, TRoleUpdate
         var role = await RoleManager.FindByIdAsync(roleId.ToString());
         if (role == null)
             throw new KirelNotFoundException($"Role with specified id {roleId} was not found");
-        if (await RoleManager.RoleExistsAsync(updateDto.Name))
-            throw new KirelAlreadyExistException($"Role with given name {updateDto.Name} already exist");
-        role.Name = updateDto.Name;
+        Mapper.Map(updateDto, role);
         await RoleManager.UpdateAsync(role);
         await SyncRoleClaims(roleId, updateDto.Claims);
         var returnDto = Mapper.Map<TRoleDto>(role);
@@ -220,11 +217,12 @@ public class KirelRoleService<TKey, TRole, TRoleDto, TRoleCreateDto, TRoleUpdate
         {
             appRoles = appRoles.Where(filterExpression);
         }
-        
+
+        var count = await appRoles.CountAsync();
         if (page > 0 && pageSize > 0)
             appRoles = appRoles.Skip((page - 1) * pageSize).Take(pageSize);
         
-        var pagination = Pagination.Generate(page ,pageSize, await appRoles.CountAsync());
+        var pagination = Pagination.Generate(page ,pageSize, count);
         var data = Mapper.Map<List<TRoleDto>>(appRoles);
         foreach (var roleDto in data)
         {

@@ -1,12 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using System.Security.Claims;
 using AutoMapper;
 using Kirel.DTO;
 using Kirel.Identity.DTOs;
 using Kirel.Identity.Core.Models;
 using Kirel.Identity.Exceptions;
-using Kirel.Shared;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -219,11 +217,12 @@ public class KirelUserService<TKey, TUser, TRole, TUserDto, TUserCreateDto, TUse
         {
             appUsers = appUsers.Where(filterExpression);
         }
-        
+
+        var count = await appUsers.CountAsync();
         if (page > 0 && pageSize > 0)
             appUsers = appUsers.Skip((page - 1) * pageSize).Take(pageSize);
         
-        var pagination = Pagination.Generate(page ,pageSize, await appUsers.CountAsync());
+        var pagination = Pagination.Generate(page ,pageSize, count);
         var data = Mapper.Map<List<TUserDto>>(appUsers);
         foreach (var userDto in data)
         {
