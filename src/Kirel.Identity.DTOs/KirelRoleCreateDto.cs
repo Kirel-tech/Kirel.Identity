@@ -8,9 +8,9 @@ public class KirelRoleCreateDto<TClaimCreateDto> where TClaimCreateDto : KirelCl
     /// <summary>
     /// Role name
     /// </summary>
-    public string Name { get; set; }
+    public string Name { get; set; } = "";
     /// <summary>
     /// List of user claims
     /// </summary>
-    public List<TClaimCreateDto> Claims { get; set; }
+    public List<TClaimCreateDto> Claims { get; set; }  = new ();
 }
