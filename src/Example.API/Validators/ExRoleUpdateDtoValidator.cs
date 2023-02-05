@@ -10,7 +10,7 @@ namespace Example.API.Validators;
 public class ExRoleUpdateDtoValidator : KirelRoleUpdateDtoValidator<Guid, ExRole, ExRoleUpdateDto, KirelClaimUpdateDto>
 {
     /// <inheritdoc />
-    public ExRoleUpdateDtoValidator(RoleManager<ExRole> roleManager) : base(roleManager)
+    public ExRoleUpdateDtoValidator(RoleManager<ExRole> roleManager, IHttpContextAccessor httpContextAccessor) : base(roleManager, httpContextAccessor)
     {
     }
 }
