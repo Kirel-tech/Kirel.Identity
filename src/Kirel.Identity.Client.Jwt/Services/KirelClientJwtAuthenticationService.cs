@@ -33,7 +33,6 @@ public class KirelClientJwtAuthenticationService : IClientAuthenticationService
     {
         await _tokenService.SetAccessTokenAsync(access);
         await _tokenService.SetRefreshTokenAsync(refresh);
-        _stateProvider.NotifyStateChanged();
     }
 
     /// <inheritdoc />
@@ -45,23 +44,21 @@ public class KirelClientJwtAuthenticationService : IClientAuthenticationService
         //TODO: Add logging here
         if (tokenDto == null)
             return;
-        await UpdateTokens(tokenDto.AccessToken, tokenDto.RefreshToken);
+        await UpdateTokens(tokenDto.AccessToken, tokenDto.RefreshToken)
+            .ContinueWith(_ => _stateProvider.NotifyStateChanged());
     }
 
     /// <inheritdoc />
     public async Task<DateTimeOffset> GetSessionExpirationTimeAsync()
     {
         var refreshToken = await _tokenService.GetRefreshTokenAsync();
-        if (string.IsNullOrEmpty(refreshToken))
-            return DateTimeOffset.MinValue;
-        return KirelJwtTokenHelper.GetExpirationTime(refreshToken);
+        return string.IsNullOrEmpty(refreshToken) ? DateTimeOffset.MinValue : KirelJwtTokenHelper.GetExpirationTime(refreshToken);
     }
 
     /// <inheritdoc />
     public async Task ExtendSessionAsync()
     {
         var refreshToken = await _tokenService.GetRefreshTokenAsync();
-        //TODO: Add logging here
         if (string.IsNullOrEmpty(refreshToken) || KirelJwtTokenHelper.TokenIsExpired(refreshToken))
         {
             return;
@@ -70,13 +67,15 @@ public class KirelClientJwtAuthenticationService : IClientAuthenticationService
         var request = new HttpRequestMessage(HttpMethod.Put, $"{_url}");
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", refreshToken);
         var response = await _httpClient.SendAsync(request);
-        //TODO: Add logging here
-        if (!response.IsSuccessStatusCode) return;
-        var tokenDto = await response.Content.ReadFromJsonAsync<JwtTokenDto>();
-        if (tokenDto == null)
-            return;
-        
-        await UpdateTokens(tokenDto.AccessToken, tokenDto.RefreshToken);
+        if (response.IsSuccessStatusCode)
+        {
+            var tokenDto = await response.Content.ReadFromJsonAsync<JwtTokenDto>();
+            if (tokenDto != null)
+            {
+                await UpdateTokens(tokenDto.AccessToken, tokenDto.RefreshToken)
+                    .ContinueWith(_ => _stateProvider.NotifyStateChanged());
+            }
+        }
     }
 
     /// <inheritdoc />
@@ -89,6 +88,7 @@ public class KirelClientJwtAuthenticationService : IClientAuthenticationService
     /// <inheritdoc />
     public async Task Logout()
     {
-        await UpdateTokens("", "");
+        await UpdateTokens("", "")
+            .ContinueWith(_ => _stateProvider.NotifyStateChanged());
     }
 }
