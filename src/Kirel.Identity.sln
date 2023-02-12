@@ -28,6 +28,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kirel.Identity.Client.Jwt",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example.DTOs", "Example.DTOs\Example.DTOs.csproj", "{6B24D652-CA24-48DD-933F-327D3D78E60C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kirel.Identity.Client.Blazor.Pages", "Kirel.Identity.Client.Blazor.Pages\Kirel.Identity.Client.Blazor.Pages.csproj", "{AEA8A8D7-C989-4978-8F03-7579C47111E4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -90,5 +92,9 @@ Global
 		{6B24D652-CA24-48DD-933F-327D3D78E60C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B24D652-CA24-48DD-933F-327D3D78E60C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B24D652-CA24-48DD-933F-327D3D78E60C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEA8A8D7-C989-4978-8F03-7579C47111E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEA8A8D7-C989-4978-8F03-7579C47111E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEA8A8D7-C989-4978-8F03-7579C47111E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEA8A8D7-C989-4978-8F03-7579C47111E4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

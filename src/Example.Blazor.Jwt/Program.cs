@@ -1,4 +1,6 @@
+using System.Reflection;
 using Blazored.LocalStorage;
+using CurrieTechnologies.Razor.Clipboard;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Example.Blazor.Jwt;
@@ -9,6 +11,7 @@ using Kirel.Identity.Client.Jwt.Options;
 using Kirel.Identity.Client.Jwt.Providers;
 using Kirel.Identity.Client.Jwt.Services;
 using Microsoft.AspNetCore.Components.Authorization;
+using MudBlazor;
 using MudBlazor.Services;
 
 // From Example.API project /Properties/launchSettings.json profiles -> Example
@@ -19,14 +22,29 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-builder.Services.AddMudServices();
+//Mud Services settings
+builder.Services.AddMudServices(config =>
+{
+    //Snackbars(Notifications) settings 
+    config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;
+    config.SnackbarConfiguration.PreventDuplicates = false;
+    config.SnackbarConfiguration.NewestOnTop = false;
+    config.SnackbarConfiguration.ShowCloseIcon = true;
+    config.SnackbarConfiguration.VisibleStateDuration = 50000;
+    config.SnackbarConfiguration.HideTransitionDuration = 500;
+    config.SnackbarConfiguration.ShowTransitionDuration = 500;
+    config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
+});
+
+//Add copy to clipboard support
+builder.Services.AddClipboard();
 
 // Add client token storage
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddScoped<IClientTokenService, KirelBlazoredClientTokenService>();
 
 // Add http client factory instance with default http client for fetch data example
-builder.Services.AddHttpClient(string.Empty, hc => hc.BaseAddress = new Uri("https://localhost:7005"));
+builder.Services.AddHttpClient(string.Empty, hc => hc.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 
 // Add Identity http client with JWT Authorization handler to factory
 builder.Services.AddScoped<KirelJwtHttpClientAuthorizationHandler>();
@@ -44,6 +62,9 @@ builder.Services.Configure<KirelClientJwtAuthenticationOptions>(options =>
 // Add JWT Authentication state provider
 builder.Services.AddScoped<KirelJwtTokenAuthenticationStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<KirelJwtTokenAuthenticationStateProvider>());
+
+// Add AutoMapper dto <--> dto mappings
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 builder.Services.AddAuthorizationCore();
 

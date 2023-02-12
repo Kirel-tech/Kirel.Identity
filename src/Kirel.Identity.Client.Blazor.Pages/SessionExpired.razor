@@ -1,0 +1,13 @@
+﻿@using Kirel.Identity.Client.Interfaces
+@inject IClientAuthenticationService AuthenticationService
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
+
+@code {
+    protected override Task OnInitializedAsync()
+    {
+        Snackbar.Add($"You session is expired. Please log in.", Severity.Warning);
+        AuthenticationService.Logout();
+        return base.OnInitializedAsync();
+    }
+}
