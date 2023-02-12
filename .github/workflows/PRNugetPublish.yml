@@ -59,7 +59,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        package: [ DTOs, Core, Controllers, Exceptions, Middlewares, Jwt.DTOs, Jwt.Core, Jwt.Controllers, Client, Client.Jwt, Client.Blazor ]
+        package: [ DTOs, Core, Controllers, Exceptions, Middlewares, Jwt.DTOs, Jwt.Core, Jwt.Controllers, Client, Client.Jwt, Client.Blazor, Client.Blazor.Pages ]
     env:
       RUN_ID: ${{ github.event.workflow_run.id }}
     steps:
