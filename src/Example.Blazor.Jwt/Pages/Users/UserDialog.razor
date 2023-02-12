@@ -1,0 +1,38 @@
+﻿@using Kirel.Blazor.Entities.Models
+@using Kirel.Identity.DTOs
+
+<UserEntityDialog
+    TClaimCreateDto="KirelClaimCreateDto" TClaimUpdateDto="KirelClaimUpdateDto" TClaimDto="KirelClaimDto"
+    TUserKey="Guid" TUserDto="ExUserDto" TUserCreateDto="ExUserCreateDto" TUserUpdateDto="ExUserUpdateDto"
+    TRoleKey="Guid" TRoleDto="ExRoleDto"
+    Dto="Dto" UpdateDto="_updateDto" CreateDto="_createDto"
+    UsersHttpClientName="IdentityAuthorized" UsersHttpRelativeUrl="users"
+    RolesHttpClientName="IdentityAuthorized" RolesHttpRelativeUrl="roles"
+    Options="Options">
+</UserEntityDialog>
+
+@code {
+    [Parameter]
+    public EntityOptions Options { get; set; }
+    [Parameter]
+    public ExUserDto Dto { get; set; }
+    private readonly ExUserCreateDto _createDto = new();
+    private readonly ExUserUpdateDto _updateDto = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var action = EntityAction.Edit;
+        if (Dto == null)
+        {
+            action = EntityAction.Create;
+            Dto = new ExUserDto();
+        }
+        Options ??= new EntityOptions()
+        {
+            Action = action,
+            IgnoredProperties = new List<string>()
+        };
+        //Options.IgnoredProperties.Add("LockoutEnabled");
+        await base.OnInitializedAsync();
+    }
+}
