@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using Kirel.Identity.Client.Interfaces;
 using Kirel.Identity.Client.Jwt.Helpers;
+using Microsoft.AspNetCore.Components;
 
 namespace Kirel.Identity.Client.Jwt.Handlers;
 
@@ -8,10 +9,13 @@ public class KirelJwtHttpClientAuthorizationHandler : DelegatingHandler
 {
     private readonly IClientTokenService _tokenService;
     private readonly IClientAuthenticationService _authenticationService;
-    public KirelJwtHttpClientAuthorizationHandler(IClientTokenService tokenService, IClientAuthenticationService authenticationService)
+    private readonly NavigationManager _navigationManager;
+    public KirelJwtHttpClientAuthorizationHandler(IClientTokenService tokenService, IClientAuthenticationService authenticationService,
+        NavigationManager navigationManager)
     {
         _tokenService = tokenService;
         _authenticationService = authenticationService;
+        _navigationManager = navigationManager;
     }
 
     /// <inheritdoc />
@@ -19,17 +23,22 @@ public class KirelJwtHttpClientAuthorizationHandler : DelegatingHandler
         HttpRequestMessage request, CancellationToken cancellationToken)
     {
         var jwtAccessToken = await _tokenService.GetAccessTokenAsync();
-        if (string.IsNullOrEmpty(jwtAccessToken))
-            return await base.SendAsync(request, cancellationToken);
-        
-        if (KirelJwtTokenHelper.TokenIsExpired(jwtAccessToken))
+        if (string.IsNullOrEmpty(jwtAccessToken) || KirelJwtTokenHelper.TokenIsExpired(jwtAccessToken))
         {
-            await _authenticationService.ExtendSessionAsync();
-            jwtAccessToken = await _tokenService.GetAccessTokenAsync();
+            await _authenticationService.ExtendSessionAsync()
+                .ContinueWith(async _ =>
+                {
+                    if (!await _authenticationService.SessionIsActiveAsync())
+                    {
+                        _navigationManager.NavigateTo("/session/expired");
+                    }
+                }, cancellationToken)
+                .ContinueWith(async _ => jwtAccessToken = await _tokenService.GetAccessTokenAsync(), cancellationToken);
         }
-        
-        request.Headers.Authorization =
-            new AuthenticationHeaderValue("Bearer", jwtAccessToken);
+
+        if (!string.IsNullOrEmpty(jwtAccessToken))
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jwtAccessToken);
+
         return await base.SendAsync(request, cancellationToken);
     }
 }
