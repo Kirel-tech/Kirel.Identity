@@ -5,6 +5,7 @@ using Kirel.DTO;
 using Kirel.Identity.Core.Models;
 using Kirel.Identity.DTOs;
 using Kirel.Identity.Exceptions;
+using Kirel.Shared;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
