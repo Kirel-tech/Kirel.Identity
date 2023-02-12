@@ -3,21 +3,21 @@
 public interface IClientTokenService
 {
     /// <summary>
-    /// Method for getting JWT access token string
+    /// Method for getting access token
     /// </summary>
-    /// <returns>JWT access token</returns>
+    /// <returns>Access token</returns>
     Task<string> GetAccessTokenAsync();
     /// <summary>
-    /// Method for getting JWT refresh token string
+    /// Method for getting refresh token
     /// </summary>
-    /// <returns>JWT refresh token</returns>
+    /// <returns>Refresh token</returns>
     Task<string> GetRefreshTokenAsync();
     /// <summary>
-    /// Method for setting JWT access token string
+    /// Method for setting access token
     /// </summary>
     Task SetAccessTokenAsync(string token);
     /// <summary>
-    /// Method for setting JWT refresh token string
+    /// Method for setting refresh token
     /// </summary>
     Task SetRefreshTokenAsync(string token);
 }
