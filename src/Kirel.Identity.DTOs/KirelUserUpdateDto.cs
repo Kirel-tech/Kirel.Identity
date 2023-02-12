@@ -17,7 +17,6 @@ public class KirelUserUpdateDto<TRoleKey, TClaimUpdateDto> where TClaimUpdateDto
     /// User email
     /// </summary>
     public string Email { get; set; } = "";
-
     /// <summary>
     /// Flag whether the email was verified
     /// </summary>
@@ -26,7 +25,6 @@ public class KirelUserUpdateDto<TRoleKey, TClaimUpdateDto> where TClaimUpdateDto
     /// User phone number
     /// </summary>
     public string PhoneNumber { get; set; } = "";
-
     /// <summary>
     /// Flag whether the phone number was verified
     /// </summary>
@@ -35,6 +33,13 @@ public class KirelUserUpdateDto<TRoleKey, TClaimUpdateDto> where TClaimUpdateDto
     /// User password
     /// </summary>
     public string Password { get; set; } = "";
+    /// <summary>
+    /// Gets or sets the date and time, in UTC, when any user lockout ends.
+    /// </summary>
+    /// <remarks>
+    /// A value in the past means the user is not locked out.
+    /// </remarks>
+    public DateTimeOffset? LockoutEnd { get; set; } = DateTimeOffset.MinValue;
     /// <summary>
     /// Gets or sets a flag indicating if the user could be locked out.
     /// </summary>
