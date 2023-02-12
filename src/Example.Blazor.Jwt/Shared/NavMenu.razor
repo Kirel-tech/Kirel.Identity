@@ -1,36 +1,17 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">ExampleBlazorGUI</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-</div>
-
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-plus" aria-hidden="true"></span> Fetch Data
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="user">
-                <span class="oi oi-plus" aria-hidden="true"></span> User
-            </NavLink>
-        </div>
-    </nav>
-</div>
+﻿<MudPaper Class="py-3" Square="true">
+    <MudNavMenu Dense="true" Color="Color.Info">
+        <AuthorizeView>
+            <Authorized>
+                <MudText Typo="Typo.h6" Class="px-4">@context.User.Identity?.Name</MudText>
+                <MudText Typo="Typo.body2" Class="px-4 mud-text-secondary">Authorized</MudText>
+                <MudDivider Class="my-2"/>
+            </Authorized>
+        </AuthorizeView>
+        <MudNavLink Href="user" Icon="@Icons.Material.Outlined.Person" IconColor="Color.Inherit" Match="NavLinkMatch.All">Authorized user</MudNavLink>
+        <MudNavLink Href="users" Icon="@Icons.Material.Outlined.Group" IconColor="Color.Inherit" Match="NavLinkMatch.Prefix">Users</MudNavLink>
+        <MudNavLink Href="roles" Icon="@Icons.Material.Outlined.Groups" IconColor="Color.Inherit" Match="NavLinkMatch.Prefix">Roles</MudNavLink>
+    </MudNavMenu>
+</MudPaper>
 
 @code {
     private bool collapseNavMenu = true;
