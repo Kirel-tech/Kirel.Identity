@@ -1,5 +1,8 @@
 ﻿namespace Kirel.Identity.Client.Interfaces;
 
+/// <summary>
+/// Describes methods for work with tokens
+/// </summary>
 public interface IClientTokenService
 {
     /// <summary>
