@@ -9,12 +9,22 @@ using Microsoft.Extensions.Options;
 
 namespace Kirel.Identity.Client.Jwt.Services;
 
+/// <summary>
+/// Client authentication service with JWT implementation.
+/// </summary>
 public class KirelClientJwtAuthenticationService : IClientAuthenticationService
 {
     private readonly IClientTokenService _tokenService;
     private readonly KirelJwtTokenAuthenticationStateProvider _stateProvider;
     private readonly HttpClient _httpClient;
     private readonly string _url;
+    /// <summary>
+    /// Creates new instance of Client authentication service with JWT implementation.
+    /// </summary>
+    /// <param name="tokenService">Client token service that stores tokens</param>
+    /// <param name="stateProvider">Implementation of default AuthenticationStateProvider that works with JWT tokens.</param>
+    /// <param name="httpClientFactory">Default microsoft http client factory</param>
+    /// <param name="options">Client authentication options</param>
     public KirelClientJwtAuthenticationService(
         IClientTokenService tokenService,
         KirelJwtTokenAuthenticationStateProvider stateProvider,

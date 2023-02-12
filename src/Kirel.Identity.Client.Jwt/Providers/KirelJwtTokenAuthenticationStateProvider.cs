@@ -5,11 +5,18 @@ using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Kirel.Identity.Client.Jwt.Providers;
 
+/// <summary>
+/// Implementation of default AuthenticationStateProvider that works with JWT tokens.
+/// </summary>
 public class KirelJwtTokenAuthenticationStateProvider : AuthenticationStateProvider
 {
     private readonly AuthenticationState _anonymousUserAuthenticationState;
     private readonly IClientTokenService _tokenService;
 
+    /// <summary>
+    /// Creates instance of JWT authentication state provider.
+    /// </summary>
+    /// <param name="tokenService">Client token service that stores tokens</param>
     public KirelJwtTokenAuthenticationStateProvider(IClientTokenService tokenService)
     {
         _tokenService = tokenService;
