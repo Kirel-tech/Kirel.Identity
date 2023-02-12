@@ -5,11 +5,23 @@ using Microsoft.AspNetCore.Components;
 
 namespace Kirel.Identity.Client.Jwt.Handlers;
 
+/// <summary>
+/// JWT authorization http client handler
+/// </summary>
 public class KirelJwtHttpClientAuthorizationHandler : DelegatingHandler
 {
     private readonly IClientTokenService _tokenService;
     private readonly IClientAuthenticationService _authenticationService;
     private readonly NavigationManager _navigationManager;
+    /// <summary>
+    /// Creates new instance of JWT authorization http client handler.
+    /// </summary>
+    /// <param name="tokenService">Client token service that stores tokens</param>
+    /// <param name="authenticationService">Client authentication service</param>
+    /// <param name="navigationManager">
+    /// Default blazor navigation service.
+    /// Used for logout if JWT session is expired, make sure that you have /session/expired page.
+    /// </param>
     public KirelJwtHttpClientAuthorizationHandler(IClientTokenService tokenService, IClientAuthenticationService authenticationService,
         NavigationManager navigationManager)
     {
