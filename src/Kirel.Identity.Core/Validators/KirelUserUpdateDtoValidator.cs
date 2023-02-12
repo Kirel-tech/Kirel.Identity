@@ -53,6 +53,9 @@ public class KirelUserUpdateDtoValidator<TKey, TUser, TRole, TUserUpdateDto, TCl
     /// <inheritdoc />
     protected override bool PreValidate(ValidationContext<TUserUpdateDto> context, ValidationResult result)
     {
+        if (string.IsNullOrEmpty(context.InstanceToValidate.Password))
+            return true;
+        
         var passErrors = ValidatePassword(context.InstanceToValidate.Password);
         foreach (var error in passErrors)
         {
