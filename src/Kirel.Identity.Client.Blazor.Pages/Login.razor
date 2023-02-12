@@ -1,8 +1,7 @@
 ﻿@using System.ComponentModel.DataAnnotations
 @using Kirel.Identity.Client.Interfaces
-@using Microsoft.AspNetCore.Authentication
-@using MudBlazor
 @inject IClientAuthenticationService AuthenticationService
+@inject NavigationManager NavigationManager
 
 <MudCard Style="max-width: 400px;" Class="ml-auto mr-auto">
     <MudCardContent>
@@ -20,10 +19,10 @@
 @code {
 
     private Model _model = new Model();
-
     private async void HandleLogin()
     {
         await AuthenticationService.LoginByPasswordAsync(_model.Username, _model.Password);
+        NavigationManager.NavigateTo("/");
     }
 
     private class Model
