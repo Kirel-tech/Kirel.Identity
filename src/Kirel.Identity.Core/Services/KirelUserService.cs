@@ -195,7 +195,7 @@ public class KirelUserService<TKey, TUser, TRole, TUserDto, TUserCreateDto, TUse
 
         if (!string.IsNullOrEmpty(search))
         {
-            filterExpression = PredicateBuilder.PredicateSearchInAllFields<TUser>(search);
+            filterExpression = PredicateBuilder.PredicateSearchInAllFields<TUser>(search, true);
         }
         
         var appUsers = UserManager.Users;

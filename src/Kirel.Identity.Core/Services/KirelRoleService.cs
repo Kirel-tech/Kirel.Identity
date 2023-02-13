@@ -195,7 +195,7 @@ public class KirelRoleService<TKey, TRole, TRoleDto, TRoleCreateDto, TRoleUpdate
 
         if (!string.IsNullOrEmpty(search))
         {
-            filterExpression = PredicateBuilder.PredicateSearchInAllFields<TRole>(search);
+            filterExpression = PredicateBuilder.PredicateSearchInAllFields<TRole>(search, true);
         }
         
         var appRoles = RoleManager.Roles;
