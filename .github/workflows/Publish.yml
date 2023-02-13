@@ -32,8 +32,8 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           dotnet restore src/Kirel.Identity.${{ matrix.package }}/Kirel.Identity.${{ matrix.package }}.csproj
-          dotnet build --version-suffix "-main-$(echo ${GITHUB_SHA} | cut -c1-8)" src/Kirel.Identity.${{ matrix.package }}/Kirel.Identity.${{ matrix.package }}.csproj
-          dotnet pack --version-suffix "-main-$(echo ${GITHUB_SHA} | cut -c1-8)" -o ./packages src/Kirel.Identity.${{ matrix.package }}/Kirel.Identity.${{ matrix.package }}.csproj
+          dotnet build --version-suffix "-main-${{github.run_number}}-$(echo ${GITHUB_SHA} | cut -c1-8)" src/Kirel.Identity.${{ matrix.package }}/Kirel.Identity.${{ matrix.package }}.csproj
+          dotnet pack --version-suffix "-main-${{github.run_number}}-$(echo ${GITHUB_SHA} | cut -c1-8)" -o ./packages src/Kirel.Identity.${{ matrix.package }}/Kirel.Identity.${{ matrix.package }}.csproj
       - name: Push
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
