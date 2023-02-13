@@ -6,15 +6,7 @@
         <Nullable>disable</Nullable>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <PackageVersion>1.0.1$(VersionSuffix)</PackageVersion>
-    </PropertyGroup>
-
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <DocumentationFile>bin\Debug\Kirel.Identity.Core.xml</DocumentationFile>
-    </PropertyGroup>
-
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <DocumentationFile>bin\Release\Kirel.Identity.Core.xml</DocumentationFile>
+        <PackageVersion>1.0.2$(VersionSuffix)</PackageVersion>
     </PropertyGroup>
 
     <ItemGroup>

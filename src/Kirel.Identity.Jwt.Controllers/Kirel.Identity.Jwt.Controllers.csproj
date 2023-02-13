@@ -6,7 +6,7 @@
         <Nullable>disable</Nullable>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <PackageVersion>1.0.1$(VersionSuffix)</PackageVersion>
+        <PackageVersion>1.0.2$(VersionSuffix)</PackageVersion>
     </PropertyGroup>
 
     <ItemGroup>
