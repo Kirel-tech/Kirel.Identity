@@ -10,7 +10,7 @@
 
 <EntityDialog TCreateDto="TUserCreateDto" TUpdateDto="TUserUpdateDto" TDto="TUserDto"
               CreateDto="@CreateDto" UpdateDto="@UpdateDto" Dto="@Dto"
-              HttpClientName="IdentityAuthorized" HttpRelativeUrl="users" Options="Options"
+              HttpClientName="@UsersHttpClientName" HttpRelativeUrl="@UsersHttpRelativeUrl" Options="Options"
               BeforeCreateRequest="BeforeEntityCreateRequest" BeforeUpdateRequest="BeforeEntityUpdateRequest">
     <Content>
         <MudContainer Class="mx-auto px-4 justify-center my-4 mud-text-align-center">
