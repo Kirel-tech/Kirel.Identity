@@ -22,7 +22,7 @@
     private async void HandleLogin()
     {
         await AuthenticationService.LoginByPasswordAsync(_model.Username, _model.Password);
-        NavigationManager.NavigateTo("/");
+        NavigationManager.NavigateTo(NavigationManager.BaseUri);
     }
 
     private class Model
