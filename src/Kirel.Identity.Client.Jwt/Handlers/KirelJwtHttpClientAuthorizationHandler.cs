@@ -42,7 +42,7 @@ public class KirelJwtHttpClientAuthorizationHandler : DelegatingHandler
                 {
                     if (!await _authenticationService.SessionIsActiveAsync())
                     {
-                        _navigationManager.NavigateTo("/session/expired");
+                        _navigationManager.NavigateTo(_navigationManager.BaseUri+"session/expired");
                     }
                 }, cancellationToken)
                 .ContinueWith(async _ => jwtAccessToken = await _tokenService.GetAccessTokenAsync(), cancellationToken);
