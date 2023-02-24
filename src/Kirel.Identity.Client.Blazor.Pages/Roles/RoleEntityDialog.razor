@@ -25,7 +25,7 @@
                     {
                         <MudItem xs="12" Class="d-flex flex-row">
                             <MudTextField Class="mr-1" @bind-Value="@claim.Type" Label="Type" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
-                            <MudTextField Class="mr-1" @bind-Value="@claim.Value" Label="Type" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                            <MudTextField Class="mr-1" @bind-Value="@claim.Value" Label="Value" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
                             <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="@(() => RemoveClaim(claim))" Color="Color.Error" Size="Size.Small" Class="ma-n1"/>
                         </MudItem>
                     }
