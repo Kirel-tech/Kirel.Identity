@@ -52,7 +52,7 @@ public class KirelJwtTokenService<TKey, TUser, TRole>
         var userRoles = await UserManager.GetRolesAsync(user);
 
         claims.Add(new Claim(ClaimsIdentity.DefaultNameClaimType, user.UserName));
-        claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Email));
+        claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
         claims.Add(new Claim(JwtRegisteredClaimNames.Iss, AuthOptions.Issuer));
         claims.Add(new Claim(JwtRegisteredClaimNames.Name, user.UserName));
         claims.Add(new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()!));
