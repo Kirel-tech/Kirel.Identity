@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using AutoMapper;
 using Kirel.DTO;
+using Kirel.Identity.Core.CacheManager;
 using Kirel.Identity.Core.Models;
 using Kirel.Identity.DTOs;
 using Kirel.Identity.Exceptions;
@@ -40,18 +41,24 @@ public class KirelRoleService<TKey, TRole, TRoleDto, TRoleCreateDto, TRoleUpdate
     /// AutoMapper instance
     /// </summary>
     protected readonly IMapper Mapper;
+    /// <summary>
+    /// 
+    /// </summary>
+    protected readonly KirelCacheManager CacheManager;
 
     /// <summary>
     /// KirelRoleService constructor
     /// </summary>
     /// <param name="roleManager">Identity role manager</param>
     /// <param name="mapper">AutoMapper instance</param>
-    public KirelRoleService(RoleManager<TRole> roleManager, IMapper mapper)
+    /// <param name="cacheManager"></param>
+    public KirelRoleService(RoleManager<TRole> roleManager, IMapper mapper, KirelCacheManager cacheManager)
     {
         RoleManager = roleManager;
         Mapper = mapper;
+        CacheManager = cacheManager;
     }
-    
+
     private async Task SyncRoleClaims(TKey roleId, ICollection<TClaimUpdateDto> claims)
     {
         var roleClaims = await GetRoleClaims(roleId);
@@ -147,7 +154,7 @@ public class KirelRoleService<TKey, TRole, TRoleDto, TRoleCreateDto, TRoleUpdate
     /// <returns>Updated role dto</returns>
     /// <exception cref="KirelNotFoundException">If role was not found</exception>
     /// <exception cref="KirelAlreadyExistException">If role with given name already exists</exception>
-    public virtual async Task<TRoleDto> UpdateRole(TKey roleId, TRoleUpdateDto updateDto)
+    public virtual async Task<TRoleUpdateDto> UpdateRole(TKey roleId, TRoleUpdateDto updateDto)
     {
         var role = await RoleManager.FindByIdAsync(roleId.ToString());
         if (role == null)
@@ -157,7 +164,8 @@ public class KirelRoleService<TKey, TRole, TRoleDto, TRoleCreateDto, TRoleUpdate
         await SyncRoleClaims(roleId, updateDto.Claims);
         var returnDto = Mapper.Map<TRoleDto>(role);
         returnDto.Claims = Mapper.Map<List<TClaimDto>>(await GetRoleClaims(roleId));
-        return returnDto;
+        
+        return await CacheManager.UpdateCache($"cacheObject_{roleId}", updateDto);
     }
     
     /// <summary>
@@ -168,6 +176,9 @@ public class KirelRoleService<TKey, TRole, TRoleDto, TRoleCreateDto, TRoleUpdate
     /// <exception cref="KirelNotFoundException">If role was not found</exception>
     public virtual async Task<TRoleDto> GetRole(TKey roleId)
     {
+       await CacheManager.GetCache($"cacheObject_{roleId}", 
+            () => RoleManager.FindByIdAsync(roleId.ToString()));
+        
         var role = await RoleManager.FindByIdAsync(roleId.ToString());
         if (role == null)
             throw new KirelNotFoundException($"Role with specified id {roleId} was not found");
