@@ -1,33 +1,33 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-        <Nullable>enable</Nullable>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <PackageVersion>1.0.2$(VersionSuffix)</PackageVersion>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<PackageVersion>1.0.2$(VersionSuffix)</PackageVersion>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
 
 
-    <ItemGroup>
-        <SupportedPlatform Include="browser" />
-    </ItemGroup>
+	<ItemGroup>
+		<SupportedPlatform Include="browser"/>
+	</ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Kirel.Blazor.Entities" Version="0.0.6" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.13" />
-        <PackageReference Include="MudBlazor" Version="6.1.8" />
-    </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Kirel.Blazor.Entities" Version="0.0.6"/>
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.13"/>
+		<PackageReference Include="MudBlazor" Version="6.1.8"/>
+	</ItemGroup>
 
-    <ItemGroup>
-      <_ContentIncludedByDefault Remove="wwwroot\background.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\exampleJsInterop.js" />
-    </ItemGroup>
+	<ItemGroup>
+		<_ContentIncludedByDefault Remove="wwwroot\background.png"/>
+		<_ContentIncludedByDefault Remove="wwwroot\exampleJsInterop.js"/>
+	</ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\Kirel.Identity.Client\Kirel.Identity.Client.csproj" />
-      <ProjectReference Include="..\Kirel.Identity.DTOs\Kirel.Identity.DTOs.csproj" />
-    </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Kirel.Identity.Client\Kirel.Identity.Client.csproj"/>
+		<ProjectReference Include="..\Kirel.Identity.DTOs\Kirel.Identity.DTOs.csproj"/>
+	</ItemGroup>
 
 </Project>

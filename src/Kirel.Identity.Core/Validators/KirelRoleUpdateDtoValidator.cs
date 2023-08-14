@@ -10,20 +10,21 @@ namespace Kirel.Identity.Core.Validators;
 /// <summary>
 /// Validation for KirelRoleUpdateDto
 /// </summary>
-public class KirelRoleUpdateDtoValidator<TKey, TRole, TRoleUpdateDto, TClaimUpdateDto> : AbstractValidator<TRoleUpdateDto> 
+public class
+    KirelRoleUpdateDtoValidator<TKey, TRole, TRoleUpdateDto, TClaimUpdateDto> : AbstractValidator<TRoleUpdateDto>
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
     where TRole : KirelIdentityRole<TKey>
     where TRoleUpdateDto : KirelRoleUpdateDto<TClaimUpdateDto>
     where TClaimUpdateDto : KirelClaimUpdateDto
 {
-    private readonly RoleManager<TRole> _roleManager;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly RoleManager<TRole> _roleManager;
 
     /// <summary>
     /// Constructor for KirelRoleUpdateDtoValidator
     /// </summary>
-    /// <param name="roleManager">Identity role manager</param>
-    /// <param name="httpContextAccessor">Http context accessor used for getting path</param>
+    /// <param name="roleManager"> Identity role manager </param>
+    /// <param name="httpContextAccessor"> Http context accessor used for getting path </param>
     public KirelRoleUpdateDtoValidator(RoleManager<TRole> roleManager, IHttpContextAccessor httpContextAccessor)
     {
         _roleManager = roleManager;
@@ -31,7 +32,7 @@ public class KirelRoleUpdateDtoValidator<TKey, TRole, TRoleUpdateDto, TClaimUpda
         var message = "";
         RuleFor(dto => dto.Name).Must((_, roleName) => RoleNameUnique(roleName, out message)).WithMessage(_ => message);
     }
-    
+
     private bool RoleNameUnique(string roleName, out string errorMessage)
     {
         errorMessage = "";

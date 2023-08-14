@@ -8,10 +8,10 @@ namespace Kirel.Identity.Core.Context;
 /// <summary>
 /// Kirel base class for the Identity Framework database context.
 /// </summary>
-public class KirelIdentityContext<TUser, TRole, TKey, TIdentityUserClaim, TIdentityUserRole, TIdentityUserLogin, 
-    TIdentityRoleClaim, TIdentityUserToken> 
-    : IdentityDbContext<TUser, TRole, TKey, 
-        TIdentityUserClaim,TIdentityUserRole,TIdentityUserLogin,TIdentityRoleClaim,TIdentityUserToken> 
+public class KirelIdentityContext<TUser, TRole, TKey, TIdentityUserClaim, TIdentityUserRole, TIdentityUserLogin,
+        TIdentityRoleClaim, TIdentityUserToken>
+    : IdentityDbContext<TUser, TRole, TKey,
+        TIdentityUserClaim, TIdentityUserRole, TIdentityUserLogin, TIdentityRoleClaim, TIdentityUserToken>
     where TUser : KirelIdentityUser<TKey>
     where TRole : KirelIdentityRole<TKey>
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
@@ -24,26 +24,29 @@ public class KirelIdentityContext<TUser, TRole, TKey, TIdentityUserClaim, TIdent
     /// <summary>
     /// Kirel base class for the Identity Framework database context constructor
     /// </summary>
-    /// <param name="options">is DbContextOptions</param>
+    /// <param name="options"> is DbContextOptions </param>
     public KirelIdentityContext(DbContextOptions options) : base(options)
     {
     }
-    
+
     /// <summary>
     /// Method which called when entity saved
     /// </summary>
-    /// <param name="cancellationToken">token</param>
-    /// <returns>A task that represents the asynchronous save operation.
-    /// The task result contains the number of state entries written to the database</returns>
-    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+    /// <param name="cancellationToken"> token </param>
+    /// <returns>
+    /// A task that represents the asynchronous save operation.
+    /// The task result contains the number of state entries written to the database
+    /// </returns>
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
     {
         DateTracking();
         return base.SaveChangesAsync(cancellationToken);
     }
+
     /// <summary>
     /// Method which called when entity saved
     /// </summary>
-    /// <returns>The number of state entries written to the database</returns>
+    /// <returns> The number of state entries written to the database </returns>
     public override int SaveChanges()
     {
         DateTracking();
@@ -56,7 +59,6 @@ public class KirelIdentityContext<TUser, TRole, TKey, TIdentityUserClaim, TIdent
     private void DateTracking()
     {
         foreach (var entry in ChangeTracker.Entries<IKirelUser<TKey>>())
-        {
             switch (entry.State)
             {
                 case EntityState.Added:
@@ -66,7 +68,5 @@ public class KirelIdentityContext<TUser, TRole, TKey, TIdentityUserClaim, TIdent
                     entry.Entity.Updated = DateTime.UtcNow;
                     break;
             }
-        }
     }
 }
-

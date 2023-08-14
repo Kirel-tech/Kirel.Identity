@@ -1,21 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <PackageVersion>1.0.2$(VersionSuffix)</PackageVersion>
-    </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<PackageVersion>1.0.2$(VersionSuffix)</PackageVersion>
+	</PropertyGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\Kirel.Identity.Core\Kirel.Identity.Core.csproj" />
-      <ProjectReference Include="..\Kirel.Identity.Jwt.DTOs\Kirel.Identity.Jwt.DTOs.csproj" />
-    </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Kirel.Identity.Core\Kirel.Identity.Core.csproj"/>
+		<ProjectReference Include="..\Kirel.Identity.Jwt.DTOs\Kirel.Identity.Jwt.DTOs.csproj"/>
+	</ItemGroup>
 
-    <ItemGroup>
-      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.25.1" />
-    </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.25.1"/>
+	</ItemGroup>
 
 </Project>

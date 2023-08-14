@@ -16,7 +16,7 @@ public class KirelJwtTokenAuthenticationStateProvider : AuthenticationStateProvi
     /// <summary>
     /// Creates instance of JWT authentication state provider.
     /// </summary>
-    /// <param name="tokenService">Client token service that stores tokens</param>
+    /// <param name="tokenService"> Client token service that stores tokens </param>
     public KirelJwtTokenAuthenticationStateProvider(IClientTokenService tokenService)
     {
         _tokenService = tokenService;
@@ -29,11 +29,12 @@ public class KirelJwtTokenAuthenticationStateProvider : AuthenticationStateProvi
         var state = _anonymousUserAuthenticationState;
         var token = await _tokenService.GetAccessTokenAsync();
         if (!string.IsNullOrEmpty(token))
-            state = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(GetClaimsFromJwt(token), "JwtToken")));
+            state = new AuthenticationState(
+                new ClaimsPrincipal(new ClaimsIdentity(GetClaimsFromJwt(token), "JwtToken")));
 
         return state;
     }
-    
+
     /// <summary>
     /// Notify authentication status changed
     /// </summary>
@@ -46,7 +47,7 @@ public class KirelJwtTokenAuthenticationStateProvider : AuthenticationStateProvi
     {
         if (string.IsNullOrEmpty(jwt))
             return new List<Claim>();
-        
+
         var handler = new JwtSecurityTokenHandler();
         var token = handler.ReadJwtToken(jwt);
         var claims = token.Claims;

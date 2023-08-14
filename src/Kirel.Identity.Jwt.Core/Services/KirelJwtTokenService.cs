@@ -1,5 +1,4 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Authentication;
 using System.Security.Claims;
 using Kirel.Identity.Core.Models;
 using Kirel.Identity.Exceptions;
@@ -12,40 +11,43 @@ namespace Kirel.Identity.Jwt.Core.Services;
 /// <summary>
 /// Provides a set of methods for generating JWT token and JWT Refresh tokens for the user
 /// </summary>
-/// <typeparam name="TKey">User key type</typeparam>
-/// <typeparam name="TUser">User type</typeparam>
-/// <typeparam name="TRole">Role type</typeparam>
-public class KirelJwtTokenService<TKey, TUser, TRole> 
-    where TKey : IComparable, IComparable<TKey>, IEquatable<TKey> 
+/// <typeparam name="TKey"> User key type </typeparam>
+/// <typeparam name="TUser"> User type </typeparam>
+/// <typeparam name="TRole"> Role type </typeparam>
+public class KirelJwtTokenService<TKey, TUser, TRole>
+    where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
     where TUser : KirelIdentityUser<TKey>
     where TRole : KirelIdentityRole<TKey>
 {
-    /// <summary>
-    /// Identity user manager
-    /// </summary>
-    protected readonly UserManager<TUser> UserManager;
-    /// <summary>
-    /// Identity role manager
-    /// </summary>
-    protected readonly RoleManager<TRole> RoleManager;
     /// <summary>
     /// Token auth options
     /// </summary>
     protected readonly KirelAuthOptions AuthOptions;
 
     /// <summary>
+    /// Identity role manager
+    /// </summary>
+    protected readonly RoleManager<TRole> RoleManager;
+
+    /// <summary>
+    /// Identity user manager
+    /// </summary>
+    protected readonly UserManager<TUser> UserManager;
+
+    /// <summary>
     /// KirelAuthenticationService constructor
     /// </summary>
-    /// <param name="userManager">Identity user manager</param>
-    /// <param name="roleManager">Identity role manager</param>
-    /// <param name="authOptions">Token auth options</param>
-    public KirelJwtTokenService(UserManager<TUser> userManager, RoleManager<TRole> roleManager, KirelAuthOptions authOptions)
+    /// <param name="userManager"> Identity user manager </param>
+    /// <param name="roleManager"> Identity role manager </param>
+    /// <param name="authOptions"> Token auth options </param>
+    public KirelJwtTokenService(UserManager<TUser> userManager, RoleManager<TRole> roleManager,
+        KirelAuthOptions authOptions)
     {
         UserManager = userManager;
         RoleManager = roleManager;
         AuthOptions = authOptions;
     }
-    
+
     private async Task<ClaimsIdentity> GetUserIdentityClaims(TUser user)
     {
         var claims = await UserManager.GetClaimsAsync(user);
@@ -61,14 +63,15 @@ public class KirelJwtTokenService<TKey, TUser, TRole>
         {
             var role = await RoleManager.FindByNameAsync(roleName);
             var roleClaims = await RoleManager.GetClaimsAsync(role);
-            
+
             foreach (var roleClaim in roleClaims)
                 claims.Add(roleClaim);
-            
+
             claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, role.Name));
         }
-            
-        return new ClaimsIdentity(claims, "JwtToken", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+
+        return new ClaimsIdentity(claims, "JwtToken", ClaimsIdentity.DefaultNameClaimType,
+            ClaimsIdentity.DefaultRoleClaimType);
     }
 
     private string CreateJwtToken(ClaimsIdentity claims, int lifetime)
@@ -81,7 +84,8 @@ public class KirelJwtTokenService<TKey, TUser, TRole>
             notBefore: now,
             claims: claims.Claims,
             expires: now.AddMinutes(lifeTime),
-            signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(AuthOptions.Key), SecurityAlgorithms.HmacSha256));
+            signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(AuthOptions.Key),
+                SecurityAlgorithms.HmacSha256));
         return new JwtSecurityTokenHandler().WriteToken(jwt);
     }
 
@@ -89,20 +93,21 @@ public class KirelJwtTokenService<TKey, TUser, TRole>
     {
         var userClaims = await GetUserIdentityClaims(user);
         if (userClaims == null) throw new KirelAuthenticationException($"User with login {user.UserName} is not found");
-        
+
         var accessToken = CreateJwtToken(userClaims, AuthOptions.AccessLifetime);
 
         var claimsList = new List<Claim>
         {
-            new (ClaimsIdentity.DefaultNameClaimType, user.UserName),
-            new (ClaimsIdentity.DefaultRoleClaimType, "RefreshToken"),
-            new (JwtRegisteredClaimNames.Name, user.UserName),
-            new (JwtRegisteredClaimNames.NameId, user.Id.ToString()!),
+            new(ClaimsIdentity.DefaultNameClaimType, user.UserName),
+            new(ClaimsIdentity.DefaultRoleClaimType, "RefreshToken"),
+            new(JwtRegisteredClaimNames.Name, user.UserName),
+            new(JwtRegisteredClaimNames.NameId, user.Id.ToString()!)
         };
-        var refreshClaims = new ClaimsIdentity(claimsList, "Token", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+        var refreshClaims = new ClaimsIdentity(claimsList, "Token", ClaimsIdentity.DefaultNameClaimType,
+            ClaimsIdentity.DefaultRoleClaimType);
         var refreshToken = CreateJwtToken(refreshClaims, AuthOptions.RefreshLifetime);
 
-        return new JwtTokenDto()
+        return new JwtTokenDto
         {
             AccessToken = accessToken,
             RefreshToken = refreshToken
@@ -112,8 +117,8 @@ public class KirelJwtTokenService<TKey, TUser, TRole>
     /// <summary>
     /// Method for getting JWT token DTO for authenticated user
     /// </summary>
-    /// <param name="user"></param>
-    /// <returns></returns>
+    /// <param name="user"> </param>
+    /// <returns> </returns>
     public virtual async Task<JwtTokenDto> GenerateJwtTokenDto(TUser user)
     {
         return await GenerateTokensPair(user);

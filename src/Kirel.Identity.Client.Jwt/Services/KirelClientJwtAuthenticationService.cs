@@ -14,17 +14,18 @@ namespace Kirel.Identity.Client.Jwt.Services;
 /// </summary>
 public class KirelClientJwtAuthenticationService : IClientAuthenticationService
 {
-    private readonly IClientTokenService _tokenService;
-    private readonly KirelJwtTokenAuthenticationStateProvider _stateProvider;
     private readonly HttpClient _httpClient;
+    private readonly KirelJwtTokenAuthenticationStateProvider _stateProvider;
+    private readonly IClientTokenService _tokenService;
     private readonly string _url;
+
     /// <summary>
     /// Creates new instance of Client authentication service with JWT implementation.
     /// </summary>
-    /// <param name="tokenService">Client token service that stores tokens</param>
-    /// <param name="stateProvider">Implementation of default AuthenticationStateProvider that works with JWT tokens.</param>
-    /// <param name="httpClientFactory">Default microsoft http client factory</param>
-    /// <param name="options">Client authentication options</param>
+    /// <param name="tokenService"> Client token service that stores tokens </param>
+    /// <param name="stateProvider"> Implementation of default AuthenticationStateProvider that works with JWT tokens. </param>
+    /// <param name="httpClientFactory"> Default microsoft http client factory </param>
+    /// <param name="options"> Client authentication options </param>
     public KirelClientJwtAuthenticationService(
         IClientTokenService tokenService,
         KirelJwtTokenAuthenticationStateProvider stateProvider,
@@ -39,16 +40,9 @@ public class KirelClientJwtAuthenticationService : IClientAuthenticationService
             _url = options.Value.BaseUrl + _url;
     }
 
-    private async Task UpdateTokens(string access, string refresh)
-    {
-        await _tokenService.SetAccessTokenAsync(access);
-        await _tokenService.SetRefreshTokenAsync(refresh);
-    }
-
     /// <inheritdoc />
     public async Task LoginByPasswordAsync(string login, string password)
     {
-        
         var tokenDto = await _httpClient.GetFromJsonAsync<JwtTokenDto>(
             $"{_url}?login={login}&password={password}");
         //TODO: Add logging here
@@ -62,17 +56,16 @@ public class KirelClientJwtAuthenticationService : IClientAuthenticationService
     public async Task<DateTimeOffset> GetSessionExpirationTimeAsync()
     {
         var refreshToken = await _tokenService.GetRefreshTokenAsync();
-        return string.IsNullOrEmpty(refreshToken) ? DateTimeOffset.MinValue : KirelJwtTokenHelper.GetExpirationTime(refreshToken);
+        return string.IsNullOrEmpty(refreshToken)
+            ? DateTimeOffset.MinValue
+            : KirelJwtTokenHelper.GetExpirationTime(refreshToken);
     }
 
     /// <inheritdoc />
     public async Task ExtendSessionAsync()
     {
         var refreshToken = await _tokenService.GetRefreshTokenAsync();
-        if (string.IsNullOrEmpty(refreshToken) || KirelJwtTokenHelper.TokenIsExpired(refreshToken))
-        {
-            return;
-        }
+        if (string.IsNullOrEmpty(refreshToken) || KirelJwtTokenHelper.TokenIsExpired(refreshToken)) return;
 
         var request = new HttpRequestMessage(HttpMethod.Put, $"{_url}");
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", refreshToken);
@@ -81,10 +74,8 @@ public class KirelClientJwtAuthenticationService : IClientAuthenticationService
         {
             var tokenDto = await response.Content.ReadFromJsonAsync<JwtTokenDto>();
             if (tokenDto != null)
-            {
                 await UpdateTokens(tokenDto.AccessToken, tokenDto.RefreshToken)
                     .ContinueWith(_ => _stateProvider.NotifyStateChanged());
-            }
         }
     }
 
@@ -100,5 +91,11 @@ public class KirelClientJwtAuthenticationService : IClientAuthenticationService
     {
         await UpdateTokens("", "")
             .ContinueWith(_ => _stateProvider.NotifyStateChanged());
+    }
+
+    private async Task UpdateTokens(string access, string refresh)
+    {
+        await _tokenService.SetAccessTokenAsync(access);
+        await _tokenService.SetRefreshTokenAsync(refresh);
     }
 }

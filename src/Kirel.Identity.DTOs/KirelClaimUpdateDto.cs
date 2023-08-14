@@ -1,7 +1,7 @@
 ﻿namespace Kirel.Identity.DTOs;
 
 /// <summary>
-/// Data transfer object for claim update 
+/// Data transfer object for claim update
 /// </summary>
 public class KirelClaimUpdateDto
 {
@@ -9,6 +9,7 @@ public class KirelClaimUpdateDto
     /// Claim type
     /// </summary>
     public string Type { get; set; }
+
     /// <summary>
     /// Claim value
     /// </summary>
