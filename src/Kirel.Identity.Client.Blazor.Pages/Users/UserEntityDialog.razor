@@ -1,5 +1,5 @@
-﻿@typeparam TClaimCreateDto where TClaimCreateDto: KirelClaimCreateDto
-@typeparam TClaimUpdateDto where TClaimUpdateDto: KirelClaimUpdateDto
+﻿@typeparam TClaimCreateDto where TClaimCreateDto : KirelClaimCreateDto
+@typeparam TClaimUpdateDto where TClaimUpdateDto : KirelClaimUpdateDto
 @typeparam TClaimDto where TClaimDto : KirelClaimDto
 @typeparam TRoleKey where TRoleKey : IComparable, IComparable<TRoleKey>, IEquatable<TRoleKey>
 @typeparam TRoleDto where TRoleDto : KirelRoleDto<TRoleKey, TClaimDto>
@@ -17,12 +17,14 @@
             <MudGrid>
                 <MudItem xs="6">
                     <EntityProperties CreateDto="@CreateDto" UpdateDto="@UpdateDto" Dto="Dto"
-                                      TCreateDto="TUserCreateDto" TUpdateDto="TUserUpdateDto" TDto="TUserDto" 
+                                      TCreateDto="TUserCreateDto" TUpdateDto="TUserUpdateDto" TDto="TUserDto"
                                       Options="@Options"/>
                     @PropertiesAdditionalContent
                 </MudItem>
                 <MudItem xs="6">
-                    <MudText Typo="Typo.body1"><b>Claims</b></MudText>
+                    <MudText Typo="Typo.body1">
+                        <b>Claims</b>
+                    </MudText>
                     @foreach (var claim in _claims)
                     {
                         <MudItem xs="12" Class="d-flex flex-row">
@@ -32,7 +34,9 @@
                         </MudItem>
                     }
                     <MudIconButton Class="d-flex flex-row my-n1" Icon="@Icons.Material.Rounded.Add" Color="Color.Success" OnClick="AddClaim" aria-label="add"></MudIconButton>
-                    <MudText Typo="Typo.body1"><b>Roles</b></MudText>
+                    <MudText Typo="Typo.body1">
+                        <b>Roles</b>
+                    </MudText>
                     @foreach (var role in _userRoles)
                     {
                         <MudItem xs="12" Class="d-flex flex-row">
@@ -42,7 +46,7 @@
                     }
                     <MudItem xs="12" Class="d-flex flex-row">
                         <MudAutocomplete T="TRoleDto" Label="Add to role" @bind-Value="@_foundedRole" SearchFuncWithCancel="@SearchRoles" Variant="Variant.Text" ShowProgressIndicator="true"
-                                         ToStringFunc="@(r=> r==null?null : $"{r.Name}")"/>
+                                         ToStringFunc="@(r => r == null ? null : $"{r.Name}")"/>
                         <MudIconButton Class="d-flex flex-row my-n1" Icon="@Icons.Material.Rounded.Add" Color="Color.Success" OnClick="@(AddRole)" aria-label="add"></MudIconButton>
                     </MudItem>
                     @ClaimsAndRolesAdditionalContent

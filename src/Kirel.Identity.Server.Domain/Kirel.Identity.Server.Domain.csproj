@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Kirel.Identity.Core" Version="1.0.2-main-24-a3f8fbfa"/>
+	</ItemGroup>
+
+</Project>

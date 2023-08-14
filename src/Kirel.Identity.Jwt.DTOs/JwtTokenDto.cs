@@ -9,6 +9,7 @@ public class JwtTokenDto
     /// Access jwt token
     /// </summary>
     public string AccessToken { get; set; } = "";
+
     /// <summary>
     /// Refresh jwt token
     /// </summary>

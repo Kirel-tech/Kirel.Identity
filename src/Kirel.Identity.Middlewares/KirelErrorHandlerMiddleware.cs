@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Kirel.Identity.Exceptions;
+﻿using Kirel.Identity.Exceptions;
 using Microsoft.AspNetCore.Http;
 
 namespace Kirel.Identity.Middlewares;
@@ -14,15 +13,16 @@ public class KirelErrorHandlerMiddleware
     /// <summary>
     /// Constructor of ErrorHandlerMiddleware
     /// </summary>
-    /// <param name="next">RequestDelegate</param>
+    /// <param name="next"> RequestDelegate </param>
     public KirelErrorHandlerMiddleware(RequestDelegate next)
     {
         _next = next;
     }
+
     /// <summary>
     /// Middleware call point
     /// </summary>
-    /// <param name="context">HttpContext</param>
+    /// <param name="context"> HttpContext </param>
     public async Task Invoke(HttpContext context)
     {
         try

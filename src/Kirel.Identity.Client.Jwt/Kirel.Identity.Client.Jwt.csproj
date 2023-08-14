@@ -1,23 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>disable</Nullable>
-        <PackageVersion>1.0.2$(VersionSuffix)</PackageVersion>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>disable</Nullable>
+		<PackageVersion>1.0.2$(VersionSuffix)</PackageVersion>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
 
-    <ItemGroup>
-      <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="6.0.13" />
-      <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
-      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.25.1" />
-    </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="6.0.13"/>
+		<PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0"/>
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.25.1"/>
+	</ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\Kirel.Identity.Client\Kirel.Identity.Client.csproj" />
-      <ProjectReference Include="..\Kirel.Identity.Jwt.DTOs\Kirel.Identity.Jwt.DTOs.csproj" />
-    </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Kirel.Identity.Client\Kirel.Identity.Client.csproj"/>
+		<ProjectReference Include="..\Kirel.Identity.Jwt.DTOs\Kirel.Identity.Jwt.DTOs.csproj"/>
+	</ItemGroup>
 
 </Project>

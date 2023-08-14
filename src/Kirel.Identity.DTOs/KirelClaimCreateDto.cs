@@ -9,6 +9,7 @@ public class KirelClaimCreateDto
     /// Claim type
     /// </summary>
     public string Type { get; set; }
+
     /// <summary>
     /// Claim value
     /// </summary>

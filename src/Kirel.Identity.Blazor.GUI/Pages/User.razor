@@ -1,0 +1,66 @@
+﻿@page "/user"
+@using Kirel.Blazor.Entities.Models
+@inject IHttpClientFactory HttpClientFactory
+@inject IMapper Mapper
+
+<AuthorizeView>
+    <Authorized>
+        <MudGrid Class="pl-5 pt-5 pr-5">
+            <MudItem xs="3">
+                @if (AuthorizedUserDto == null)
+                {
+                    <p>
+                        <em>Loading...</em>
+                    </p>
+                }
+                else
+                {
+                    <EntityPage TCreateDto="object" TDto="AuthorizedUserDto" TUpdateDto="AuthorizedUserUpdateDto"
+                                UpdateDto="@AuthorizedUserUpdateDto" Dto="AuthorizedUserDto" Options="@Options"
+                                HttpClientName="IdentityAuthorized" HttpRelativeUrl="authorized/user">
+                        <Content>
+                            <h3>Authorized User</h3>
+                            <EntityProperties UpdateDto="@AuthorizedUserUpdateDto" Dto="@AuthorizedUserDto"
+                                              TDto="AuthorizedUserDto" TCreateDto="object" TUpdateDto="AuthorizedUserUpdateDto"
+                                              Options="@Options"/>
+                        </Content>
+                    </EntityPage>
+                }
+            </MudItem>
+            <MudItem xs="9">
+                <b>JWT INFO:</b><br>
+                Claims count: @context.User.Claims.Count() <br>
+                @foreach (var claim in context.User.Claims)
+                {
+                    @($"{claim.Type} : {claim.Value}")<br>
+                }
+            </MudItem>
+        </MudGrid>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    private HttpClient HttpClient { get; set; }
+    private AuthorizedUserDto AuthorizedUserDto { get; set; }
+    private AuthorizedUserUpdateDto AuthorizedUserUpdateDto { get; } = new();
+    private EntityOptions Options { get; } = new() { Action = EntityAction.Edit };
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        HttpClient = HttpClientFactory.CreateClient("IdentityAuthorized");
+        var sync = await SyncDtos();
+        if (sync != null)
+            await base.OnInitializedAsync();
+    }
+
+    private async Task<object> SyncDtos()
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, "authorized/user");
+        var resp = await HttpClient.SendAsync(request);
+        AuthorizedUserDto = await resp.Content.ReadFromJsonAsync<AuthorizedUserDto>();
+        Mapper.Map(AuthorizedUserDto, AuthorizedUserUpdateDto);
+        return new object();
+    }
+
+}

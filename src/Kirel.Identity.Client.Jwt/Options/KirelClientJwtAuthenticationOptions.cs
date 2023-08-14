@@ -1,7 +1,7 @@
 ﻿namespace Kirel.Identity.Client.Jwt.Options;
 
 /// <summary>
-/// JWT Authentication options 
+/// JWT Authentication options
 /// </summary>
 public class KirelClientJwtAuthenticationOptions
 {
@@ -9,6 +9,7 @@ public class KirelClientJwtAuthenticationOptions
     /// Base url to authentication API endpoint
     /// </summary>
     public string BaseUrl { get; set; }
+
     /// <summary>
     /// Relative url to authentication API endpoint
     /// </summary>

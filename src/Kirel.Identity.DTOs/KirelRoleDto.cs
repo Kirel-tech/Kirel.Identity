@@ -9,12 +9,14 @@ public class KirelRoleDto<TKey, TClaimDto> where TClaimDto : KirelClaimDto
     /// Role Id
     /// </summary>
     public TKey Id { get; set; }
+
     /// <summary>
     /// Role name
     /// </summary>
     public string Name { get; set; } = "";
+
     /// <summary>
     /// List of user claims
     /// </summary>
-    public List<TClaimDto> Claims { get; set; }  = new ();
+    public List<TClaimDto> Claims { get; set; } = new();
 }

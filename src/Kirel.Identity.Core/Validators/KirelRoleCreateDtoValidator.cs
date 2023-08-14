@@ -8,7 +8,8 @@ namespace Kirel.Identity.Core.Validators;
 /// <summary>
 /// Validation for KirelRoleCreateDto
 /// </summary>
-public class KirelRoleCreateDtoValidator<TKey, TRole, TRoleCreateDto, TClaimCreateDto> : AbstractValidator<TRoleCreateDto> 
+public class
+    KirelRoleCreateDtoValidator<TKey, TRole, TRoleCreateDto, TClaimCreateDto> : AbstractValidator<TRoleCreateDto>
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
     where TRole : KirelIdentityRole<TKey>
     where TRoleCreateDto : KirelRoleCreateDto<TClaimCreateDto>
@@ -19,14 +20,14 @@ public class KirelRoleCreateDtoValidator<TKey, TRole, TRoleCreateDto, TClaimCrea
     /// <summary>
     /// Constructor for KirelRoleCreateDtoValidator
     /// </summary>
-    /// <param name="roleManager">Identity role manager</param>
+    /// <param name="roleManager"> Identity role manager </param>
     public KirelRoleCreateDtoValidator(RoleManager<TRole> roleManager)
     {
         _roleManager = roleManager;
         var message = "";
         RuleFor(dto => dto.Name).Must((_, roleName) => RoleNameUnique(roleName, out message)).WithMessage(_ => message);
     }
-    
+
     private bool RoleNameUnique(string roleName, out string errorMessage)
     {
         errorMessage = "";

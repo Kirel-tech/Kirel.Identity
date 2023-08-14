@@ -1,13 +1,13 @@
-﻿@typeparam TClaimCreateDto where TClaimCreateDto: KirelClaimCreateDto
-@typeparam TClaimUpdateDto where TClaimUpdateDto: KirelClaimUpdateDto
+﻿@typeparam TClaimCreateDto where TClaimCreateDto : KirelClaimCreateDto
+@typeparam TClaimUpdateDto where TClaimUpdateDto : KirelClaimUpdateDto
 @typeparam TClaimDto where TClaimDto : KirelClaimDto
 @typeparam TKey where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
 @typeparam TCreateDto where TCreateDto : KirelRoleCreateDto<TClaimCreateDto>, new()
 @typeparam TUpdateDto where TUpdateDto : KirelRoleUpdateDto<TClaimUpdateDto>, new()
 @typeparam TDto where TDto : KirelRoleDto<TKey, TClaimDto>, new()
 
-<EntityDialog TCreateDto="TCreateDto" TUpdateDto="TUpdateDto" TDto="TDto" 
-              CreateDto="CreateDto" UpdateDto="UpdateDto" Dto="Dto" 
+<EntityDialog TCreateDto="TCreateDto" TUpdateDto="TUpdateDto" TDto="TDto"
+              CreateDto="CreateDto" UpdateDto="UpdateDto" Dto="Dto"
               HttpClientName="@HttpClientName" HttpRelativeUrl="@HttpRelativeUrl" Options="Options"
               BeforeCreateRequest="BeforeEntityCreateRequest"
               BeforeUpdateRequest="BeforeEntityUpdateRequest">
@@ -16,11 +16,13 @@
             <MudGrid>
                 <MudItem xs="6">
                     <EntityProperties CreateDto="@CreateDto" UpdateDto="@UpdateDto" Dto="Dto"
-                                      TCreateDto="TCreateDto" TUpdateDto="TUpdateDto" TDto="TDto" 
+                                      TCreateDto="TCreateDto" TUpdateDto="TUpdateDto" TDto="TDto"
                                       Options="@Options"/>
                 </MudItem>
                 <MudItem xs="6">
-                    <MudText Typo="Typo.body1"><b>Claims</b></MudText>
+                    <MudText Typo="Typo.body1">
+                        <b>Claims</b>
+                    </MudText>
                     @foreach (var claim in _claims)
                     {
                         <MudItem xs="12" Class="d-flex flex-row">
@@ -29,8 +31,9 @@
                             <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="@(() => RemoveClaim(claim))" Color="Color.Error" Size="Size.Small" Class="ma-n1"/>
                         </MudItem>
                     }
-                    <MudIconButton Class="d-flex flex-row my-n1" Icon="@Icons.Material.Rounded.Add" Color="Color.Success" 
-                                   OnClick="AddClaim" aria-label="add"></MudIconButton>
+                    <MudIconButton Class="d-flex flex-row my-n1" Icon="@Icons.Material.Rounded.Add" Color="Color.Success"
+                                   OnClick="AddClaim" aria-label="add">
+                    </MudIconButton>
                 </MudItem>
             </MudGrid>
         </MudContainer>

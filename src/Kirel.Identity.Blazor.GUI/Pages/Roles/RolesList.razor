@@ -1,0 +1,115 @@
+﻿@page "/roles"
+@using CurrieTechnologies.Razor.Clipboard
+@using Kirel.Blazor.Shared
+@using Kirel.DTO
+@inject IHttpClientFactory HttpClientFactory
+@inject IDialogService DialogService
+@inject ClipboardService Clipboard
+
+<style>
+    div.myClass > div > div {
+        border-bottom: 1px solid lightgrey;
+    }
+    .mud-table-dense * .mud-table-row .mud-table-cell {
+        padding: 0px 10px 0px 10px;
+        padding-inline-start: 10px;
+        padding-inline-end: 10px;
+    }
+</style>
+
+<MudTable Bordered="@true" Striped="@true" Dense="@true" @ref="_table" ServerData="@(new Func<TableState, Task<TableData<RoleDto>>>(ServerReload))" Breakpoint="Breakpoint.Sm" Hover="true">
+    <ToolBarContent>
+        <MudText Class="small">Add Role</MudText>
+        <MudIconButton Class="float-left" Icon="@Icons.Material.Rounded.Add" Color="Color.Success" OnClick="@(() => ShowRoleDialog(null))" aria-label="add"></MudIconButton>
+        <MudSpacer/>
+        <MudTextField T="string" ValueChanged="@(OnSearch)" Placeholder="Search" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0">
+        </MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>
+            <MudTableSortLabel SortLabel="Id" T="RoleDto">Id</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortLabel="Name" T="RoleDto">Name</MudTableSortLabel>
+        </MudTh>
+        <MudTh>Edit</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Id">
+            <MudIconButton Size="Size.Small" Icon="@Icons.Material.Outlined.ContentCopy" Color="Color.Info"
+                           @onclick="async _ => await Clipboard.WriteTextAsync(context.Id.ToString())">
+            </MudIconButton>
+            @context.Id
+        </MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd Style="white-space: nowrap; width: 1%;" DataLabel="Options">
+            <MudIconButton Size="Size.Small" Icon="@Icons.Material.TwoTone.Edit" Color="Color.Info"
+                           OnClick="@(() => ShowRoleDialog(context))">
+            </MudIconButton>
+        </MudTd>
+    </RowTemplate>
+    <NoRecordsContent>
+        <MudText>No matching records found</MudText>
+    </NoRecordsContent>
+    <LoadingContent>
+        <MudText>Loading...</MudText>
+    </LoadingContent>
+    <PagerContent>
+        <MudTablePager/>
+    </PagerContent>
+</MudTable>
+
+@code {
+    private readonly string _relativeUrl = "roles";
+    private string _searchString = "";
+    private MudTable<RoleDto> _table;
+    private HttpClient _httpClient;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _httpClient = HttpClientFactory.CreateClient("IdentityAuthorized");
+        await base.OnInitializedAsync();
+    }
+
+    private async Task<TableData<RoleDto>> ServerReload(TableState state)
+    {
+        var uriParamsStr = HttpRequestParamsGenerator.GetListParams(state);
+        if (!string.IsNullOrEmpty(_searchString))
+            uriParamsStr += $"&search={_searchString}";
+
+        var request = new HttpRequestMessage(HttpMethod.Get, $"{_relativeUrl}?{uriParamsStr}");
+        var response = await _httpClient.SendAsync(request);
+        if (!response.IsSuccessStatusCode) return new TableData<RoleDto>();
+        var paginatedList = await response.Content.ReadFromJsonAsync<PaginatedResult<List<RoleDto>>>();
+        if (paginatedList != null)
+        {
+            return new TableData<RoleDto> { TotalItems = paginatedList.Pagination.TotalCount, Items = paginatedList.Data };
+        }
+        return new TableData<RoleDto>();
+    }
+
+    private async Task ReloadServerDataOnDialogClose(IDialogReference dialogReference)
+    {
+        var diagResult = await dialogReference.Result;
+        if (diagResult != null)
+        {
+            await _table.ReloadServerData();
+        }
+    }
+
+    private async void ShowRoleDialog(RoleDto roleDto)
+    {
+        var dialogOptions = new DialogOptions { MaxWidth = MaxWidth.Medium, FullWidth = true };
+        var parameters = new DialogParameters { { "Dto", roleDto } };
+        var dialog = await DialogService.ShowAsync<RoleDialog>("Role", parameters, dialogOptions);
+        await ReloadServerDataOnDialogClose(dialog);
+    }
+
+    private void OnSearch(string text)
+    {
+        _searchString = text;
+        _table?.ReloadServerData();
+    }
+
+}

@@ -11,11 +11,11 @@ public class KirelAuthOptions
     /// <summary>
     /// AuthOptions constructor
     /// </summary>
-    /// <param name="issuer">Token publisher</param>
-    /// <param name="audience">Token consumer</param>
-    /// <param name="key">Encryption key</param>
-    /// <param name="accessLifetime">Access token lifetime(in minutes)</param>
-    /// <param name="refreshLifetime">Refresh token lifetime(in minutes)</param>
+    /// <param name="issuer"> Token publisher </param>
+    /// <param name="audience"> Token consumer </param>
+    /// <param name="key"> Encryption key </param>
+    /// <param name="accessLifetime"> Access token lifetime(in minutes) </param>
+    /// <param name="refreshLifetime"> Refresh token lifetime(in minutes) </param>
     public KirelAuthOptions(string issuer, string audience, string key, int accessLifetime, int refreshLifetime)
     {
         Issuer = issuer;
@@ -36,18 +36,22 @@ public class KirelAuthOptions
     /// Token publisher
     /// </summary>
     public string Issuer { get; set; } = "";
+
     /// <summary>
     /// Token consumer
     /// </summary>
     public string Audience { get; set; } = "";
+
     /// <summary>
     /// Encryption key
     /// </summary>
     public string Key { get; set; } = "";
+
     /// <summary>
     /// Access token lifetime(in minutes)
     /// </summary>
     public int AccessLifetime { get; set; }
+
     /// <summary>
     /// Refresh token lifetime(in minutes)
     /// </summary>
@@ -56,7 +60,7 @@ public class KirelAuthOptions
     /// <summary>
     /// Method for getting symmetric security key
     /// </summary>
-    /// <returns>Symmetric security key</returns>
+    /// <returns> Symmetric security key </returns>
     public SymmetricSecurityKey GetSymmetricSecurityKey(string key)
     {
         return new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key));

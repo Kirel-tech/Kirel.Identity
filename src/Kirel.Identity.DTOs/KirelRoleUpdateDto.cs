@@ -8,9 +8,10 @@ public class KirelRoleUpdateDto<TClaimUpdateDto> where TClaimUpdateDto : KirelCl
     /// <summary>
     /// Role name
     /// </summary>
-    public string Name { get; set; }  = "";
+    public string Name { get; set; } = "";
+
     /// <summary>
     /// List of user claims
     /// </summary>
-    public List<TClaimUpdateDto> Claims { get; set; }  = new ();
+    public List<TClaimUpdateDto> Claims { get; set; } = new();
 }

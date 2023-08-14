@@ -9,16 +9,24 @@ public class KirelUnauthorizedException : Exception
     /// <summary>
     /// Initializes a new instance of Kirel unauthorized exception.
     /// </summary>
-    public KirelUnauthorizedException(){}
+    public KirelUnauthorizedException()
+    {
+    }
+
     /// <summary>
     /// Initializes a new instance of Kirel unauthorized exception.
     /// </summary>
-    /// <param name="message">Exception message</param>
-    public KirelUnauthorizedException(string message): base(message) {}
+    /// <param name="message"> Exception message </param>
+    public KirelUnauthorizedException(string message) : base(message)
+    {
+    }
+
     /// <summary>
     /// Initializes a new instance of Kirel unauthorized exception.
     /// </summary>
-    /// <param name="message">Exception message</param>
-    /// <param name="innerEx">Inner exception</param>
-    public KirelUnauthorizedException(string message, Exception innerEx) : base(message, innerEx) {}
+    /// <param name="message"> Exception message </param>
+    /// <param name="innerEx"> Inner exception </param>
+    public KirelUnauthorizedException(string message, Exception innerEx) : base(message, innerEx)
+    {
+    }
 }
