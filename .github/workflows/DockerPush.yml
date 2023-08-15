@@ -32,7 +32,7 @@ jobs:
           echo "IMAGE_TAG: ${tag}"
           echo "IMAGE_TAG_SHA: ${tag_sha}"
           echo "IMAGE_NAME: ${image}"
-          echo "IMAGE_TAG=${image}" >> "$GITHUB_ENV"
+          echo "IMAGE_TAG=${tag}" >> "$GITHUB_ENV"
           echo "IMAGE_TAG_SHA=${tag_sha}" >> "$GITHUB_ENV"
           echo "IMAGE_NAME=${image}" >> "$GITHUB_ENV"
       - name: Build Docker image
