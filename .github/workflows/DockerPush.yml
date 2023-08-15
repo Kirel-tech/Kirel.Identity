@@ -1,0 +1,49 @@
+﻿---
+name: Docker images push
+on:
+  push:
+    branches:
+      - "main"
+    tags:
+      - "[0-9]+.[0-9]+.[0-9]+"
+
+jobs:
+  publish:
+    name: Build and publish docker images
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        package: [ Server.API ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Prepare env
+        run: |
+          short_sha=$(echo ${GITHUB_SHA} | cut -c1-7)
+          tag=latest
+          tag_sha=${tag}-${short_sha}
+          image=$(echo "kireltech/kirel.identity.${{ matrix.package }}" | tr '[:upper:]' '[:lower:]')
+          if [ "${GITHUB_REF}" != "refs/heads/main" ];  then
+            tag=$(cat src/Kirel.Identity.${{ matrix.package }}/Kirel.Identity.${{ matrix.package }}.csproj | grep PackageVersion |sed s/'\s'//g | sed 's/<\/PackageVersion>//g' | sed 's/<PackageVersion>//g' | sed 's/$(VersionSuffix)//g')
+            tag_sha=${tag}
+          fi
+          echo "REF: ${GITHUB_REF}"
+          echo "IMAGE_TAG: ${tag}"
+          echo "IMAGE_TAG_SHA: ${tag_sha}"
+          echo "IMAGE_NAME: ${image}"
+          echo "IMAGE_TAG=${image}" >> "$GITHUB_ENV"
+          echo "IMAGE_TAG_SHA=${tag_sha}" >> "$GITHUB_ENV"
+          echo "IMAGE_NAME=${image}" >> "$GITHUB_ENV"
+      - name: Build Docker image
+        run: |
+          cd src && docker build -t ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG_SHA }} -f Kirel.Identity.${{ matrix.package }}/Dockerfile .
+      - name: Docker login
+        run: |
+          echo "${{ secrets.RELEASE_DOCKERHUB_TOKEN }}" |\
+                       docker login -u "${{ secrets.RELEASE_DOCKERHUB_ACCOUNT }}" --password-stdin
+      - name: Docker push
+        run: |
+          docker tag "${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG_SHA }}" "${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}"
+          docker push "${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG_SHA }}"
+          docker push "${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}"

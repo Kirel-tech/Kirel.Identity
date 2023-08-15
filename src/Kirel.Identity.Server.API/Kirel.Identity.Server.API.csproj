@@ -5,6 +5,7 @@
 		<Nullable>disable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<PackageVersion>1.0.2$(VersionSuffix)</PackageVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
