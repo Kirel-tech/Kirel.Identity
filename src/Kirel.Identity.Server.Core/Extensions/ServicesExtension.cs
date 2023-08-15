@@ -15,13 +15,13 @@ public static class ServicesExtension
     /// </summary>
     /// <param name="services"> services collection </param>
     /// <param name="jwtConfig"> JWT Token generation config </param>
-    public static void AddServices(this IServiceCollection services, JwtAuthenticationConfig jwtConfig)
+    public static void AddServices(this IServiceCollection services, JwtAuthenticationConfig jwtConfig  )
     {
         services.AddScoped<AuthenticationService>();
         services.AddScoped<AuthorizedUserService>();
         services.AddScoped<UserService>();
         services.AddScoped<RoleService>();
-
+        services.AddScoped<RegistrationService>();
         // configure JWT Tokens issue
         var kirelAuthOptions = new KirelAuthOptions
         {
