@@ -3,71 +3,89 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Kirel.Identity.Server.Infrastructure.Contexts;
-
-/// <summary>
-/// Database context initializer
-/// </summary>
-public static class IdentityServerDbInitializer
+namespace Kirel.Identity.Server.Infrastructure.Contexts
 {
     /// <summary>
-    /// Method for data initialisation
+    /// Class responsible for initializing the Identity Server database
     /// </summary>
-    /// <param name="serviceProvider"> Parameter of IServiceProvider </param>
-    /// <param name="maintenance"> Config maintenance </param>
-    public static async Task Initialize<TDbContext>(IServiceProvider serviceProvider, MaintenanceConfig maintenance)
-        where TDbContext : DbContext
+    public static class IdentityServerDbInitializer
     {
-        var dataContext = serviceProvider.GetRequiredService<TDbContext>();
-        await dataContext.Database.MigrateAsync();
-        var roleManager = serviceProvider.GetRequiredService<RoleManager<Role>>();
-        var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
-        var adminRoleExist = true;
-        var adminRole = await roleManager.FindByNameAsync("Admin");
-        if (adminRole == null)
+        /// <summary>
+        /// Initializes the Identity Server database with roles and users.
+        /// </summary>
+        /// <typeparam name="TDbContext">The type of the database context.</typeparam>
+        /// <param name="serviceProvider">The service provider.</param>
+        /// <param name="maintenanceConfig">The maintenance configuration.</param>
+        public static async Task Initialize<TDbContext>(IServiceProvider serviceProvider, MaintenanceConfig maintenanceConfig)
+            where TDbContext : DbContext
         {
-            adminRole = new Role { Name = "Admin", NormalizedName = "ADMIN" };
-            var result = await roleManager.CreateAsync(adminRole);
-            if (!result.Succeeded)
-                adminRoleExist = false;
-        }
+            var dataContext = serviceProvider.GetRequiredService<TDbContext>();
+            await dataContext.Database.MigrateAsync();
+            
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<Role>>();
+            var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
 
-        var coursesManagerRoleExist = true;
-        var coursesManagerRole = await roleManager.FindByNameAsync("Courses.Manager");
-        if (coursesManagerRole == null)
-        {
-            coursesManagerRole = new Role { Name = "Courses.Manager", NormalizedName = "COURSES.MANAGER" };
-            var result = await roleManager.CreateAsync(coursesManagerRole);
-            if (!result.Succeeded)
-                coursesManagerRoleExist = false;
-        }
-
-        var adminUserExist = true;
-        var adminUser = await userManager.FindByNameAsync("Admin");
-        if (adminUser == null)
-        {
-            adminUser = new User
+            if (maintenanceConfig?.Admin?.Reset == true)
             {
-                UserName = "Admin", Email = "admin@citmed.ru", Name = "Admin", LastName = "Default"
-            };
-            var result = await userManager.CreateAsync(adminUser, "Admin@123");
-            if (!result.Succeeded)
-                adminUserExist = false;
+                var adminUser = await userManager.FindByNameAsync("Admin");
+                var newPassword = maintenanceConfig.Admin.Password ?? "Admin@123";
+                await userManager.RemovePasswordAsync(adminUser);
+                await userManager.AddPasswordAsync(adminUser, newPassword);
+            }
+
+            foreach (var roleConfig in maintenanceConfig!.Roles)
+            {
+                var roleName = roleConfig.Name;
+                var roleNormalizedName = roleConfig.NormalizedName;
+
+                var roleExist = await roleManager.RoleExistsAsync(roleName);
+                if (!roleExist)
+                {
+                    var role = new Role { Name = roleName, NormalizedName = roleNormalizedName };
+                    var result = await roleManager.CreateAsync(role);
+                    if (!result.Succeeded)
+                    {
+                        
+                    }
+                }
+            }
+
+            foreach (var userConfig in maintenanceConfig.Users)
+            {
+                var userName = userConfig.UserName;
+                var email = userConfig.Email;
+                var name = userConfig.Name;
+                var lastName = userConfig.LastName;
+                var password = userConfig.Password;
+
+                var userExist = await userManager.FindByNameAsync(userName);
+                if (userExist == null)
+                {
+                    var user = new User
+                    {
+                        UserName = userName,
+                        Email = email,
+                        Name = name,
+                        LastName = lastName
+                    };
+                    var result = await userManager.CreateAsync(user, password);
+                    if (!result.Succeeded)
+                    {
+                        
+                    }
+
+                    if (userConfig.Roles != null)
+                        foreach (var roleName in userConfig.Roles)
+                        {
+                            if (await roleManager.RoleExistsAsync(roleName))
+                            {
+                                await userManager.AddToRoleAsync(user, roleName);
+                            }
+                        }
+                }
+            }
+
+            
         }
-
-        if (adminUserExist && maintenance.Admin.Reset)
-        {
-            var newPassword = maintenance.Admin.Password != "" ? maintenance.Admin.Password : "Admin@123";
-            await userManager.RemovePasswordAsync(adminUser);
-            await userManager.AddPasswordAsync(adminUser, newPassword);
-        }
-
-        if (!adminUserExist || !adminRoleExist) return;
-        if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
-            await userManager.AddToRoleAsync(adminUser, "Admin");
-
-        if (!adminUserExist || !coursesManagerRoleExist) return;
-        if (!await userManager.IsInRoleAsync(adminUser, "Courses.Manager"))
-            await userManager.AddToRoleAsync(adminUser, "Courses.Manager");
     }
 }
