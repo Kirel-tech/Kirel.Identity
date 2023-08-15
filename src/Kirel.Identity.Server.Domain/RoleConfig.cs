@@ -8,11 +8,11 @@ namespace Kirel.Identity.Server.Domain
         /// <summary>
         /// Gets or sets the role name.
         /// </summary>
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// Gets or sets the normalized role name.
         /// </summary>
-        public string NormalizedName { get; set; }
+        public string? NormalizedName { get; set; }
     }
 }
