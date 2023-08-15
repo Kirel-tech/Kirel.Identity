@@ -1,4 +1,4 @@
-﻿namespace Kirel.Identity.Server.Domain;
+namespace Kirel.Identity.Server.Domain;
 
 /// <summary>
 /// Configuration class for maintenance settings
