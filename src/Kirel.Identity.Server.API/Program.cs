@@ -1,4 +1,5 @@
 using Kirel.Identity.Middlewares;
+using Kirel.Identity.Server.API.Controllers;
 using Kirel.Identity.Server.API.Extensions;
 using Kirel.Identity.Server.Core.Extensions;
 using Kirel.Identity.Server.Core.Filters;
@@ -42,18 +43,17 @@ builder.Services.AddValidators();
 builder.Services.AddServices(jwtConfig);
 
 bool enableRegistrationController = builder.Configuration.GetValue<bool>("RegistrationEnable");
+string[] disabledControllers = builder.Configuration.GetSection("DisabledControllers").Get<string[]>();
+
 builder.Services.AddControllers(options =>
 {
-    
-
-    options.Filters.Add(new EnabledControllerAttribute(enableRegistrationController));
-    
-});
+    options.Filters.Add(new EnabledControllerAttribute(enableRegistrationController, disabledControllers));
+}).AddApplicationPart(typeof(RegistrationController).Assembly);
 // Add ASP.NET authentication configuration
 builder.Services.AddAuthenticationConfiguration(jwtConfig);
 
 // Add custom swagger configuration
-builder.Services.AddSwagger(enableRegistrationController);
+builder.Services.AddSwagger(enableRegistrationController,disabledControllers);
 
 builder.Services.AddCors(options =>
 {
