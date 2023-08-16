@@ -1,5 +1,4 @@
 ﻿using Kirel.Identity.Controllers;
-using Kirel.Identity.Server.Core.Filters;
 using Kirel.Identity.Server.Core.Services;
 using Kirel.Identity.Server.Domain;
 using Kirel.Identity.Server.DTOs;
@@ -11,8 +10,6 @@ namespace Kirel.Identity.Server.API.Controllers;
 
 [ApiController]
 [Route("registration")]
-[EnableIfSetting(true)] 
-[ApiExplorerSettings(IgnoreApi = true)]
 public class RegistrationController : KirelRegistrationController<RegistrationService, UserRegistrationDto, Guid, User>
 {
     /// <inheritdoc />
