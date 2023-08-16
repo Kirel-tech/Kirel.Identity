@@ -14,7 +14,7 @@ public static class SwaggerExtension
     /// </summary>
     /// <param name="services"> </param>
     /// <param name="enableRegistrationController">controller status </param>
-    public static void AddSwagger(this IServiceCollection services,bool enableRegistrationController)
+    public static void AddSwagger(this IServiceCollection services,bool enableRegistrationController,string[] disabledControllers)
     {
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         services.AddEndpointsApiExplorer();
@@ -28,7 +28,7 @@ public static class SwaggerExtension
             //Set the comments path for the swagger json and ui.
             var xmlFiles = Directory.GetFiles(AppContext.BaseDirectory, "*.xml", SearchOption.TopDirectoryOnly)
                 .ToList();
-            c.DocumentFilter<EnabledControllerAttribute>(enableRegistrationController);
+            c.DocumentFilter<EnabledControllerAttribute>(enableRegistrationController, disabledControllers);
         
             xmlFiles.ForEach(xmlFile => c.IncludeXmlComments(xmlFile));
             // Add JWT token authorization support
