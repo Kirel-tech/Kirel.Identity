@@ -41,19 +41,20 @@ builder.Services.AddValidators();
 // Add Identity services and jwt token issuing service, that works with DTOs and with fluent validation framework
 builder.Services.AddServices(jwtConfig);
 
-
+bool enableRegistrationController = builder.Configuration.GetSection("RegistrationEnable")
+    .GetValue<bool>("EnableRegistrationController");
 builder.Services.AddControllers(options =>
 {
-    bool enableRegistrationController = builder.Configuration.GetSection("ControllerState")
-        .GetValue<bool>("EnableRegistrationController");
+    
 
-    options.Filters.Add(new EnableIfSettingAttribute(enableRegistrationController));
+    options.Filters.Add(new EnabledControllerAttribute(enableRegistrationController));
+    
 });
 // Add ASP.NET authentication configuration
 builder.Services.AddAuthenticationConfiguration(jwtConfig);
 
 // Add custom swagger configuration
-builder.Services.AddSwagger();
+builder.Services.AddSwagger(enableRegistrationController);
 
 builder.Services.AddCors(options =>
 {
