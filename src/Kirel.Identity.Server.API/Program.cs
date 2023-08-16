@@ -41,8 +41,7 @@ builder.Services.AddValidators();
 // Add Identity services and jwt token issuing service, that works with DTOs and with fluent validation framework
 builder.Services.AddServices(jwtConfig);
 
-bool enableRegistrationController = builder.Configuration.GetSection("RegistrationEnable")
-    .GetValue<bool>("EnableRegistrationController");
+bool enableRegistrationController = builder.Configuration.GetValue<bool>("RegistrationEnable");
 builder.Services.AddControllers(options =>
 {
     
