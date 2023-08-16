@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Kirel.Identity.Server.API.Controllers;
 
 /// <inheritdoc />
+
 [ApiController]
 [Route("registration")]
 public class RegistrationController : KirelRegistrationController<RegistrationService, UserRegistrationDto, Guid, User>
