@@ -13,14 +13,16 @@ namespace Kirel.Identity.Server.Core.Filters
     public class EnabledControllerAttribute : Attribute, IActionFilter, IDocumentFilter
     {
         private readonly bool _isEnabled;
+        private readonly string[] _disabledControllers;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EnabledControllerAttribute"/> class.
         /// </summary>
         /// <param name="isEnabled">A value indicating whether action execution is enabled.</param>
-        public EnabledControllerAttribute(bool isEnabled)
+        public EnabledControllerAttribute(bool isEnabled, string[] disabledControllers)
         {
             _isEnabled = isEnabled;
+            _disabledControllers = disabledControllers;
         }
 
         /// <summary>
@@ -53,10 +55,23 @@ namespace Kirel.Identity.Server.Core.Filters
         {
             if (!_isEnabled)
             {
-                var registrationController = swaggerDoc.Paths.FirstOrDefault(p => p.Key.Contains("registration"));
-                if (registrationController.Key != null)
+                var pathsToRemove = new List<string>();
+
+                foreach (var path in swaggerDoc.Paths.Keys)
                 {
-                    swaggerDoc.Paths.Remove(registrationController.Key);
+                    foreach (var disabledController in _disabledControllers)
+                    {
+                        if (path.Contains($"/{disabledController}"))
+                        {
+                            pathsToRemove.Add(path);
+                            break;
+                        }
+                    }
+                }
+
+                foreach (var pathToRemove in pathsToRemove)
+                {
+                    swaggerDoc.Paths.Remove(pathToRemove);
                 }
             }
         }
