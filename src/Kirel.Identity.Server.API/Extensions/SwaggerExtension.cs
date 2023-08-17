@@ -1,4 +1,5 @@
-﻿using Kirel.Identity.Server.Swagger.Shared;
+﻿using Kirel.Identity.Server.API.Filters;
+using Kirel.Identity.Server.Swagger.Shared;
 using Microsoft.OpenApi.Models;
 
 namespace Kirel.Identity.Server.API.Extensions;
@@ -12,15 +13,16 @@ public static class SwaggerExtension
     /// Add swagger documentation stuff to DI
     /// </summary>
     /// <param name="services"> </param>
-    public static void AddSwagger(this IServiceCollection services)
+    /// <param name="disabledControllers"> </param>
+    public static void AddSwagger(this IServiceCollection services, List<Type> disabledControllers)
     {
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         services.AddEndpointsApiExplorer();
-        // Configure swagger
+
         services.AddSwaggerGen(c =>
         {
             //Add swagger xml docs
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "Identity Server API", Version = "v1" });
+            c.DocumentFilter<EnabledControllerDocumentFilter>(disabledControllers);
             //Set the comments path for the swagger json and ui.
             var xmlFiles = Directory.GetFiles(AppContext.BaseDirectory, "*.xml", SearchOption.TopDirectoryOnly)
                 .ToList();
