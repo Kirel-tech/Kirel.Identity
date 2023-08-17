@@ -1,6 +1,8 @@
 ﻿using Kirel.Identity.Core.Models;
+
 using Kirel.Identity.Server.Core.Services;
 using Kirel.Identity.Server.Jwt.Shared;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Kirel.Identity.Server.Core.Extensions;
@@ -21,6 +23,7 @@ public static class ServicesExtension
         services.AddScoped<AuthorizedUserService>();
         services.AddScoped<UserService>();
         services.AddScoped<RoleService>();
+        services.AddScoped<RegistrationService>();
 
         // configure JWT Tokens issue
         var kirelAuthOptions = new KirelAuthOptions
