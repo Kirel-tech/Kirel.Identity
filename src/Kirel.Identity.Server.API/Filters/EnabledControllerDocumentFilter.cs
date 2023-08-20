@@ -17,7 +17,7 @@ public class EnabledControllerDocumentFilter : IDocumentFilter
 {
     private readonly DisabledControllerTypes _disabledControllerTypes;
     /// <summary>
-    /// Initializes a new instance of the <see cref="EnabledControllerAttribute"/> class.
+    /// Initializes a new instance of the <see cref="EnabledControllerDocumentFilter"/> class.
     /// </summary>
     /// <param name="disabledControllerTypes">The list of disabled controller types.</param>
     public EnabledControllerDocumentFilter(DisabledControllerTypes disabledControllerTypes)
