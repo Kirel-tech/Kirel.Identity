@@ -16,6 +16,7 @@ public static class SwaggerExtension
     /// <param name="disabledControllers"> </param>
     public static void AddSwagger(this IServiceCollection services, List<Type> disabledControllers)
     {
+        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         services.AddEndpointsApiExplorer();
 
         services.AddSwaggerGen(c =>
