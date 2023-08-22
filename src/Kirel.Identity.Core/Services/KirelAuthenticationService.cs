@@ -1,4 +1,5 @@
-﻿using Kirel.Identity.Core.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using Kirel.Identity.Core.Models;
 using Kirel.Identity.Exceptions;
 using Microsoft.AspNetCore.Identity;
 
@@ -39,7 +40,11 @@ public class KirelAuthenticationService<TKey, TUser>
     {
         if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password))
             throw new KirelAuthenticationException("Login or password cannot be empty");
-        var user = await UserManager.FindByNameAsync(login);
+        bool isEmail = new EmailAddressAttribute().IsValid(login);
+        // Find the user by login (username or email) based on the input
+        var user = isEmail
+            ? await UserManager.FindByEmailAsync(login)
+            : await UserManager.FindByNameAsync(login);
         if (user == null) throw new KirelIdentityStoreException($"User with login {login} is not found");
         var result = await UserManager.CheckPasswordAsync(user, password);
         if (!result) throw new KirelAuthenticationException("Wrong password");
