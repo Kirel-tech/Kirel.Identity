@@ -31,7 +31,6 @@ public class KirelRegistrationController<TRegistrationService, TRegistrationDto,
     {
         Service = service;
     }
-
     /// <summary>
     /// User registration
     /// </summary>
@@ -42,5 +41,25 @@ public class KirelRegistrationController<TRegistrationService, TRegistrationDto,
     {
         await Service.Registration(registrationDto);
         return NoContent();
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="token"></param>
+    /// <returns></returns>
+    [HttpGet("confirm")]
+    public async Task<IActionResult> ConfirmEmail(TKey userId, string token)
+    {
+        try
+        {
+            await Service.ConfirmEmailAsync(userId, token);
+            return Ok("Email confirmed successfully.");
+        }
+        catch (Exception ex)
+        {
+            // Обработка ошибки подтверждения email
+            return BadRequest($"Email confirmation failed: {ex.Message}");
+        }
     }
 }

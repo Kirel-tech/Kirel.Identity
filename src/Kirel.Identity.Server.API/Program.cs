@@ -21,13 +21,20 @@ var registrationDisabled = builder.Configuration.GetValue<bool>("RegistrationDis
 var disabledControllers = new DisabledControllerTypes();
 if (registrationDisabled) disabledControllers.Add(typeof(RegistrationController));
 
+builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+{
+    options.TokenLifespan = TimeSpan.FromHours(90); // Настройте желаемое время жизни токена
+});
 
 
 // Add Identity framework db context based on Kirel Identity templates
 // with ability to change db driver (mssql, mysql, postgresql)
 builder.Services.AddDbContextByConfig<IdentityServerDbContext, MssqlIdentityServerDbContext,
     PostgresqlIdentityServerDbContext, MysqlIdentityServerDbContext, SqliteIdentityServerDbContext>(dbConfig);
-builder.Services.AddIdentity<User, Role>().AddEntityFrameworkStores<IdentityServerDbContext>();
+builder.Services.AddIdentity<User, Role>()
+    .AddEntityFrameworkStores<IdentityServerDbContext>()
+    .AddDefaultTokenProviders();
+
 builder.Services.Configure<IdentityOptions>(options =>
 {
     // Password settings.
@@ -35,9 +42,11 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireLowercase = true;
     options.Password.RequireNonAlphanumeric = true;
     options.Password.RequireUppercase = true;
-
+    /*options.SignIn.RequireConfirmedEmail = true;*/
     // User settings.
-    options.User.RequireUniqueEmail = false;
+    options.User.RequireUniqueEmail = true;
+    //options.Tokens.EmailConfirmationTokenProvider = "Email";
+    //options.Tokens.
 });
 
 // Add identity mappers

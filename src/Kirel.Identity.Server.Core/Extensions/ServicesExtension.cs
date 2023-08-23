@@ -36,5 +36,6 @@ public static class ServicesExtension
         };
         services.AddSingleton(kirelAuthOptions);
         services.AddScoped<JwtTokenService>();
+        
     }
 }
