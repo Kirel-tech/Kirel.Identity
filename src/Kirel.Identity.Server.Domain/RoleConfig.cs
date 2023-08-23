@@ -9,7 +9,6 @@ public class RoleConfig
     /// Gets or sets the role name.
     /// </summary>
     public string Name { get; set; } = "";
-
     /// <summary>
     /// Gets or sets the normalized role name.
     /// </summary>
