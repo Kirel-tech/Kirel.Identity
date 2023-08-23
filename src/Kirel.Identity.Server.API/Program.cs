@@ -15,12 +15,11 @@ var builder = WebApplication.CreateBuilder(args);
 var jwtConfig = builder.Configuration.GetSection("jwt").Get<JwtAuthenticationConfig>();
 var dbConfig = builder.Configuration.GetSection("dbConfig").Get<DbConfig>();
 var maintenanceConfig = builder.Configuration.GetSection("maintenance").Get<MaintenanceConfig>();
+var dataSeedConfig = builder.Configuration.GetSection("DataSeeding").Get<DataSeedConfig>();
 var registrationDisabled = builder.Configuration.GetValue<bool>("RegistrationDisabled");
-
 //To disable controller add him here like disabledControllers.Add(typeof(RegistrationController));
 var disabledControllers = new DisabledControllerTypes();
 if (registrationDisabled) disabledControllers.Add(typeof(RegistrationController));
-
 
 
 // Add Identity framework db context based on Kirel Identity templates
@@ -74,7 +73,8 @@ var app = builder.Build();
 
 //Apply migrations to db, create admin user and role, do maintenance admin password reset if needed
 await IdentityServerDbInitializer.Initialize<IdentityServerDbContext>(
-    app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope().ServiceProvider, maintenanceConfig);
+    app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope().ServiceProvider, maintenanceConfig,
+    dataSeedConfig);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
