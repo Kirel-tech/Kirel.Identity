@@ -54,8 +54,9 @@ public class KirelRegistrationService<TKey, TUser, TRegistrationDto>
             throw new KirelIdentityStoreException("Failed to create new user");
 
         // Generate the email confirmation token and confirmation link
-        var token = await UserManager.GenerateUserTokenAsync(appUser, "Default", "EmailConfirmation");
-        var confirmationLink = GenerateConfirmationLink(appUser.Id, token);
+        var token = await UserManager.GenerateEmailConfirmationTokenAsync(appUser);
+        
+        var confirmationLink = GenerateConfirmationLink(appUser.Id,token);
         // Send the confirmation email
         await SendConfirmationEmailAsync(appUser.Email, confirmationLink);
 
@@ -115,11 +116,11 @@ public class KirelRegistrationService<TKey, TUser, TRegistrationDto>
     public async Task ConfirmEmailAsync(TKey userId, string token)
     {
         // Проверьте наличие userId и token, а затем вызовите ConfirmEmailAsync
-        var user = await UserManager.FindByIdAsync(userId.ToString());
+        TUser user = await UserManager.FindByIdAsync(userId.ToString());
         if (user != null)
         {
-            var result = await UserManager.VerifyUserTokenAsync(user,"Default","EmailConfirmation", token);
-            if (!result)
+            var result = await UserManager.ConfirmEmailAsync(user, token);
+            if (!result.Succeeded)
             {   
                 // Обработка ошибки подтверждения email
                 throw new Exception("Email confirmation failed.");

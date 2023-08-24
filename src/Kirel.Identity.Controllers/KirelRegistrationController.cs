@@ -61,5 +61,5 @@ public class KirelRegistrationController<TRegistrationService, TRegistrationDto,
             // Обработка ошибки подтверждения email
             return BadRequest($"Email confirmation failed: {ex.Message}");
         }
-    }
+    }   
 }
