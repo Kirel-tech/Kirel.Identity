@@ -8,15 +8,15 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Kirel.Identity.Core" Version="1.0.2-main-24-a3f8fbfa"/>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.12"/>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.12"/>
-		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.8"/>
-		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.2"/>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.12" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.12" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.8" />
+		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.2" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Kirel.Identity.Server.Domain\Kirel.Identity.Server.Domain.csproj"/>
+		<ProjectReference Include="..\Kirel.Identity.Core\Kirel.Identity.Core.csproj" />
+		<ProjectReference Include="..\Kirel.Identity.Server.Domain\Kirel.Identity.Server.Domain.csproj" />
 	</ItemGroup>
 
 </Project>
