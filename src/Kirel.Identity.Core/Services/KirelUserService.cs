@@ -177,36 +177,56 @@ public class KirelUserService<TKey, TUser, TRole, TUserRole, TUserDto, TUserCrea
     /// <param name="search"> Search keyword </param>
     /// <param name="orderBy"> Field name to order by </param>
     /// <param name="orderDirection"> Ascending or descending order direction </param>
+    /// <param name="roleIds"> Id's of the roles for users filtering </param>
     /// <returns> List of users dto with pagination </returns>
     /// <exception cref="ArgumentOutOfRangeException"> If passed wrong sort direction </exception>
     public virtual async Task<PaginatedResult<List<TUserDto>>> GetUsersList(int page, int pageSize, string search,
-        string orderBy, SortDirection orderDirection)
+        string orderBy, SortDirection orderDirection, IEnumerable<TKey>? roleIds = null)
     {
         page = page < 1 ? 0 : page;
         pageSize = pageSize < 1 ? 0 : pageSize;
-        Expression<Func<TUser, bool>> filterExpression = null;
-        Expression<Func<TUser, object>> orderExpression = null;
-
+        Expression<Func<TUser, bool>>? searchExpression = _ => true;
+        Expression<Func<TUser, bool>>? rolesIdsExpression = _ => true;
+        Func<IQueryable<TUser>, IOrderedQueryable<TUser>>? orderByFunc = null;
+        if (roleIds != null && roleIds.Any())
+            rolesIdsExpression = u => u.UserRoles.Any(d => roleIds.Contains(d.RoleId));
+        
         if (!string.IsNullOrEmpty(search))
-            filterExpression = PredicateBuilder.PredicateSearchInAllFields<TUser>(search, true);
+            searchExpression = PredicateBuilder.PredicateSearchInAllFields<TUser>(search, true);
+        
+        if (!string.IsNullOrEmpty(orderBy)) 
+            orderByFunc = ServiceHelper.GenerateOrderingMethod<TUser>(orderBy, orderDirection);
+
+        var finalExpression = PredicateBuilder.And(searchExpression, rolesIdsExpression);
+        
+        return await GetUsersList(page, pageSize, finalExpression, orderByFunc);
+    }
+    
+    /// <summary>
+    /// Gets a list of users with search and pagination
+    /// </summary>
+    /// <param name="page"> Page number </param>
+    /// <param name="pageSize"> Page size </param>
+    /// <param name="filterBy"> Filter expression </param>
+    /// <param name="orderBy"> Ordering method </param>
+    /// <returns> List of users dto with pagination </returns>
+    /// <exception cref="ArgumentOutOfRangeException"> If passed wrong sort direction </exception>
+    internal virtual async Task<PaginatedResult<List<TUserDto>>> GetUsersList(int page, int pageSize, 
+        Expression<Func<TUser, bool>>? filterBy,
+        Func<IQueryable<TUser>, IOrderedQueryable<TUser>>? orderBy)
+    {
+        page = page < 1 ? 0 : page;
+        pageSize = pageSize < 1 ? 0 : pageSize;
 
         var appUsers = UserManager.Users;
-        if (!string.IsNullOrEmpty(orderBy)) orderExpression = PredicateBuilder.ToLambda<TUser>(orderBy);
-
-        if (orderExpression != null)
-            appUsers = orderDirection switch
-            {
-                SortDirection.Asc => appUsers.OrderBy(orderExpression),
-                SortDirection.Desc => appUsers.OrderByDescending(orderExpression),
-                _ => throw new ArgumentOutOfRangeException(nameof(orderDirection), orderDirection, null)
-            };
-
-        if (filterExpression != null) appUsers = appUsers.Where(filterExpression);
-
+        appUsers = orderBy == null ? appUsers.OrderByDescending(u => u.Created) : orderBy(appUsers);
+            
+        
+        if (filterBy != null) appUsers = appUsers.Where(filterBy);
         var count = await appUsers.CountAsync();
         if (page > 0 && pageSize > 0)
             appUsers = appUsers.Skip((page - 1) * pageSize).Take(pageSize);
-
+        
         var pagination = Pagination.Generate(page, pageSize, count);
         var data = Mapper.Map<List<TUserDto>>(appUsers);
         foreach (var userDto in data)

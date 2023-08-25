@@ -98,14 +98,15 @@ public class KirelUsersController<TUserService, TKey, TUser, TRole, TUserRole, T
     /// <param name="orderBy"> Name of the sorting field </param>
     /// <param name="orderDirection"> Order direction </param>
     /// <param name="search"> Search string parameter </param>
+    /// <param name="roleIds"></param>
     /// <returns> Paginated result with list of users dto </returns>
     [HttpGet]
     [Authorize(Roles = "Admin, Microservice")]
     public virtual async Task<PaginatedResult<List<TUserDto>>> GetList([FromQuery] int pageNumber = 0, int pageSize = 0,
-        string orderBy = "", string orderDirection = "asc", string search = "")
+        string orderBy = "", string orderDirection = "asc", string search = "", [FromQuery] IEnumerable<TKey>? roleIds = null)
     {
         var directionEnum = SortDirection.Asc;
         if (orderDirection == "desc") directionEnum = SortDirection.Desc;
-        return await Service.GetUsersList(pageNumber, pageSize, search, orderBy, directionEnum);
+        return await Service.GetUsersList(pageNumber, pageSize, search, orderBy, directionEnum, roleIds);
     }
 }
