@@ -54,7 +54,7 @@ public class KirelUsersController<TUserService, TKey, TUser, TRole, TUserDto, TU
     /// <param name="createDto"> User create dto </param>
     /// <returns> User dto </returns>
     [HttpPost]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Microservice")]
     public virtual async Task<ActionResult<TUserDto>> Create([FromBody] TUserCreateDto createDto)
     {
         var dto = await Service.CreateUser(createDto);
@@ -69,7 +69,7 @@ public class KirelUsersController<TUserService, TKey, TUser, TRole, TUserDto, TU
     /// <param name="id"> User id </param>
     /// <returns> User dto </returns>
     [HttpPut("{id}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Microservice")]
     public virtual async Task<ActionResult<TUserDto>> Update([FromBody] TUserUpdateDto updateDto, TKey id)
     {
         var dto = await Service.UpdateUser(id, updateDto);
