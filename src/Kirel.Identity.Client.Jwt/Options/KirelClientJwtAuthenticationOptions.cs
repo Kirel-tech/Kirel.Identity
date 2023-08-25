@@ -8,10 +8,10 @@ public class KirelClientJwtAuthenticationOptions
     /// <summary>
     /// Base url to authentication API endpoint
     /// </summary>
-    public string BaseUrl { get; set; }
+    public string BaseUrl { get; set; } = "";
 
     /// <summary>
     /// Relative url to authentication API endpoint
     /// </summary>
-    public string RelativeUrl { get; set; }
+    public string RelativeUrl { get; set; } = "";
 }

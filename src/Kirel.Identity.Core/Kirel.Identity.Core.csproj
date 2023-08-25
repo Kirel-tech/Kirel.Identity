@@ -3,26 +3,26 @@
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>disable</Nullable>
+		<Nullable>enable</Nullable>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<PackageVersion>1.0.2$(VersionSuffix)</PackageVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AutoMapper" Version="12.0.0"/>
-		<PackageReference Include="FluentValidation" Version="11.4.0"/>
-		<PackageReference Include="Kirel.DTO" Version="0.0.1"/>
-		<PackageReference Include="Kirel.Shared" Version="0.0.2"/>
-		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0"/>
-		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.12"/>
-		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.25.1"/>
-		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.25.1"/>
+		<PackageReference Include="AutoMapper" Version="12.0.0" />
+		<PackageReference Include="FluentValidation" Version="11.4.0" />
+		<PackageReference Include="Kirel.DTO" Version="0.0.1" />
+		<PackageReference Include="Kirel.Shared" Version="0.0.2" />
+		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.12" />
+		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.25.1" />
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.25.1" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Kirel.Identity.DTOs\Kirel.Identity.DTOs.csproj"/>
-		<ProjectReference Include="..\Kirel.Identity.Exceptions\Kirel.Identity.Exceptions.csproj"/>
+		<ProjectReference Include="..\Kirel.Identity.DTOs\Kirel.Identity.DTOs.csproj" />
+		<ProjectReference Include="..\Kirel.Identity.Exceptions\Kirel.Identity.Exceptions.csproj" />
 	</ItemGroup>
 
 </Project>

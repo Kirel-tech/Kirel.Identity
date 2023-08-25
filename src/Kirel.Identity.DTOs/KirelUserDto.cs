@@ -8,7 +8,7 @@ public class KirelUserDto<TKey, TRoleKey, TClaimDto> where TClaimDto : KirelClai
     /// <summary>
     /// User id
     /// </summary>
-    public TKey Id { get; set; }
+    public TKey Id { get; set; } = default!;
 
     /// <summary>
     /// User create date and time

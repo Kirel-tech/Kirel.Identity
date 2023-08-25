@@ -59,8 +59,7 @@ public class KirelAuthorizedUserController<TAuthorizedUserService, TKey, TUser, 
     public virtual async Task<ActionResult<TAuthorizedUserDto>> GetInfo()
     {
         var result = await AuthorizedUserService.GetDto();
-        if (result != null) return Ok(result);
-        return NotFound();
+        return Ok(result);
     }
 
     /// <summary>
@@ -72,8 +71,7 @@ public class KirelAuthorizedUserController<TAuthorizedUserService, TKey, TUser, 
     public virtual async Task<ActionResult<TAuthorizedUserDto>> Update([FromBody] TAuthorizedUserUpdateDto updateDto)
     {
         var dto = await AuthorizedUserService.Update(updateDto);
-        if (dto != null) return Ok(dto);
-        return BadRequest();
+        return Ok(dto);
     }
 
     /// <summary>

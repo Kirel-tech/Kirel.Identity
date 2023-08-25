@@ -60,8 +60,7 @@ public class KirelUsersController<TUserService, TKey, TUser, TRole, TUserRole, T
     public virtual async Task<ActionResult<TUserDto>> Create([FromBody] TUserCreateDto createDto)
     {
         var dto = await Service.CreateUser(createDto);
-        if (dto != null) return Ok(dto);
-        return BadRequest();
+        return Ok(dto);
     }
 
     /// <summary>
@@ -75,8 +74,7 @@ public class KirelUsersController<TUserService, TKey, TUser, TRole, TUserRole, T
     public virtual async Task<ActionResult<TUserDto>> Update([FromBody] TUserUpdateDto updateDto, TKey id)
     {
         var dto = await Service.UpdateUser(id, updateDto);
-        if (dto != null) return Ok(dto);
-        return BadRequest();
+        return Ok(dto);
     }
 
     /// <summary>
@@ -89,8 +87,7 @@ public class KirelUsersController<TUserService, TKey, TUser, TRole, TUserRole, T
     public virtual async Task<ActionResult<TUserDto>> GetById(TKey id)
     {
         var result = await Service.GetById(id);
-        if (result != null) return Ok(result);
-        return NotFound();
+        return Ok(result);
     }
 
     /// <summary>
