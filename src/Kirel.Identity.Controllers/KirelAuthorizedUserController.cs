@@ -18,11 +18,15 @@ namespace Kirel.Identity.Controllers;
 /// <typeparam name="TUser"> User type </typeparam>
 /// <typeparam name="TAuthorizedUserDto"> Authorized user dto </typeparam>
 /// <typeparam name="TAuthorizedUserUpdateDto"> Authorized user update dto </typeparam>
-public class KirelAuthorizedUserController<TAuthorizedUserService, TKey, TUser, TAuthorizedUserDto,
+/// <typeparam name="TRole"> The role entity type </typeparam>
+/// <typeparam name="TUserRole"> The user role entity type </typeparam>
+public class KirelAuthorizedUserController<TAuthorizedUserService, TKey, TUser, TRole, TUserRole, TAuthorizedUserDto,
     TAuthorizedUserUpdateDto> : Controller
-    where TAuthorizedUserService : KirelAuthorizedUserService<TKey, TUser, TAuthorizedUserDto, TAuthorizedUserUpdateDto>
+    where TAuthorizedUserService : KirelAuthorizedUserService<TKey, TUser, TRole, TUserRole, TAuthorizedUserDto, TAuthorizedUserUpdateDto>
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
-    where TUser : KirelIdentityUser<TKey>
+    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole>
+    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole>
+    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole>
     where TAuthorizedUserDto : KirelAuthorizedUserDto
     where TAuthorizedUserUpdateDto : KirelAuthorizedUserUpdateDto
 {

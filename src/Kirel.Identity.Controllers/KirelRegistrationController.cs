@@ -10,13 +10,17 @@ namespace Kirel.Identity.Controllers;
 /// </summary>
 /// <typeparam name="TRegistrationService"> User registration service type </typeparam>
 /// <typeparam name="TRegistrationDto"> User registration DTO type </typeparam>
-/// <typeparam name="TKey"> User key type </typeparam>
-/// <typeparam name="TUser"> User type </typeparam>
-public class KirelRegistrationController<TRegistrationService, TRegistrationDto, TKey, TUser> : Controller
-    where TRegistrationService : KirelRegistrationService<TKey, TUser, TRegistrationDto>
+/// <typeparam name="TKey"> The user key type </typeparam>
+/// <typeparam name="TUser"> The user type </typeparam>
+/// <typeparam name="TRole"> The role entity type </typeparam>
+/// <typeparam name="TUserRole"> The user role entity type </typeparam>
+public class KirelRegistrationController<TRegistrationService, TRegistrationDto, TKey, TUser, TRole, TUserRole> : Controller
+    where TRegistrationService : KirelRegistrationService<TKey, TUser, TRole, TUserRole, TRegistrationDto>
     where TRegistrationDto : KirelUserRegistrationDto
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
-    where TUser : KirelIdentityUser<TKey>
+    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole>
+    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole>
+    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole>
 {
     /// <summary>
     /// Authorized user service

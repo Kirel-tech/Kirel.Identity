@@ -11,9 +11,11 @@ namespace Kirel.Identity.Core.Validators;
 /// Validation for KirelRoleUpdateDto
 /// </summary>
 public class
-    KirelRoleUpdateDtoValidator<TKey, TRole, TRoleUpdateDto, TClaimUpdateDto> : AbstractValidator<TRoleUpdateDto>
+    KirelRoleUpdateDtoValidator<TKey, TRole, TUser, TUserRole, TRoleUpdateDto, TClaimUpdateDto> : AbstractValidator<TRoleUpdateDto>
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
-    where TRole : KirelIdentityRole<TKey>
+    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole>
+    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole>
+    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole>
     where TRoleUpdateDto : KirelRoleUpdateDto<TClaimUpdateDto>
     where TClaimUpdateDto : KirelClaimUpdateDto
 {

@@ -12,7 +12,7 @@ namespace Kirel.Identity.Server.API.Controllers;
 [ApiController]
 [Authorize]
 [Route("authorized/user")]
-public class AuthorizedUserController : KirelAuthorizedUserController<AuthorizedUserService, Guid, User,
+public class AuthorizedUserController : KirelAuthorizedUserController<AuthorizedUserService, Guid, User, Role, UserRole,
     AuthorizedUserDto, AuthorizedUserUpdateDto>
 {
     /// <inheritdoc />

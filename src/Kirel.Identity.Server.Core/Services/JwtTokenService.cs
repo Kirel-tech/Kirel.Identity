@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 namespace Kirel.Identity.Server.Core.Services;
 
 /// <inheritdoc />
-public class JwtTokenService : KirelJwtTokenService<Guid, User, Role>
+public class JwtTokenService : KirelJwtTokenService<Guid, User, Role, UserRole>
 {
     /// <inheritdoc />
     public JwtTokenService(UserManager<User> userManager, RoleManager<Role> roleManager, KirelAuthOptions authOptions) :

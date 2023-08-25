@@ -13,10 +13,11 @@ namespace Kirel.Identity.Core.Validators;
 /// Validation class for user update dto
 /// </summary>
 public class
-    KirelUserUpdateDtoValidator<TKey, TUser, TRole, TUserUpdateDto, TClaimUpdateDto> : AbstractValidator<TUserUpdateDto>
+    KirelUserUpdateDtoValidator<TKey, TUser, TRole, TUserRole, TUserUpdateDto, TClaimUpdateDto> : AbstractValidator<TUserUpdateDto>
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
-    where TUser : KirelIdentityUser<TKey>
-    where TRole : KirelIdentityRole<TKey>
+    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole>
+    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole>
+    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole>
     where TUserUpdateDto : KirelUserUpdateDto<TKey, TClaimUpdateDto>
     where TClaimUpdateDto : KirelClaimUpdateDto
 {
@@ -69,7 +70,9 @@ public class
         var passErrors = new List<string>();
         foreach (var validator in _userManager.PasswordValidators)
         {
+#pragma warning disable CS8625
             var task = validator.ValidateAsync(_userManager, null, password);
+#pragma warning restore CS8625
             var result = task.Result;
             if (result.Succeeded) return passErrors;
             passErrors.AddRange(result.Errors.Select(error => error.Description));

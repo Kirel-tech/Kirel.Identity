@@ -14,10 +14,12 @@ namespace Kirel.Identity.Jwt.Core.Services;
 /// <typeparam name="TKey"> User key type </typeparam>
 /// <typeparam name="TUser"> User type </typeparam>
 /// <typeparam name="TRole"> Role type </typeparam>
-public class KirelJwtTokenService<TKey, TUser, TRole>
+/// <typeparam name="TUserRole"> User role entity type </typeparam>
+public class KirelJwtTokenService<TKey, TUser, TRole, TUserRole>
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
-    where TUser : KirelIdentityUser<TKey>
-    where TRole : KirelIdentityRole<TKey>
+    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole>
+    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole>
+    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole>
 {
     /// <summary>
     /// Token auth options

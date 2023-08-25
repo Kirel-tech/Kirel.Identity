@@ -22,10 +22,14 @@ namespace Kirel.Identity.Core.Services;
 /// <typeparam name="TClaimDto"> Claim dto. Must be a descendant of the KirelClaimDto class </typeparam>
 /// <typeparam name="TClaimCreateDto"> Claim create dto. Must be a descendant of the KirelClaimCreateDto class </typeparam>
 /// <typeparam name="TClaimUpdateDto"> Claim update dto. Must be a descendant of the KirelClaimUpdateDto class </typeparam>
-public class KirelRoleService<TKey, TRole, TRoleDto, TRoleCreateDto, TRoleUpdateDto, TClaimDto, TClaimCreateDto,
+/// <typeparam name="TUser"> User entity type. </typeparam>
+/// <typeparam name="TUserRole"> User role entity type. </typeparam>
+public class KirelRoleService<TKey, TRole, TUser, TUserRole, TRoleDto, TRoleCreateDto, TRoleUpdateDto, TClaimDto, TClaimCreateDto,
     TClaimUpdateDto>
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
-    where TRole : KirelIdentityRole<TKey>
+    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole>
+    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole>
+    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole>
     where TRoleDto : KirelRoleDto<TKey, TClaimDto>
     where TRoleCreateDto : KirelRoleCreateDto<TClaimCreateDto>
     where TRoleUpdateDto : KirelRoleUpdateDto<TClaimUpdateDto>

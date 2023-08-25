@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 namespace Kirel.Identity.Server.Core.Validators;
 
 /// <inheritdoc />
-public class RoleUpdateDtoValidator : KirelRoleUpdateDtoValidator<Guid, Role, RoleUpdateDto, ClaimUpdateDto>
+public class RoleUpdateDtoValidator : KirelRoleUpdateDtoValidator<Guid, Role, User, UserRole, RoleUpdateDto, ClaimUpdateDto>
 {
     /// <inheritdoc />
     public RoleUpdateDtoValidator(RoleManager<Role> roleManager, IHttpContextAccessor httpContextAccessor) : base(
