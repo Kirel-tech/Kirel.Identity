@@ -8,20 +8,19 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1"/>
-		<PackageReference Include="FluentValidation" Version="11.4.0"/>
-		<PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2"/>
-		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.4.0"/>
-		<PackageReference Include="Kirel.Identity.Core" Version="1.0.2-main-24-a3f8fbfa"/>
-		<PackageReference Include="Kirel.Identity.Jwt.Core" Version="1.0.2-main-24-a3f8fbfa"/>
+		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+		<PackageReference Include="FluentValidation" Version="11.4.0" />
+		<PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.4.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Kirel.Identity.Server.Domain\Kirel.Identity.Server.Domain.csproj"/>
-		<ProjectReference Include="..\Kirel.Identity.Server.DTOs\Kirel.Identity.Server.DTOs.csproj"/>
-		<ProjectReference Include="..\Kirel.Identity.Server.Infrastructure.Shared\Kirel.Identity.Server.Infrastructure.Shared.csproj"/>
-		<ProjectReference Include="..\Kirel.Identity.Server.Jwt.Shared\Kirel.Identity.Server.Jwt.Shared.csproj"/>
-		<ProjectReference Include="..\Kirel.Identity.Server.Swagger.Shared\Kirel.Identity.Server.Swagger.Shared.csproj"/>
+		<ProjectReference Include="..\Kirel.Identity.Jwt.Core\Kirel.Identity.Jwt.Core.csproj" />
+		<ProjectReference Include="..\Kirel.Identity.Server.Domain\Kirel.Identity.Server.Domain.csproj" />
+		<ProjectReference Include="..\Kirel.Identity.Server.DTOs\Kirel.Identity.Server.DTOs.csproj" />
+		<ProjectReference Include="..\Kirel.Identity.Server.Infrastructure.Shared\Kirel.Identity.Server.Infrastructure.Shared.csproj" />
+		<ProjectReference Include="..\Kirel.Identity.Server.Jwt.Shared\Kirel.Identity.Server.Jwt.Shared.csproj" />
+		<ProjectReference Include="..\Kirel.Identity.Server.Swagger.Shared\Kirel.Identity.Server.Swagger.Shared.csproj" />
 	</ItemGroup>
 
 </Project>

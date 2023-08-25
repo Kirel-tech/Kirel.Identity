@@ -9,9 +9,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Kirel.Identity.Controllers" Version="1.0.2-main-24-a3f8fbfa" />
-		<PackageReference Include="Kirel.Identity.Jwt.Controllers" Version="1.0.2-main-24-a3f8fbfa" />
-		<PackageReference Include="Kirel.Identity.Middlewares" Version="1.0.2-main-24-a3f8fbfa" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.20" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.12" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.12">
@@ -33,6 +30,8 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Kirel.Identity.Controllers\Kirel.Identity.Controllers.csproj" />
+		<ProjectReference Include="..\Kirel.Identity.Jwt.Controllers\Kirel.Identity.Jwt.Controllers.csproj" />
+		<ProjectReference Include="..\Kirel.Identity.Middlewares\Kirel.Identity.Middlewares.csproj" />
 		<ProjectReference Include="..\Kirel.Identity.Server.Core\Kirel.Identity.Server.Core.csproj" />
 		<ProjectReference Include="..\Kirel.Identity.Server.Infrastructure\Kirel.Identity.Server.Infrastructure.csproj" />
 		<ProjectReference Include="..\Kirel.Identity.Server.Infrastructure.Shared\Kirel.Identity.Server.Infrastructure.Shared.csproj" />

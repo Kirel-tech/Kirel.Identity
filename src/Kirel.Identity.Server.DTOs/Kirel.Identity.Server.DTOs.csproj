@@ -7,7 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Kirel.Identity.DTOs" Version="1.0.1-main-24-a3f8fbfa"/>
+	  <ProjectReference Include="..\Kirel.Identity.DTOs\Kirel.Identity.DTOs.csproj" />
 	</ItemGroup>
 
 </Project>
