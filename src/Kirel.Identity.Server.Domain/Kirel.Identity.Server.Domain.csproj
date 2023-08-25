@@ -8,7 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Kirel.Identity.Core" Version="1.0.2-main-24-a3f8fbfa"/>
+	  <ProjectReference Include="..\Kirel.Identity.Core\Kirel.Identity.Core.csproj" />
 	</ItemGroup>
 
 </Project>
