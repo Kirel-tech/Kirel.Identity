@@ -7,11 +7,15 @@ namespace Kirel.Identity.Core.Services;
 /// <summary>
 /// Provides methods for getting the user within the authentication procedure using different methods
 /// </summary>
-/// <typeparam name="TKey"> User key type </typeparam>
-/// <typeparam name="TUser"> User type </typeparam>
-public class KirelAuthenticationService<TKey, TUser>
+/// <typeparam name="TKey"> User entity key type. </typeparam>
+/// <typeparam name="TUser"> User entity type. </typeparam>
+/// <typeparam name="TRole"> Role entity type. </typeparam>
+/// <typeparam name="TUserRole"> Role user entity type. </typeparam>
+public class KirelAuthenticationService<TKey, TUser, TRole, TUserRole>
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
-    where TUser : KirelIdentityUser<TKey>
+    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole>
+    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole>
+    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole>
 {
     /// <summary>
     /// Identity user manager

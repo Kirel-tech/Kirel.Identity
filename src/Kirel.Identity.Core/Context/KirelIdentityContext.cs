@@ -8,18 +8,18 @@ namespace Kirel.Identity.Core.Context;
 /// <summary>
 /// Kirel base class for the Identity Framework database context.
 /// </summary>
-public class KirelIdentityContext<TUser, TRole, TKey, TIdentityUserClaim, TIdentityUserRole, TIdentityUserLogin,
-        TIdentityRoleClaim, TIdentityUserToken>
+public class KirelIdentityContext<TUser, TRole, TKey, TUserClaim, TUserRole, TUserLogin,
+        TRoleClaim, TUserToken>
     : IdentityDbContext<TUser, TRole, TKey,
-        TIdentityUserClaim, TIdentityUserRole, TIdentityUserLogin, TIdentityRoleClaim, TIdentityUserToken>
-    where TUser : KirelIdentityUser<TKey>
-    where TRole : KirelIdentityRole<TKey>
+        TUserClaim, TUserRole, TUserLogin, TRoleClaim, TUserToken>
+    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole>
+    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole>
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
-    where TIdentityUserClaim : KirelIdentityUserClaim<TKey>
-    where TIdentityUserRole : KirelIdentityUserRole<TKey>
-    where TIdentityUserLogin : KirelIdentityUserLogin<TKey>
-    where TIdentityRoleClaim : KirelIdentityRoleClaim<TKey>
-    where TIdentityUserToken : KirelIdentityUserToken<TKey>
+    where TUserClaim : KirelIdentityUserClaim<TKey>
+    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole>
+    where TUserLogin : KirelIdentityUserLogin<TKey>
+    where TRoleClaim : KirelIdentityRoleClaim<TKey>
+    where TUserToken : KirelIdentityUserToken<TKey>
 {
     /// <summary>
     /// Kirel base class for the Identity Framework database context constructor
@@ -68,5 +68,28 @@ public class KirelIdentityContext<TUser, TRole, TKey, TIdentityUserClaim, TIdent
                     entry.Entity.Updated = DateTime.UtcNow;
                     break;
             }
+    }
+
+    /// <inheritdoc />
+    protected override void OnModelCreating(ModelBuilder modelBuilder)  
+    {  
+        base.OnModelCreating(modelBuilder);  
+        modelBuilder.Entity<TUser>(b =>  
+        {     
+            // Each User can have many entries in the UserRole join table  
+            b.HasMany(e => e.UserRoles)  
+                .WithOne(e => e.User)  
+                .HasForeignKey(ur => ur.UserId)  
+                .IsRequired();  
+        });  
+
+        modelBuilder.Entity<TRole>(b =>  
+        {  
+            // Each Role can have many entries in the UserRole join table  
+            b.HasMany(e => e.UserRoles)  
+                .WithOne(e => e.Role)  
+                .HasForeignKey(ur => ur.RoleId)  
+                .IsRequired();  
+        });  
     }
 }

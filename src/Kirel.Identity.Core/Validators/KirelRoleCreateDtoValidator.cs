@@ -9,9 +9,11 @@ namespace Kirel.Identity.Core.Validators;
 /// Validation for KirelRoleCreateDto
 /// </summary>
 public class
-    KirelRoleCreateDtoValidator<TKey, TRole, TRoleCreateDto, TClaimCreateDto> : AbstractValidator<TRoleCreateDto>
+    KirelRoleCreateDtoValidator<TKey, TRole, TUser, TUserRole, TRoleCreateDto, TClaimCreateDto> : AbstractValidator<TRoleCreateDto>
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
-    where TRole : KirelIdentityRole<TKey>
+    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole>
+    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole>
+    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole>
     where TRoleCreateDto : KirelRoleCreateDto<TClaimCreateDto>
     where TClaimCreateDto : KirelClaimCreateDto
 {

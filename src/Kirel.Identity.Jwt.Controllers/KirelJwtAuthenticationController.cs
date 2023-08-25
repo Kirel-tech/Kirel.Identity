@@ -26,16 +26,18 @@ namespace Kirel.Identity.Jwt.Controllers;
 /// <typeparam name="TRole"> Role type </typeparam>
 /// <typeparam name="TAuthorizedUserDto"> </typeparam>
 /// <typeparam name="TAuthorizedUserUpdateDto"> </typeparam>
+/// <typeparam name="TUserRole"> The user role entity type </typeparam>
 public class KirelJwtAuthenticationController<TTokenService, TAuthenticationService, TAuthorizedUserService,
-    TKey, TUser, TRole, TAuthorizedUserDto, TAuthorizedUserUpdateDto> : Controller
+    TKey, TUser, TRole, TUserRole, TAuthorizedUserDto, TAuthorizedUserUpdateDto> : Controller
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
-    where TUser : KirelIdentityUser<TKey>
-    where TRole : KirelIdentityRole<TKey>
+    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole>
+    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole>
+    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole>
     where TAuthorizedUserDto : KirelAuthorizedUserDto
     where TAuthorizedUserUpdateDto : KirelAuthorizedUserUpdateDto
-    where TTokenService : KirelJwtTokenService<TKey, TUser, TRole>
-    where TAuthenticationService : KirelAuthenticationService<TKey, TUser>
-    where TAuthorizedUserService : KirelAuthorizedUserService<TKey, TUser, TAuthorizedUserDto, TAuthorizedUserUpdateDto>
+    where TTokenService : KirelJwtTokenService<TKey, TUser, TRole, TUserRole>
+    where TAuthenticationService : KirelAuthenticationService<TKey, TUser, TRole, TUserRole>
+    where TAuthorizedUserService : KirelAuthorizedUserService<TKey, TUser, TRole, TUserRole, TAuthorizedUserDto, TAuthorizedUserUpdateDto>
 {
     /// <summary>
     /// Authentication service

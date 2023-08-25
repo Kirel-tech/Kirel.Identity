@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 namespace Kirel.Identity.Server.Core.Services;
 
 /// <inheritdoc />
-public class RoleService : KirelRoleService<Guid, Role, RoleDto, RoleCreateDto, RoleUpdateDto, ClaimDto, ClaimCreateDto,
+public class RoleService : KirelRoleService<Guid, Role, User, UserRole, RoleDto, RoleCreateDto, RoleUpdateDto, ClaimDto, ClaimCreateDto,
     ClaimUpdateDto>
 {
     /// <inheritdoc />

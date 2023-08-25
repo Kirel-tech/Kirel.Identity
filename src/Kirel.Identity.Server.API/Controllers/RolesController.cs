@@ -9,7 +9,7 @@ namespace Kirel.Identity.Server.API.Controllers;
 /// <inheritdoc />
 [Route("roles")]
 [ApiController]
-public class RolesController : KirelRolesController<RoleService, Guid, Role, RoleDto, RoleCreateDto, RoleUpdateDto,
+public class RolesController : KirelRolesController<RoleService, Guid, Role, User, UserRole, RoleDto, RoleCreateDto, RoleUpdateDto,
     ClaimDto, ClaimCreateDto, ClaimUpdateDto>
 {
     /// <inheritdoc />

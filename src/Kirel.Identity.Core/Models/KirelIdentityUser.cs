@@ -4,10 +4,13 @@ using Microsoft.AspNetCore.Identity;
 namespace Kirel.Identity.Core.Models;
 
 /// <summary>
-/// The default implementation of <see cref="IdentityUser{TKey}" /> which uses a string as a primary key.
+/// The default implementation of <see cref="IdentityUser{TKey}" />.
 /// </summary>
-public class KirelIdentityUser<TKey> : IdentityUser<TKey>, IKirelUser<TKey>
+public class KirelIdentityUser<TKey, TUser, TRole, TUserRole> : IdentityUser<TKey>, IKirelUser<TKey>
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
+    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole>
+    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole>
+    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole>
 {
     /// <summary>
     /// First name of the user
@@ -28,4 +31,9 @@ public class KirelIdentityUser<TKey> : IdentityUser<TKey>, IKirelUser<TKey>
     /// User last update date and time
     /// </summary>
     public DateTime? Updated { get; set; }
+
+    /// <summary>
+    /// List of user roles
+    /// </summary>
+    public virtual ICollection<TUserRole> UserRoles { get; set; } = null!;
 }
