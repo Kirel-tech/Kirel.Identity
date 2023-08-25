@@ -1,5 +1,7 @@
 ﻿using System.Text;
+using Kirel.Identity.Server.API.Handlers;
 using Kirel.Identity.Server.Jwt.Shared;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -15,13 +17,21 @@ public static class AuthenticationExtension
     /// </summary>
     /// <param name="services"> services collection </param>
     /// <param name="config"> JWT Token generation config </param>
-    public static void AddAuthenticationConfiguration(this IServiceCollection services, JwtAuthenticationConfig config)
+    /// <param name="apiKeys">API keys list</param>
+    public static void AddAuthenticationConfiguration(this IServiceCollection services, JwtAuthenticationConfig config, ApiKeysList apiKeys)
     {
+        services.AddSingleton(apiKeys);
         services.AddAuthentication(option =>
             {
                 // Fixing 404 error when adding an attribute Authorize to controller
-                option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                option.DefaultAuthenticateScheme = "Smart";
+                option.DefaultChallengeScheme = "Smart";
+            })
+            .AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>("APIKey", null)
+            .AddPolicyScheme("Smart", "Bearer JWT or API key authorization", options =>
+            {
+                options.ForwardDefaultSelector = context => context.Request.Headers["Authorization"]
+                    .ToString()?.StartsWith("Bearer ") == true ? JwtBearerDefaults.AuthenticationScheme : "APIKey";
             })
             .AddJwtBearer(options =>
             {
