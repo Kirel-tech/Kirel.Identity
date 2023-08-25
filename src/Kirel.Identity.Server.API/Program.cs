@@ -2,6 +2,7 @@ using Kirel.Identity.Middlewares;
 using Kirel.Identity.Server.API.Controllers;
 using Kirel.Identity.Server.API.Extensions;
 using Kirel.Identity.Server.API.Filters;
+using Kirel.Identity.Server.API.Handlers;
 using Kirel.Identity.Server.Core.Extensions;
 using Kirel.Identity.Server.Domain;
 using Kirel.Identity.Server.Infrastructure.Contexts;
@@ -16,25 +17,17 @@ var jwtConfig = builder.Configuration.GetSection("jwt").Get<JwtAuthenticationCon
 var dbConfig = builder.Configuration.GetSection("dbConfig").Get<DbConfig>();
 var maintenanceConfig = builder.Configuration.GetSection("maintenance").Get<MaintenanceConfig>();
 var registrationDisabled = builder.Configuration.GetValue<bool>("RegistrationDisabled");
+var apiKeys = builder.Configuration.GetSection("APIKeys").Get<ApiKeysList>();
 
 //To disable controller add him here like disabledControllers.Add(typeof(RegistrationController));
 var disabledControllers = new DisabledControllerTypes();
 if (registrationDisabled) disabledControllers.Add(typeof(RegistrationController));
 
-builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
-{
-    options.TokenLifespan = TimeSpan.FromHours(90); // Настройте желаемое время жизни токена
-});
-
-
 // Add Identity framework db context based on Kirel Identity templates
 // with ability to change db driver (mssql, mysql, postgresql)
 builder.Services.AddDbContextByConfig<IdentityServerDbContext, MssqlIdentityServerDbContext,
     PostgresqlIdentityServerDbContext, MysqlIdentityServerDbContext, SqliteIdentityServerDbContext>(dbConfig);
-builder.Services.AddIdentity<User, Role>()
-    .AddEntityFrameworkStores<IdentityServerDbContext>()
-    .AddDefaultTokenProviders();
-
+builder.Services.AddIdentity<User, Role>().AddEntityFrameworkStores<IdentityServerDbContext>();
 builder.Services.Configure<IdentityOptions>(options =>
 {
     // Password settings.
@@ -42,11 +35,9 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireLowercase = true;
     options.Password.RequireNonAlphanumeric = true;
     options.Password.RequireUppercase = true;
-    /*options.SignIn.RequireConfirmedEmail = true;*/
+
     // User settings.
-    options.User.RequireUniqueEmail = true;
-    //options.Tokens.EmailConfirmationTokenProvider = "Email";
-    //options.Tokens.
+    options.User.RequireUniqueEmail = false;
 });
 
 // Add identity mappers
@@ -62,7 +53,7 @@ builder.Services.AddControllers(options =>
 
 
 // Add ASP.NET authentication configuration
-builder.Services.AddAuthenticationConfiguration(jwtConfig);
+builder.Services.AddAuthenticationConfiguration(jwtConfig, apiKeys);
 
 // Add custom swagger configuration
 builder.Services.AddSwagger(disabledControllers);
