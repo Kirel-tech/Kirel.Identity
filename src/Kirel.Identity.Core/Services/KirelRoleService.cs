@@ -187,8 +187,8 @@ public class KirelRoleService<TKey, TRole, TUser, TUserRole, TRoleDto, TRoleCrea
     {
         page = page < 1 ? 0 : page;
         pageSize = pageSize < 1 ? 0 : pageSize;
-        Expression<Func<TRole, bool>> filterExpression = null;
-        Expression<Func<TRole, object>> orderExpression = null;
+        Expression<Func<TRole, bool>>? filterExpression = null;
+        Expression<Func<TRole, object>>? orderExpression = null;
 
         if (!string.IsNullOrEmpty(search))
             filterExpression = PredicateBuilder.PredicateSearchInAllFields<TRole>(search, true);

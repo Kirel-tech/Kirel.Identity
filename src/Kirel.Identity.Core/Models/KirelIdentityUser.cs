@@ -15,12 +15,12 @@ public class KirelIdentityUser<TKey, TUser, TRole, TUserRole> : IdentityUser<TKe
     /// <summary>
     /// First name of the user
     /// </summary>
-    public string Name { get; set; }
+    public string Name { get; set; } = "";
 
     /// <summary>
     /// Last name of the user
     /// </summary>
-    public string LastName { get; set; }
+    public string LastName { get; set; } = "";
 
     /// <summary>
     /// User create date and time

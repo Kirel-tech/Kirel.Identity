@@ -8,7 +8,7 @@ public class KirelRoleDto<TKey, TClaimDto> where TClaimDto : KirelClaimDto
     /// <summary>
     /// Role Id
     /// </summary>
-    public TKey Id { get; set; }
+    public TKey Id { get; set; } = default!;
 
     /// <summary>
     /// Role name
