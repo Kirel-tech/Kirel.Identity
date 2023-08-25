@@ -1,137 +1,139 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Mail;
+using System.Threading.Tasks;
 using AutoMapper;
 using Kirel.Identity.Core.Models;
 using Kirel.Identity.DTOs;
 using Kirel.Identity.Exceptions;
 using Microsoft.AspNetCore.Identity;
 
-namespace Kirel.Identity.Core.Services;
-
-/// <summary>
-/// Provides methods for registering users
-/// </summary>
-/// <typeparam name="TKey"> User key type </typeparam>
-/// <typeparam name="TUser"> User type </typeparam>
-/// <typeparam name="TRegistrationDto"> User registration dto type </typeparam>
-public class KirelRegistrationService<TKey, TUser, TRegistrationDto>
-    where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
-    where TUser : KirelIdentityUser<TKey>
-    where TRegistrationDto : KirelUserRegistrationDto
+namespace Kirel.Identity.Core.Services
 {
     /// <summary>
-    /// AutoMapper instance
+    /// Provides methods for registering users
     /// </summary>
-    protected readonly IMapper Mapper;
-
-    /// <summary>
-    /// Identity user manager
-    /// </summary> 
-    protected readonly UserManager<TUser> UserManager;
-
-    /// <summary>
-    /// Constructor for KirelRegistrationService
-    /// </summary>
-    /// <param name="userManager"> Identity user manager </param>
-    /// <param name="mapper"> AutoMapper instance </param>
-    public KirelRegistrationService(UserManager<TUser> userManager, IMapper mapper)
+    /// <typeparam name="TKey"> User key type </typeparam>
+    /// <typeparam name="TUser"> User type </typeparam>
+    /// <typeparam name="TRegistrationDto"> User registration dto type </typeparam>
+    public class KirelRegistrationService<TKey, TUser, TRegistrationDto>
+        where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
+        where TUser : KirelIdentityUser<TKey>
+        where TRegistrationDto : KirelUserRegistrationDto
     {
-        UserManager = userManager;
-        Mapper = mapper;
-    }
+        /// <summary>
+        /// AutoMapper instance
+        /// </summary>
+        protected readonly IMapper Mapper;
 
-    /// <summary>
-    /// User registration method
-    /// </summary>
-    /// <param name="registrationDto"> registration data transfer object </param>
-    /// <exception cref="KirelIdentityStoreException"> If user or role managers fails on store based operations </exception>
-    public virtual async Task Registration(TRegistrationDto registrationDto)
-    {
-        var appUser = Mapper.Map<TUser>(registrationDto);
-        var result = await UserManager.CreateAsync(appUser);
-            
-        if (!result.Succeeded)
-            throw new KirelIdentityStoreException("Failed to create new user");
+        /// <summary>
+        /// Identity user manager
+        /// </summary> 
+        protected readonly UserManager<TUser> UserManager;
 
-        // Generate the email confirmation token and confirmation link
-        var token = await UserManager.GenerateEmailConfirmationTokenAsync(appUser);
-        
-        var confirmationLink = GenerateConfirmationLink(appUser.Id,token);
-        // Send the confirmation email
-        await SendConfirmationEmailAsync(appUser.Email, confirmationLink);
-
-        var passwordResult = await UserManager.AddPasswordAsync(appUser, registrationDto.Password);
-
-        if (!passwordResult.Succeeded)
+        /// <summary>
+        /// Constructor for KirelRegistrationService
+        /// </summary>
+        /// <param name="userManager"> Identity user manager </param>
+        /// <param name="mapper"> AutoMapper instance </param>
+        public KirelRegistrationService(UserManager<TUser> userManager, IMapper mapper)
         {
-            await UserManager.DeleteAsync(appUser);
-            throw new KirelIdentityStoreException("Failed to add password");
+            UserManager = userManager;
+            Mapper = mapper;
         }
-    }
-    
-    private string GenerateConfirmationLink(TKey userId, string token)
-    {
-        return $"https://localhost:7055/registration/confirm?userId={userId}&token={token}";
-    }
-    private async Task SendConfirmationEmailAsync(string recipientEmail, string confirmationLink)
-    {
-        var smtpClient = new SmtpClient("smtp.gmail.com")
-        {
-            Port = 587,
-            Credentials = new NetworkCredential("dont.even.try.to.replybltch@gmail.com", "zetyhgdcvboswjbf"),
-            EnableSsl = true,
-            UseDefaultCredentials = false
-        };
 
-        var message = new MailMessage
+        /// <summary>
+        /// User registration method
+        /// </summary>
+        /// <param name="registrationDto"> Registration data transfer object </param>
+        /// <exception cref="KirelIdentityStoreException"> If user or role managers fail on store-based operations </exception>
+        public virtual async Task Registration(TRegistrationDto registrationDto)
         {
-            From = new MailAddress("dont.even.try.to.replybltch@gmail.com"),
-            Subject = "Email Confirmation",
-            Body = $"Please confirm your email by clicking <a href='{confirmationLink}'>here</a>, please dont reply this message .",
-            IsBodyHtml = true,
-        };
+            var appUser = Mapper.Map<TUser>(registrationDto);
+            var result = await UserManager.CreateAsync(appUser);
 
-        message.To.Add(recipientEmail);
-
-        try
-        {
-            await smtpClient.SendMailAsync(message);
-        }
-        catch (Exception ex)
-        {
-            throw new Exception(ex.ToString());
-        }
-        finally
-        {
-            smtpClient.Dispose();
-            message.Dispose();
-        }
-    }
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="userId"></param>
-    /// <param name="token"></param>
-    /// <exception cref="Exception"></exception>
-    public async Task ConfirmEmailAsync(TKey userId, string token)
-    {
-        // Проверьте наличие userId и token, а затем вызовите ConfirmEmailAsync
-        TUser user = await UserManager.FindByIdAsync(userId.ToString());
-        if (user != null)
-        {
-            var result = await UserManager.ConfirmEmailAsync(user, token);
             if (!result.Succeeded)
-            {   
-                // Обработка ошибки подтверждения email
-                throw new Exception("Email confirmation failed.");
+                throw new KirelIdentityStoreException("Failed to create new user");
+
+            var passwordResult = await UserManager.AddPasswordAsync(appUser, registrationDto.Password);
+
+            // Generate the email confirmation token and confirmation link
+            var token = await UserManager.GenerateEmailConfirmationTokenAsync(appUser);
+
+            var confirmationLink = GenerateConfirmationLink(appUser.Email, token);
+            // Send the confirmation email
+            await SendConfirmationEmailAsync(appUser.Email, confirmationLink);
+
+            if (!passwordResult.Succeeded)
+            {
+                await UserManager.DeleteAsync(appUser);
+                throw new KirelIdentityStoreException("Failed to add password");
             }
         }
-        else
+
+        /// <summary>
+        /// Generates an email confirmation link
+        /// </summary>
+        /// <param name="email"> User's email </param>
+        /// <param name="token"> Email confirmation token </param>
+        /// <returns> The confirmation link </returns>
+        private string GenerateConfirmationLink(string email, string token)
         {
-            // Обработка ошибки: пользователь не найден
-            throw new Exception("User not found.");
+            return $"https://localhost:7055/registration/confirm?Email={email}&token={token}";
+        }
+
+        /// <summary>
+        /// Sends a confirmation email
+        /// </summary>
+        /// <param name="recipientEmail"> Recipient's email address </param>
+        /// <param name="confirmationLink"> Confirmation link </param>
+        /// <returns> A task representing the asynchronous operation </returns>
+        private async Task SendConfirmationEmailAsync(string recipientEmail, string confirmationLink)
+        {
+            var smtpClient = new SmtpClient("smtp.gmail.com")
+            {
+                Port = 587,
+                Credentials = new NetworkCredential("dont.even.try.to.replybltch@gmail.com", "zetyhgdcvboswjbf"),
+                EnableSsl = true,
+                UseDefaultCredentials = false
+            };
+
+            var message = new MailMessage
+            {
+                From = new MailAddress("dont.even.try.to.replybltch@gmail.com"),
+                Subject = "Email Confirmation",
+                Body = $"Please confirm your email by clicking <a href='{confirmationLink}'>here</a>, please don't reply to this message.",
+                IsBodyHtml = true,
+            };
+
+            message.To.Add(recipientEmail);
+
+            try
+            {
+                await smtpClient.SendMailAsync(message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString());
+            }
+            finally
+            {
+                smtpClient.Dispose();
+                message.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Confirm user's email address
+        /// </summary>
+        /// <param name="token"> Email confirmation token </param>
+        /// <param name="email"> User's email address </param>
+        /// <exception cref="Exception"> If email confirmation fails </exception>
+        public async Task EmailConfirm(string token, string email)
+        {
+            var user = await UserManager.FindByEmailAsync(email);
+            token = token.Replace(' ', '+');
+            var result = await UserManager.ConfirmEmailAsync(user, token);
         }
     }
-    
 }
-
