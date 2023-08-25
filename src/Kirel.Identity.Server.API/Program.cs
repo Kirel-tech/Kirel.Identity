@@ -18,7 +18,6 @@ var dbConfig = builder.Configuration.GetSection("dbConfig").Get<DbConfig>();
 var maintenanceConfig = builder.Configuration.GetSection("maintenance").Get<MaintenanceConfig>();
 var dataSeedConfig = builder.Configuration.GetSection("DataSeeding").Get<DataSeedConfig>();
 var registrationDisabled = builder.Configuration.GetValue<bool>("RegistrationDisabled");
-
 var apiKeys = builder.Configuration.GetSection("APIKeys").Get<ApiKeysList>();
 
 //To disable controller add him here like disabledControllers.Add(typeof(RegistrationController));
