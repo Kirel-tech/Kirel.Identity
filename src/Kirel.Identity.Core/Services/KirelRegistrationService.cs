@@ -1,8 +1,7 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Net.Mail;
-using System.Threading.Tasks;
 using AutoMapper;
+using Kirel.Identity.Core.Interfaces;
 using Kirel.Identity.Core.Models;
 using Kirel.Identity.DTOs;
 using Kirel.Identity.Exceptions;
@@ -16,7 +15,7 @@ namespace Kirel.Identity.Core.Services
     /// <typeparam name="TKey"> User key type </typeparam>
     /// <typeparam name="TUser"> User type </typeparam>
     /// <typeparam name="TRegistrationDto"> User registration dto type </typeparam>
-    public class KirelRegistrationService<TKey, TUser, TRegistrationDto>
+    public class KirelRegistrationService<TKey, TUser, TRegistrationDto> : IKirelIdentityRegistrationService
         where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
         where TUser : KirelIdentityUser<TKey>
         where TRegistrationDto : KirelUserRegistrationDto
@@ -77,7 +76,7 @@ namespace Kirel.Identity.Core.Services
         /// <param name="email"> User's email </param>
         /// <param name="token"> Email confirmation token </param>
         /// <returns> The confirmation link </returns>
-        private string GenerateConfirmationLink(string email, string token)
+        public string GenerateConfirmationLink(string email, string token)
         {
             return $"https://localhost:7055/registration/confirm?Email={email}&token={token}";
         }
@@ -88,7 +87,7 @@ namespace Kirel.Identity.Core.Services
         /// <param name="recipientEmail"> Recipient's email address </param>
         /// <param name="confirmationLink"> Confirmation link </param>
         /// <returns> A task representing the asynchronous operation </returns>
-        private async Task SendConfirmationEmailAsync(string recipientEmail, string confirmationLink)
+        public async Task SendConfirmationEmailAsync(string recipientEmail, string confirmationLink)
         {
             var smtpClient = new SmtpClient("smtp.gmail.com")
             {
