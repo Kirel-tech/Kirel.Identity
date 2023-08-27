@@ -391,3 +391,4 @@ FodyWeavers.xsd
 *.db
 *.db-wal
 *.db-shm
+*.lock
