@@ -1,28 +1,28 @@
 ﻿namespace Kirel.Identity.Server.Domain;
 
 /// <summary>
-/// Maintenance config parameters
+/// Configuration class for maintenance settings
 /// </summary>
 public class MaintenanceConfig
 {
     /// <summary>
-    /// Root admin parameters
+    /// Gets or sets the admin configuration.
     /// </summary>
     public AdminConfig Admin { get; set; } = new();
 }
 
 /// <summary>
-/// Root admin parameters
+/// Configuration class for admin settings
 /// </summary>
 public class AdminConfig
 {
     /// <summary>
-    /// If true, admin password will be reset
+    /// Gets or sets a value indicating whether the admin password should be reset.
     /// </summary>
     public bool Reset { get; set; }
 
     /// <summary>
-    /// Password which will be set after reset
+    /// Gets or sets the password which will be set after reset.
     /// </summary>
     public string Password { get; set; } = "";
 }
