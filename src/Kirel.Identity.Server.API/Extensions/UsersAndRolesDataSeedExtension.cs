@@ -24,10 +24,13 @@ public static class UsersAndRolesDataSeedExtension
         where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
         where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole>
     {
+        const string dataSeedLockfile = "identity_data_seed.lock";
+        if (File.Exists(dataSeedLockfile)) return;
         var scopedServiceProvider = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope()
             .ServiceProvider;
         var roleManager = scopedServiceProvider.GetRequiredService<RoleManager<TRole>>();
         var userManager = scopedServiceProvider.GetRequiredService<UserManager<TUser>>();
+        
         foreach (var roleName in config.Roles.Where(r => !r.Equals("Admin", StringComparison.OrdinalIgnoreCase)))
         {
             var roleNormalizedName = roleName.ToUpper();
@@ -80,5 +83,6 @@ public static class UsersAndRolesDataSeedExtension
                 }
             }
         }
+        await File.Create(dataSeedLockfile).DisposeAsync();
     }
 }
