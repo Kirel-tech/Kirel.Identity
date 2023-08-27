@@ -72,9 +72,10 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-//Apply migrations to db, create admin user and role, do maintenance admin password reset if needed
-await IdentityServerDbInitializer.Initialize<IdentityServerDbContext>(
-    app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope().ServiceProvider, maintenanceConfig);
+// Apply migrations to db
+await app.MigrateIdentityDbAsync();
+// Create admin user and role, do maintenance admin password reset if needed
+await app.MaintenanceAsync<Guid, User, Role, UserRole>(maintenanceConfig);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
