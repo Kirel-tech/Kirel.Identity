@@ -1,4 +1,5 @@
 using Kirel.Identity.Middlewares;
+using Kirel.Identity.Server.API.Configs;
 using Kirel.Identity.Server.API.Controllers;
 using Kirel.Identity.Server.API.Extensions;
 using Kirel.Identity.Server.API.Filters;
@@ -6,6 +7,7 @@ using Kirel.Identity.Server.API.Handlers;
 using Kirel.Identity.Server.Core.Extensions;
 using Kirel.Identity.Server.Domain;
 using Kirel.Identity.Server.Infrastructure.Contexts;
+using Kirel.Identity.Server.Infrastructure.Extensions;
 using Kirel.Identity.Server.Infrastructure.Shared.Extensions;
 using Kirel.Identity.Server.Infrastructure.Shared.Models;
 using Kirel.Identity.Server.Jwt.Shared;
@@ -16,6 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 var jwtConfig = builder.Configuration.GetSection("jwt").Get<JwtAuthenticationConfig>();
 var dbConfig = builder.Configuration.GetSection("dbConfig").Get<DbConfig>();
 var maintenanceConfig = builder.Configuration.GetSection("maintenance").Get<MaintenanceConfig>();
+var dataSeedConfig = builder.Configuration.GetSection("DataSeeding").Get<IdentityDataSeedConfig>();
 var registrationDisabled = builder.Configuration.GetValue<bool>("RegistrationDisabled");
 var apiKeys = builder.Configuration.GetSection("APIKeys").Get<ApiKeysList>();
 
@@ -76,6 +79,8 @@ var app = builder.Build();
 await app.MigrateIdentityDbAsync();
 // Create admin user and role, do maintenance admin password reset if needed
 await app.MaintenanceAsync<Guid, User, Role, UserRole>(maintenanceConfig);
+// Apply users and roles data seeding
+await app.UsersAndRolesDataSeedAsync<Guid, User, Role, UserRole>(dataSeedConfig);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
