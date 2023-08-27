@@ -63,71 +63,75 @@ public static class IdentityServerDbInitializer
           
         }
 
-        foreach (var roleConfig in dataSeedConfig.Roles)
+        if (File.Exists(markerFilePath))
         {
-            var roleName = roleConfig.Name;
-            var roleNormalizedName = roleConfig.NormalizedName;
-
-            var roleExist = await roleManager.RoleExistsAsync(roleName);
-            if (!roleExist)
+            foreach (var roleConfig in dataSeedConfig.Roles)
             {
-                var role = new Role { Name = roleName, NormalizedName = roleNormalizedName };
-                var result = await roleManager.CreateAsync(role);
-                if (!result.Succeeded)
-                {
-                    foreach (var error in result.Errors)
-                    {
-                        var errorMessage = $"Error creating role: {error.Description}";
-                        throw new Exception(errorMessage);
-                    }
+                var roleName = roleConfig.Name;
+                var roleNormalizedName = roleConfig.NormalizedName;
 
-                    throw new Exception($"Role name: {roleName}");
+                var roleExist = await roleManager.RoleExistsAsync(roleName);
+                if (!roleExist)
+                {
+                    var role = new Role { Name = roleName, NormalizedName = roleNormalizedName };
+                    var result = await roleManager.CreateAsync(role);
+                    if (!result.Succeeded)
+                    {
+                        foreach (var error in result.Errors)
+                        {
+                            var errorMessage = $"Error creating role: {error.Description}";
+                            throw new Exception(errorMessage);
+                        }
+
+                        throw new Exception($"Role name: {roleName}");
+                    }
                 }
             }
-        }
 
-        foreach (var userConfig in dataSeedConfig.Users)
-        {
-            var userName = userConfig.UserName;
-            var email = userConfig.Email;
-            var name = userConfig.Name;
-            var lastName = userConfig.LastName;
-            var password = userConfig.Password;
-
-            var userExist = await userManager.FindByNameAsync(userName);
-            if (userExist == null)
+            foreach (var userConfig in dataSeedConfig.Users)
             {
-                var user = new User
+                var userName = userConfig.UserName;
+                var email = userConfig.Email;
+                var name = userConfig.Name;
+                var lastName = userConfig.LastName;
+                var password = userConfig.Password;
+
+                var userExist = await userManager.FindByNameAsync(userName);
+                if (userExist == null)
                 {
-                    UserName = userName,
-                    Email = email,
-                    Name = name,
-                    LastName = lastName
-                };
-                var result = await userManager.CreateAsync(user, password);
-                if (!result.Succeeded)
-                {
-                    foreach (var error in result.Errors)
+                    var user = new User
                     {
-                        var errorMessage = $"Error creating user: {error.Description}";
-                        throw new Exception(errorMessage);
+                        UserName = userName,
+                        Email = email,
+                        Name = name,
+                        LastName = lastName
+                    };
+                    var result = await userManager.CreateAsync(user, password);
+                    if (!result.Succeeded)
+                    {
+                        foreach (var error in result.Errors)
+                        {
+                            var errorMessage = $"Error creating user: {error.Description}";
+                            throw new Exception(errorMessage);
+                        }
+
+                        throw new Exception($"User name: {userName}");
                     }
 
-                    throw new Exception($"User name: {userName}");
-                }
-
-                if (userConfig.Roles != null)
-                {
-                    foreach (var roleName in userConfig.Roles)
+                    if (userConfig.Roles != null)
                     {
-                        if (await roleManager.RoleExistsAsync(roleName))
+                        foreach (var roleName in userConfig.Roles)
                         {
-                            await userManager.AddToRoleAsync(user, roleName);
+                            if (await roleManager.RoleExistsAsync(roleName))
+                            {
+                                await userManager.AddToRoleAsync(user, roleName);
+                            }
                         }
                     }
                 }
             }
         }
+
         File.Create(markerFilePath).Dispose();
     }
 }
