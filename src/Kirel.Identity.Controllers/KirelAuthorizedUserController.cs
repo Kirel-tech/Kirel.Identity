@@ -3,6 +3,7 @@ using AutoMapper;
 using Kirel.Identity.Core.Models;
 using Kirel.Identity.Core.Services;
 using Kirel.Identity.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Kirel.Identity.Controllers;
@@ -56,6 +57,7 @@ public class KirelAuthorizedUserController<TAuthorizedUserService, TKey, TUser, 
     /// </summary>
     /// <returns> Authorized user dto </returns>
     [HttpGet]
+    [Authorize]
     public virtual async Task<ActionResult<TAuthorizedUserDto>> GetInfo()
     {
         var result = await AuthorizedUserService.GetDto();
@@ -68,6 +70,7 @@ public class KirelAuthorizedUserController<TAuthorizedUserService, TKey, TUser, 
     /// <param name="updateDto"> Authorized user update dto </param>
     /// <returns> Authorized user dto </returns>
     [HttpPut]
+    [Authorize]
     public virtual async Task<ActionResult<TAuthorizedUserDto>> Update([FromBody] TAuthorizedUserUpdateDto updateDto)
     {
         var dto = await AuthorizedUserService.Update(updateDto);
@@ -80,6 +83,7 @@ public class KirelAuthorizedUserController<TAuthorizedUserService, TKey, TUser, 
     /// <param name="currentPassword"> Current user password </param>
     /// <param name="newPassword"> New user password </param>
     [HttpPut("password")]
+    [Authorize]
     public virtual async Task<ActionResult> ChangePassword(
         [Required] string currentPassword,
         [Required] string newPassword)
