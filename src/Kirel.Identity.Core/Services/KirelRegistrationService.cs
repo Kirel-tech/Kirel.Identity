@@ -22,6 +22,11 @@ public class KirelRegistrationService<TKey, TUser, TRole, TUserRole, TRegistrati
     where TRegistrationDto : KirelUserRegistrationDto
 {
     /// <summary>
+    /// The service responsible for email confirmation operations.
+    /// </summary>
+    protected readonly KirelEmailConfirmationService<TKey, TUser, TRole, TUserRole> MailConfirmationService;
+
+    /// <summary>
     /// AutoMapper instance
     /// </summary>
     protected readonly IMapper Mapper;
@@ -36,10 +41,13 @@ public class KirelRegistrationService<TKey, TUser, TRole, TUserRole, TRegistrati
     /// </summary>
     /// <param name="userManager"> Identity user manager </param>
     /// <param name="mapper"> AutoMapper instance </param>
-    public KirelRegistrationService(UserManager<TUser> userManager, IMapper mapper)
+    /// <param name="mailConfirmationService"> mailConfirmationService instance </param>
+    public KirelRegistrationService(UserManager<TUser> userManager, IMapper mapper,
+        KirelEmailConfirmationService<TKey, TUser, TRole, TUserRole> mailConfirmationService)
     {
         UserManager = userManager;
         Mapper = mapper;
+        MailConfirmationService = mailConfirmationService;
     }
 
     /// <summary>
@@ -58,5 +66,8 @@ public class KirelRegistrationService<TKey, TUser, TRole, TUserRole, TRegistrati
             await UserManager.DeleteAsync(appUser);
             throw new KirelIdentityStoreException("Failed to add password");
         }
+
+        var token = UserManager.GenerateEmailConfirmationTokenAsync(appUser);
+        await MailConfirmationService.SendConfirmationMail(appUser, await token);
     }
 }

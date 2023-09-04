@@ -18,17 +18,26 @@ public class KirelAuthenticationService<TKey, TUser, TRole, TUserRole>
     where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole>
 {
     /// <summary>
+    /// AuthentificationEmail Service
+    /// </summary>
+    protected readonly KirelEmailAuthenticationService<TKey, TUser, TRole, TUserRole> EmailAuthenticationService;
+
+    /// <summary>
     /// Identity user manager
     /// </summary>
     protected readonly UserManager<TUser> UserManager;
 
+
     /// <summary>
     /// Constructor for KirelAuthenticationService
     /// </summary>
-    /// <param name="userManager"> </param>
-    public KirelAuthenticationService(UserManager<TUser> userManager)
+    /// <param name="userManager"> Usermanager </param>
+    /// <param name="emailAuthenticationService"> emailAuthenticationService</param>
+    public KirelAuthenticationService(UserManager<TUser> userManager,
+        KirelEmailAuthenticationService<TKey, TUser, TRole, TUserRole> emailAuthenticationService)
     {
         UserManager = userManager;
+        EmailAuthenticationService = emailAuthenticationService;
     }
 
     /// <summary>

@@ -1,8 +1,8 @@
-﻿using Kirel.Identity.Core.Models;
-
+﻿using Kirel.Identity.Core.Interfaces;
+using Kirel.Identity.Core.Models;
+using Kirel.Identity.Core.Options;
 using Kirel.Identity.Server.Core.Services;
 using Kirel.Identity.Server.Jwt.Shared;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Kirel.Identity.Server.Core.Extensions;
@@ -17,14 +17,27 @@ public static class ServicesExtension
     /// </summary>
     /// <param name="services"> services collection </param>
     /// <param name="jwtConfig"> JWT Token generation config </param>
-    public static void AddServices(this IServiceCollection services, JwtAuthenticationConfig jwtConfig)
+    /// <param name="emailSettings"> emailSettings options </param>
+    public static void AddServices(this IServiceCollection services, JwtAuthenticationConfig jwtConfig,
+        EmailSettings emailSettings)
     {
         services.AddScoped<AuthenticationService>();
         services.AddScoped<AuthorizedUserService>();
         services.AddScoped<UserService>();
         services.AddScoped<RoleService>();
         services.AddScoped<RegistrationService>();
+        services.AddScoped<IMailSender, SmtpMailSender>();
+        services.AddScoped<EmailAuthenticationService>();
 
+
+        var emailsettings = new EmailSettings
+        {
+            SmtpServer = emailSettings.SmtpServer,
+            SmtpPort = emailSettings.SmtpPort,
+            SmtpUsername = emailSettings.SmtpUsername,
+            SmtpPassword = emailSettings.SmtpPassword,
+            SmtpEmail = emailSettings.SmtpEmail
+        };
         // configure JWT Tokens issue
         var kirelAuthOptions = new KirelAuthOptions
         {
@@ -35,6 +48,8 @@ public static class ServicesExtension
             RefreshLifetime = jwtConfig.RefreshLifetime
         };
         services.AddSingleton(kirelAuthOptions);
+        services.AddSingleton(emailsettings);
         services.AddScoped<JwtTokenService>();
+        services.AddScoped<EmailConfirmationService>();
     }
 }

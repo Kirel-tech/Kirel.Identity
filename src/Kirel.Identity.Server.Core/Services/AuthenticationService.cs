@@ -8,7 +8,8 @@ namespace Kirel.Identity.Server.Core.Services;
 public class AuthenticationService : KirelAuthenticationService<Guid, User, Role, UserRole>
 {
     /// <inheritdoc />
-    public AuthenticationService(UserManager<User> userManager) : base(userManager)
+    public AuthenticationService(UserManager<User> userManager,
+        EmailAuthenticationService emailAuthenticationService) : base(userManager, emailAuthenticationService)
     {
     }
 }

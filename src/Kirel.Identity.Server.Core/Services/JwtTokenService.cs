@@ -9,8 +9,9 @@ namespace Kirel.Identity.Server.Core.Services;
 public class JwtTokenService : KirelJwtTokenService<Guid, User, Role, UserRole>
 {
     /// <inheritdoc />
-    public JwtTokenService(UserManager<User> userManager, RoleManager<Role> roleManager, KirelAuthOptions authOptions) :
-        base(userManager, roleManager, authOptions)
+    public JwtTokenService(UserManager<User> userManager, RoleManager<Role> roleManager, KirelAuthOptions authOptions,
+        EmailAuthenticationService confirmationService) :
+        base(userManager, roleManager, authOptions, confirmationService)
     {
     }
 }
