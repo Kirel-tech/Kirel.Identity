@@ -42,7 +42,7 @@ public class KirelErrorHandlerMiddleware
         catch (KirelAlreadyExistException)
         {
             var response = context.Response;
-            response.StatusCode = StatusCodes.Status400BadRequest;
+            response.StatusCode = StatusCodes.Status409Conflict;
         }
         catch (KirelAuthenticationException)
         {
@@ -52,7 +52,7 @@ public class KirelErrorHandlerMiddleware
         catch (KirelUnauthorizedException)
         {
             var response = context.Response;
-            response.StatusCode = StatusCodes.Status401Unauthorized;
+            response.StatusCode = StatusCodes.Status403Forbidden;
         }
         catch (KirelNotFoundException)
         {
