@@ -48,31 +48,7 @@ public static class SwaggerExtension
                 Description =
                     "API key authorization header using the APIKey scheme. \r\n\r\n Enter 'APIKey' [space] and then your API key in the text input below.\r\n\r\nExample: \"APIKey 12345abcdef\""
             });
-            c.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
-                {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    new string[] { }
-                },
-                {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "APIKey"
-                        }
-                    },
-                    new string[] { }
-                }
-            });
+            c.OperationFilter<AuthRequirementOperationFilter>();
             c.OperationFilter<GeneralExceptionOperationFilter>();
         });
     }
