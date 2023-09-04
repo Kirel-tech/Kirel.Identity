@@ -92,6 +92,11 @@ if (app.Environment.IsDevelopment())
 app.UseCors("DevCorsPolicy");
 //app.UseHttpsRedirection();
 
+// for now we use static index html to use stoplight/elements OpenAPI documentation on address /docs
+// Save order UseDefaultFiles() - First.
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 // Save order, UseAuthentication() - First.
 app.UseAuthentication();
 app.UseAuthorization();

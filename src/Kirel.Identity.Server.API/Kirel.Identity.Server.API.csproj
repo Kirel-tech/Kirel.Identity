@@ -26,6 +26,9 @@
 		<Content Include="..\.dockerignore">
 			<Link>.dockerignore</Link>
 		</Content>
+		<Content Update="wwwroot\docs\index.html">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
