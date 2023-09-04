@@ -57,7 +57,7 @@ public class KirelAuthorizedUserController<TAuthorizedUserService, TKey, TUser, 
     /// </summary>
     /// <returns> Authorized user dto </returns>
     [HttpGet]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public virtual async Task<ActionResult<TAuthorizedUserDto>> GetInfo()
     {
         var result = await AuthorizedUserService.GetDto();
@@ -70,7 +70,7 @@ public class KirelAuthorizedUserController<TAuthorizedUserService, TKey, TUser, 
     /// <param name="updateDto"> Authorized user update dto </param>
     /// <returns> Authorized user dto </returns>
     [HttpPut]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public virtual async Task<ActionResult<TAuthorizedUserDto>> Update([FromBody] TAuthorizedUserUpdateDto updateDto)
     {
         var dto = await AuthorizedUserService.Update(updateDto);
@@ -83,7 +83,7 @@ public class KirelAuthorizedUserController<TAuthorizedUserService, TKey, TUser, 
     /// <param name="currentPassword"> Current user password </param>
     /// <param name="newPassword"> New user password </param>
     [HttpPut("password")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public virtual async Task<ActionResult> ChangePassword(
         [Required] string currentPassword,
         [Required] string newPassword)

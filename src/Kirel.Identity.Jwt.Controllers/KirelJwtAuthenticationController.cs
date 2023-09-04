@@ -88,7 +88,7 @@ public class KirelJwtAuthenticationController<TTokenService, TAuthenticationServ
     /// </summary>
     /// <returns> Token dto </returns>
     [HttpPut]
-    [Authorize(Roles = "RefreshToken")]
+    [Authorize(Roles = "RefreshToken", AuthenticationSchemes = "Bearer")]
     public virtual async Task<ActionResult<JwtTokenDto>> RefreshToken()
     {
         var user = await AuthorizedUserService.Get();
