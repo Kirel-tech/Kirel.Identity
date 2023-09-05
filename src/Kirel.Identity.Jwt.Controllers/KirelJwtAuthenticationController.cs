@@ -69,7 +69,7 @@ public class KirelJwtAuthenticationController<TTokenService, TAuthenticationServ
     }
 
     /// <summary>
-    /// Getting Jwt token
+    /// Get Jwt token
     /// </summary>
     /// <param name="login"> User login </param>
     /// <param name="password"> User password </param>
@@ -84,7 +84,7 @@ public class KirelJwtAuthenticationController<TTokenService, TAuthenticationServ
     }
 
     /// <summary>
-    /// Getting new JWT token via refresh token
+    /// Get JWT token by refresh token
     /// </summary>
     /// <returns> Token dto </returns>
     [HttpPut]

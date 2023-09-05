@@ -51,7 +51,7 @@ public class KirelUsersController<TUserService, TKey, TUser, TRole, TUserRole, T
     }
 
     /// <summary>
-    /// Create new user
+    /// Create user
     /// </summary>
     /// <param name="createDto"> User create dto </param>
     /// <returns> User dto </returns>
@@ -78,7 +78,7 @@ public class KirelUsersController<TUserService, TKey, TUser, TRole, TUserRole, T
     }
 
     /// <summary>
-    /// Gets user by id
+    /// Get user by ID
     /// </summary>
     /// <param name="id"> User id </param>
     /// <returns> User dto </returns>
@@ -91,7 +91,7 @@ public class KirelUsersController<TUserService, TKey, TUser, TRole, TUserRole, T
     }
 
     /// <summary>
-    /// Gets user paginated list
+    /// Get users list
     /// </summary>
     /// <param name="pageNumber"> The number of the displayed page </param>
     /// <param name="pageSize"> Number of items per page </param>

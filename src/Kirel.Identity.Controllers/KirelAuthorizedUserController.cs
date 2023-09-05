@@ -53,7 +53,7 @@ public class KirelAuthorizedUserController<TAuthorizedUserService, TKey, TUser, 
     }
 
     /// <summary>
-    /// Gets authorized user account info
+    /// Get authorized user
     /// </summary>
     /// <returns> Authorized user dto </returns>
     [HttpGet]
@@ -65,7 +65,7 @@ public class KirelAuthorizedUserController<TAuthorizedUserService, TKey, TUser, 
     }
 
     /// <summary>
-    /// Update authorized user account info
+    /// Update authorized user
     /// </summary>
     /// <param name="updateDto"> Authorized user update dto </param>
     /// <returns> Authorized user dto </returns>
@@ -78,7 +78,7 @@ public class KirelAuthorizedUserController<TAuthorizedUserService, TKey, TUser, 
     }
 
     /// <summary>
-    /// Change authorized user password
+    /// Change user password
     /// </summary>
     /// <param name="currentPassword"> Current user password </param>
     /// <param name="newPassword"> New user password </param>
