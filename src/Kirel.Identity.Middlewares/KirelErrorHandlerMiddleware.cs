@@ -1,5 +1,7 @@
-﻿using Kirel.Identity.Exceptions;
+﻿using System.Text.Json;
+using Kirel.Identity.Exceptions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Kirel.Identity.Middlewares;
 
@@ -19,6 +21,21 @@ public class KirelErrorHandlerMiddleware
         _next = next;
     }
 
+    private async Task SetProblemDetails(HttpContext context, int code, string title, string details)
+    {
+        context.Response.StatusCode = code;
+        context.Response.ContentType = "application/problem+json";
+        var problem = new ProblemDetails
+        {
+            Title = title,
+            Detail = details,
+            Status = context.Response.StatusCode,
+            Type = "about:blank"
+        };
+        var jsonToken = JsonSerializer.Serialize(problem);
+        await context.Response.WriteAsync(jsonToken);
+    }
+
     /// <summary>
     /// Middleware call point
     /// </summary>
@@ -29,35 +46,35 @@ public class KirelErrorHandlerMiddleware
         {
             await _next(context);
         }
-        catch (KirelIdentityStoreException)
+        catch (KirelIdentityStoreException ex)
         {
-            var response = context.Response;
-            response.StatusCode = StatusCodes.Status500InternalServerError;
+            await SetProblemDetails(context, StatusCodes.Status500InternalServerError,
+            context.Response.StatusCode.ToString(), ex.Message);
         }
-        catch (KirelValidationException)
+        catch (KirelValidationException ex)
         {
-            var response = context.Response;
-            response.StatusCode = StatusCodes.Status400BadRequest;
+            await SetProblemDetails(context, StatusCodes.Status400BadRequest,
+            context.Response.StatusCode.ToString(), ex.Message);
         }
-        catch (KirelAlreadyExistException)
+        catch (KirelAlreadyExistException ex)
         {
-            var response = context.Response;
-            response.StatusCode = StatusCodes.Status409Conflict;
+            await SetProblemDetails(context, StatusCodes.Status409Conflict,
+            context.Response.StatusCode.ToString(), ex.Message);
         }
-        catch (KirelAuthenticationException)
+        catch (KirelAuthenticationException ex)
         {
-            var response = context.Response;
-            response.StatusCode = StatusCodes.Status401Unauthorized;
+            await SetProblemDetails(context, StatusCodes.Status401Unauthorized,
+            context.Response.StatusCode.ToString(), ex.Message);
         }
-        catch (KirelUnauthorizedException)
+        catch (KirelUnauthorizedException ex)
         {
-            var response = context.Response;
-            response.StatusCode = StatusCodes.Status403Forbidden;
+            await SetProblemDetails(context, StatusCodes.Status403Forbidden,
+            context.Response.StatusCode.ToString(), ex.Message);
         }
-        catch (KirelNotFoundException)
+        catch (KirelNotFoundException ex)
         {
-            var response = context.Response;
-            response.StatusCode = StatusCodes.Status404NotFound;
+            await SetProblemDetails(context, StatusCodes.Status404NotFound,
+            context.Response.StatusCode.ToString(), ex.Message);
         }
     }
 }
