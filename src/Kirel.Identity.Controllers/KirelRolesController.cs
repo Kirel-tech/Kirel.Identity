@@ -51,7 +51,7 @@ public class KirelRolesController<TRoleService, TKey, TRole, TUser, TUserRole, T
     }
 
     /// <summary>
-    /// Create new role
+    /// Create role
     /// </summary>
     /// <param name="createDto"> Role create dto </param>
     /// <returns> Role dto </returns>
@@ -64,7 +64,7 @@ public class KirelRolesController<TRoleService, TKey, TRole, TUser, TUserRole, T
     }
 
     /// <summary>
-    /// Update new role
+    /// Update role
     /// </summary>
     /// <param name="updateDto"> Role update dto </param>
     /// <param name="id"> Role id </param>
@@ -78,7 +78,7 @@ public class KirelRolesController<TRoleService, TKey, TRole, TUser, TUserRole, T
     }
 
     /// <summary>
-    /// Get role by id
+    /// Get role by ID
     /// </summary>
     /// <param name="id"> Role id </param>
     /// <returns> Role dto </returns>
