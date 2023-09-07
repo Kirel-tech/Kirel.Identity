@@ -44,7 +44,7 @@ public class KirelAuthenticationService<TKey, TUser, TRole, TUserRole>
         if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password))
             throw new KirelAuthenticationException("Login or password cannot be empty");
         var user = await UserManager.FindByNameAsync(login);
-        if (user == null) throw new KirelIdentityStoreException($"User with login {login} is not found");
+        if (user == null) throw new KirelAuthenticationException($"User with login {login} is not found");
         var result = await UserManager.CheckPasswordAsync(user, password);
         if (!result) throw new KirelAuthenticationException("Wrong password");
         return user;
