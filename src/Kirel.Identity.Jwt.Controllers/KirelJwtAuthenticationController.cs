@@ -75,6 +75,9 @@ public class KirelJwtAuthenticationController<TTokenService, TAuthenticationServ
     /// <param name="password"> User password </param>
     /// <returns> Token dto </returns>
     [HttpGet]
+    [Produces("application/json", "application/problem+json")]
+    [ProducesResponseType(typeof(ProblemDetails), 401)]
+    [ProducesResponseType(typeof(JwtTokenDto), 200)]
     public virtual async Task<ActionResult<JwtTokenDto>> GetJwtToken(
         [Required] string login,
         [Required] string password)
