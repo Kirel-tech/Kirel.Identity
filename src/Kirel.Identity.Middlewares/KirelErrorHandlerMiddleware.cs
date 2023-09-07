@@ -59,13 +59,13 @@ public class KirelErrorHandlerMiddleware
         {
             await SetProblemDetails(context, StatusCodes.Status409Conflict, ex.Message);
         }
-        catch (KirelAuthenticationException ex)
+        catch (KirelAuthenticationException)
         {
-            await SetProblemDetails(context, StatusCodes.Status401Unauthorized, ex.Message);
+            await SetProblemDetails(context, StatusCodes.Status401Unauthorized, "login or password is incorrect");
         }
-        catch (KirelUnauthorizedException ex)
+        catch (KirelUnauthorizedException)
         {
-            await SetProblemDetails(context, StatusCodes.Status403Forbidden, ex.Message);
+            await SetProblemDetails(context, StatusCodes.Status403Forbidden, "user does not have access for this action");
         }
         catch (KirelNotFoundException ex)
         {
