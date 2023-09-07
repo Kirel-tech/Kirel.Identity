@@ -2,6 +2,7 @@
 using Kirel.Identity.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace Kirel.Identity.Middlewares;
 
@@ -21,15 +22,15 @@ public class KirelErrorHandlerMiddleware
         _next = next;
     }
 
-    private async Task SetProblemDetails(HttpContext context, int code, string title, string details)
+    private async Task SetProblemDetails(HttpContext context, int code, string details)
     {
         context.Response.StatusCode = code;
         context.Response.ContentType = "application/problem+json";
         var problem = new ProblemDetails
         {
-            Title = title,
+            Title = ReasonPhrases.GetReasonPhrase(code),
             Detail = details,
-            Status = context.Response.StatusCode,
+            Status = code,
             Type = "about:blank"
         };
         var jsonToken = JsonSerializer.Serialize(problem);
@@ -48,33 +49,27 @@ public class KirelErrorHandlerMiddleware
         }
         catch (KirelIdentityStoreException ex)
         {
-            await SetProblemDetails(context, StatusCodes.Status500InternalServerError,
-            context.Response.StatusCode.ToString(), ex.Message);
+            await SetProblemDetails(context, StatusCodes.Status500InternalServerError, ex.Message);
         }
         catch (KirelValidationException ex)
         {
-            await SetProblemDetails(context, StatusCodes.Status400BadRequest,
-            context.Response.StatusCode.ToString(), ex.Message);
+            await SetProblemDetails(context, StatusCodes.Status400BadRequest, ex.Message);
         }
         catch (KirelAlreadyExistException ex)
         {
-            await SetProblemDetails(context, StatusCodes.Status409Conflict,
-            context.Response.StatusCode.ToString(), ex.Message);
+            await SetProblemDetails(context, StatusCodes.Status409Conflict, ex.Message);
         }
         catch (KirelAuthenticationException ex)
         {
-            await SetProblemDetails(context, StatusCodes.Status401Unauthorized,
-            context.Response.StatusCode.ToString(), ex.Message);
+            await SetProblemDetails(context, StatusCodes.Status401Unauthorized, ex.Message);
         }
         catch (KirelUnauthorizedException ex)
         {
-            await SetProblemDetails(context, StatusCodes.Status403Forbidden,
-            context.Response.StatusCode.ToString(), ex.Message);
+            await SetProblemDetails(context, StatusCodes.Status403Forbidden, ex.Message);
         }
         catch (KirelNotFoundException ex)
         {
-            await SetProblemDetails(context, StatusCodes.Status404NotFound,
-            context.Response.StatusCode.ToString(), ex.Message);
+            await SetProblemDetails(context, StatusCodes.Status404NotFound, ex.Message);
         }
     }
 }
