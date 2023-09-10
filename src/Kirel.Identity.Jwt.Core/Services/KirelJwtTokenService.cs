@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Kirel.Identity.Core.Models;
+using Kirel.Identity.Core.Services;
 using Kirel.Identity.Exceptions;
 using Kirel.Identity.Jwt.DTOs;
 using Microsoft.AspNetCore.Identity;
@@ -22,6 +23,11 @@ public class KirelJwtTokenService<TKey, TUser, TRole, TUserRole>
     where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole>
 {
     /// <summary>
+    /// AuthentificationEmail Service
+    /// </summary>
+    protected readonly KirelEmailAuthenticationService<TKey, TUser, TRole, TUserRole> EmailAuthenticationService;
+
+    /// <summary>
     /// Token auth options
     /// </summary>
     protected readonly KirelAuthOptions AuthOptions;
@@ -42,12 +48,15 @@ public class KirelJwtTokenService<TKey, TUser, TRole, TUserRole>
     /// <param name="userManager"> Identity user manager </param>
     /// <param name="roleManager"> Identity role manager </param>
     /// <param name="authOptions"> Token auth options </param>
+    /// <param name="emailAuthenticationService">EmailAuthenticationService instance </param>
     public KirelJwtTokenService(UserManager<TUser> userManager, RoleManager<TRole> roleManager,
-        KirelAuthOptions authOptions)
+        KirelAuthOptions authOptions,
+        KirelEmailAuthenticationService<TKey, TUser, TRole, TUserRole> emailAuthenticationService)
     {
         UserManager = userManager;
         RoleManager = roleManager;
         AuthOptions = authOptions;
+        EmailAuthenticationService = emailAuthenticationService;
     }
 
     private async Task<ClaimsIdentity> GetUserIdentityClaims(TUser user)
@@ -125,4 +134,5 @@ public class KirelJwtTokenService<TKey, TUser, TRole, TUserRole>
     {
         return await GenerateTokensPair(user);
     }
+
 }

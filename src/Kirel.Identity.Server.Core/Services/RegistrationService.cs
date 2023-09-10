@@ -10,7 +10,8 @@ namespace Kirel.Identity.Server.Core.Services;
 public class RegistrationService : KirelRegistrationService<Guid, User, Role, UserRole, UserRegistrationDto>
 {
     /// <inheritdoc />
-    public RegistrationService(UserManager<User> userManager, IMapper mapper) : base(userManager, mapper)
+    public RegistrationService(UserManager<User> userManager, IMapper mapper,
+        EmailConfirmationService mailConfirmationService) : base(userManager, mapper, mailConfirmationService)
     {
     }
 }

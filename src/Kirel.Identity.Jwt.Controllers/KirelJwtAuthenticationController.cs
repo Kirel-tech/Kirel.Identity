@@ -27,7 +27,8 @@ namespace Kirel.Identity.Jwt.Controllers;
 /// <typeparam name="TAuthorizedUserDto"> </typeparam>
 /// <typeparam name="TAuthorizedUserUpdateDto"> </typeparam>
 /// <typeparam name="TUserRole"> The user role entity type </typeparam>
-public class KirelJwtAuthenticationController<TTokenService, TAuthenticationService, TAuthorizedUserService,
+/// <typeparam name="TEmailAuthenticationService"> Email authentication service </typeparam>
+public class KirelJwtAuthenticationController<TTokenService, TAuthenticationService, TAuthorizedUserService, TEmailAuthenticationService,
     TKey, TUser, TRole, TUserRole, TAuthorizedUserDto, TAuthorizedUserUpdateDto> : Controller
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
     where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole>
@@ -37,7 +38,9 @@ public class KirelJwtAuthenticationController<TTokenService, TAuthenticationServ
     where TAuthorizedUserUpdateDto : KirelAuthorizedUserUpdateDto
     where TTokenService : KirelJwtTokenService<TKey, TUser, TRole, TUserRole>
     where TAuthenticationService : KirelAuthenticationService<TKey, TUser, TRole, TUserRole>
-    where TAuthorizedUserService : KirelAuthorizedUserService<TKey, TUser, TRole, TUserRole, TAuthorizedUserDto, TAuthorizedUserUpdateDto>
+    where TAuthorizedUserService : KirelAuthorizedUserService<TKey, TUser, TRole, TUserRole, TAuthorizedUserDto,
+        TAuthorizedUserUpdateDto>
+    where TEmailAuthenticationService : KirelEmailAuthenticationService<TKey, TUser, TRole, TUserRole>
 {
     /// <summary>
     /// Authentication service
@@ -55,17 +58,24 @@ public class KirelJwtAuthenticationController<TTokenService, TAuthenticationServ
     protected readonly TTokenService TokenService;
 
     /// <summary>
+    /// Email authentication service 
+    /// </summary>
+    protected readonly TEmailAuthenticationService EmailAuthenticationService;
+
+    /// <summary>
     /// KirelAuthenticationController constructor
     /// </summary>
     /// <param name="authService"> Authentication service </param>
     /// <param name="tokenService"> Service for generating JWT dto </param>
     /// <param name="authorizedUserProvider"> </param>
+    /// <param name="emailAuthenticationService">Email authentication service  </param>
     public KirelJwtAuthenticationController(TAuthenticationService authService, TTokenService tokenService,
-        TAuthorizedUserService authorizedUserProvider)
+        TAuthorizedUserService authorizedUserProvider, TEmailAuthenticationService emailAuthenticationService)
     {
         TokenService = tokenService;
         AuthenticationService = authService;
         AuthorizedUserService = authorizedUserProvider;
+        EmailAuthenticationService = emailAuthenticationService;
     }
 
     /// <summary>
@@ -96,5 +106,32 @@ public class KirelJwtAuthenticationController<TTokenService, TAuthenticationServ
     {
         var user = await AuthorizedUserService.Get();
         return Ok(await TokenService.GenerateJwtTokenDto(user));
+    }
+
+    /// <summary>
+    /// Method for user login using an email address and a token.
+    /// </summary>
+    /// <param name="email"> User's email address. </param>
+    /// <param name="token"> Token for user login. </param>
+    /// <returns> The result of the login operation, including the token. </returns>
+    [HttpGet("email/login")]
+    public virtual async Task<ActionResult<JwtTokenDto>> Login(
+        [Required] string email,
+        [Required] string token)
+    {
+        var user = await EmailAuthenticationService.LoginByToken(email, token);
+        return Ok(await TokenService.GenerateJwtTokenDto(user));
+    }
+
+    /// <summary>
+    /// Method for sending a login token to an email address.
+    /// </summary>
+    /// <param name="email"> Email address to which the login token will be sent. </param>
+    /// <returns> The result of the token sending operation. </returns>
+    [HttpPost("email/send")]
+    public virtual async Task<ActionResult> SendMailToken([Required] string email)
+    {
+        await EmailAuthenticationService.SendTokenOnMail(email);
+        return Ok();
     }
 }

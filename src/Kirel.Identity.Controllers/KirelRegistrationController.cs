@@ -14,14 +14,21 @@ namespace Kirel.Identity.Controllers;
 /// <typeparam name="TUser"> The user type </typeparam>
 /// <typeparam name="TRole"> The role entity type </typeparam>
 /// <typeparam name="TUserRole"> The user role entity type </typeparam>
-public class KirelRegistrationController<TRegistrationService, TRegistrationDto, TKey, TUser, TRole, TUserRole> : Controller
+/// <typeparam name="TEmailConfirmationService"> </typeparam>
+public class KirelRegistrationController<TRegistrationService, TRegistrationDto, TKey, TUser, TRole, TUserRole,
+    TEmailConfirmationService> : Controller
     where TRegistrationService : KirelRegistrationService<TKey, TUser, TRole, TUserRole, TRegistrationDto>
     where TRegistrationDto : KirelUserRegistrationDto
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
     where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole>
     where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole>
     where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole>
+    where TEmailConfirmationService : KirelEmailConfirmationService<TKey, TUser, TRole, TUserRole>
 {
+    /// <summary>
+    /// The service responsible for email confirmation operations.
+    /// </summary>
+    protected readonly TEmailConfirmationService _emailConfirmationService;
     /// <summary>
     /// Authorized user service
     /// </summary>
@@ -31,9 +38,11 @@ public class KirelRegistrationController<TRegistrationService, TRegistrationDto,
     /// Constructor for KirelRegistrationController
     /// </summary>
     /// <param name="service"> User registration service </param>
-    public KirelRegistrationController(TRegistrationService service)
+    /// <param name="emailConfirmationService">emailConfirmation service </param>
+    public KirelRegistrationController(TRegistrationService service, TEmailConfirmationService emailConfirmationService)
     {
         Service = service;
+        _emailConfirmationService = emailConfirmationService;
     }
 
     /// <summary>
@@ -46,5 +55,37 @@ public class KirelRegistrationController<TRegistrationService, TRegistrationDto,
     {
         await Service.Registration(registrationDto);
         return NoContent();
+    }
+
+    /// <summary>
+    /// Confirms the user's email based on the provided token.
+    /// </summary>
+    /// <param name="Email">The email address of the user.</param>
+    /// <param name="token">The email confirmation token.</param>
+    /// <returns>An IActionResult indicating the result of the email confirmation.</returns>
+    [HttpGet("confirm")]
+    public async Task<IActionResult> ConfirmEmail(string Email, string token)
+    {
+        var res = await _emailConfirmationService.ConfirmMail(Email, token);
+        return Ok(res);
+    }
+    /// <summary>
+    /// resend email confirmation link
+    /// </summary>
+    /// <param name="Email"></param>
+    /// <returns></returns>
+    [HttpGet("ResendConfirmMail")]
+    public async Task<IActionResult> ResendConfirmEmail(string Email)
+    {
+        try
+        {
+            await _emailConfirmationService.ResendConfirmationMail(Email);
+        }
+        catch (Exception ex)
+        {
+            // Handle email confirmation failure and return a BadRequest result with an error message.
+            return BadRequest($"Email confirmation failed: {ex.Message}");
+        }
+        return Ok();
     }
 }
