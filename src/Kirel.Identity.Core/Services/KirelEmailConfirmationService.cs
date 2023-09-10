@@ -57,16 +57,48 @@ public class KirelEmailConfirmationService<TKey, TUser, TRole, TUserRole>
 
         await MailSender.SendAsync(user.Email, message);
     }
+    /// <summary>
+    /// resend email confirmation link
+    /// </summary>
+    /// <param name="email"> The user to send the email to. </param>
+    public virtual async Task ResendConfirmationMail(string email)
+    {
+        var user = await UserManager.FindByEmailAsync(email);
+        var token = UserManager.GenerateEmailConfirmationTokenAsync(user);
+        var link = $"https://localhost:7055/registration/confirm?Email={user.Email}&token={token}";
+        var message = new MailMessage
+        {
+            Subject = "Email Confirmation",
+            Body =
+                $"Please confirm your email by clicking <a href='{link}'>here</a>. Please do not reply to this message.",
+            IsBodyHtml = true
+        };
 
+        await MailSender.SendAsync(user.Email, message);
+    }
     /// <summary>
     /// Confirms the email for a user.
     /// </summary>
     /// <param name="email"> The email address. </param>
     /// <param name="token"> The email confirmation token. </param>
-    public virtual async Task ConfirmMail(string email, string token)
+    public virtual async Task<string> ConfirmMail(string email, string token)
     {
-        token = token.Replace(' ', '+');
-        var user = await UserManager.FindByEmailAsync(email);
-        var result = await UserManager.ConfirmEmailAsync(user, token);
+        try
+        {
+            token = token.Replace(' ', '+');
+            var user = await UserManager.FindByEmailAsync(email);
+            var result = await UserManager.ConfirmEmailAsync(user, token);
+            if (result.Succeeded)
+            {
+                return "Email confirmed successfully.";
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+
+        return null;
     }
 }
