@@ -29,7 +29,6 @@ public class KirelRegistrationController<TRegistrationService, TRegistrationDto,
     /// The service responsible for email confirmation operations.
     /// </summary>
     protected readonly TEmailConfirmationService _emailConfirmationService;
-
     /// <summary>
     /// Authorized user service
     /// </summary>
@@ -67,16 +66,26 @@ public class KirelRegistrationController<TRegistrationService, TRegistrationDto,
     [HttpGet("confirm")]
     public async Task<IActionResult> ConfirmEmail(string Email, string token)
     {
+        var res = await _emailConfirmationService.ConfirmMail(Email, token);
+        return Ok(res);
+    }
+    /// <summary>
+    /// resend email confirmation link
+    /// </summary>
+    /// <param name="Email"></param>
+    /// <returns></returns>
+    [HttpGet("ResendConfirmMail")]
+    public async Task<IActionResult> ResendConfirmEmail(string Email)
+    {
         try
         {
-            await _emailConfirmationService.ConfirmMail(Email, token);
+            await _emailConfirmationService.ResendConfirmationMail(Email);
         }
         catch (Exception ex)
         {
             // Handle email confirmation failure and return a BadRequest result with an error message.
             return BadRequest($"Email confirmation failed: {ex.Message}");
         }
-        return Ok("Email confirmed successfully.");
+        return Ok();
     }
-
 }
