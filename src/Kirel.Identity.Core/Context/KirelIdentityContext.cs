@@ -12,11 +12,11 @@ public class KirelIdentityContext<TUser, TRole, TKey, TUserClaim, TUserRole, TUs
         TRoleClaim, TUserToken>
     : IdentityDbContext<TUser, TRole, TKey,
         TUserClaim, TUserRole, TUserLogin, TRoleClaim, TUserToken>
-    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole>
-    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole>
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
+    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim>
+    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole, TRoleClaim, TUserClaim>
+    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole, TUserClaim, TRoleClaim>
     where TUserClaim : KirelIdentityUserClaim<TKey>
-    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole>
     where TUserLogin : KirelIdentityUserLogin<TKey>
     where TRoleClaim : KirelIdentityRoleClaim<TKey>
     where TUserToken : KirelIdentityUserToken<TKey>
@@ -74,22 +74,48 @@ public class KirelIdentityContext<TUser, TRole, TKey, TUserClaim, TUserRole, TUs
     protected override void OnModelCreating(ModelBuilder modelBuilder)  
     {  
         base.OnModelCreating(modelBuilder);  
-        modelBuilder.Entity<TUser>(b =>  
-        {     
-            // Each User can have many entries in the UserRole join table  
-            b.HasMany(e => e.UserRoles)  
-                .WithOne(e => e.User)  
-                .HasForeignKey(ur => ur.UserId)  
-                .IsRequired();  
-        });  
-
-        modelBuilder.Entity<TRole>(b =>  
-        {  
-            // Each Role can have many entries in the UserRole join table  
-            b.HasMany(e => e.UserRoles)  
-                .WithOne(e => e.Role)  
-                .HasForeignKey(ur => ur.RoleId)  
-                .IsRequired();  
-        });  
+        // User Roles relationships
+        modelBuilder.Entity<TUserRole>()
+            .HasKey(ur => new { ur.UserId, ur.RoleId });
+        modelBuilder.Entity<TUserRole>()
+            .HasOne(mg => mg.User)
+            .WithMany(m => m.UserRoles)
+            .HasForeignKey(mg => mg.UserId);
+        modelBuilder.Entity<TUserRole>()
+            .HasOne(mg => mg.Role)
+            .WithMany(g => g.UserRoles)
+            .HasForeignKey(mg => mg.RoleId);
+        
+        //Include Role automatically for UserRole
+        modelBuilder.Entity<TUserRole>()
+            .Navigation(e => e.Role)
+            .AutoInclude();
+        //Include Claims automatically for User
+        modelBuilder.Entity<TUser>()
+            .Navigation(e => e.Claims)
+            .AutoInclude();
+        //Include UserRoles automatically for User
+        modelBuilder.Entity<TUser>()
+            .Navigation(e => e.UserRoles)
+            .AutoInclude();
+        //Include Claims automatically for Role
+        modelBuilder.Entity<TRole>()
+            .Navigation(e => e.Claims)
+            .AutoInclude();
+        
+        
+        
+        // User claims relationships
+        modelBuilder.Entity<TUser>()
+            .HasMany(e => e.Claims)
+            .WithOne()
+            .HasForeignKey(ur => ur.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        // Role claims relationships
+        modelBuilder.Entity<TRole>().HasMany(e => e.Claims)
+            .WithOne()
+            .HasForeignKey(ur => ur.RoleId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

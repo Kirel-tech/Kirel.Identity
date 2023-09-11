@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 namespace Kirel.Identity.Server.Core.Services;
 
 /// <inheritdoc />
-public class AuthorizedUserService : KirelAuthorizedUserService<Guid, User, Role, UserRole, AuthorizedUserDto, AuthorizedUserUpdateDto>
+public class AuthorizedUserService : KirelAuthorizedUserService<Guid, User, Role, UserRole, UserClaim, RoleClaim, AuthorizedUserDto, AuthorizedUserUpdateDto>
 {
     /// <inheritdoc />
     public AuthorizedUserService(IHttpContextAccessor httpContextAccessor, UserManager<User> userManager,

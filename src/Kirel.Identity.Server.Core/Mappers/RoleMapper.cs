@@ -14,8 +14,8 @@ public class RoleMapper : Profile
     /// </summary>
     public RoleMapper()
     {
-        CreateMap<Role, RoleDto>().ReverseMap();
-        CreateMap<Role, RoleCreateDto>().ReverseMap();
-        CreateMap<Role, RoleUpdateDto>().ReverseMap();
+        CreateMap<Role, RoleDto>();
+        CreateMap<RoleCreateDto, Role>();
+        CreateMap<RoleUpdateDto, Role>();
     }
 }

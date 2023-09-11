@@ -3,6 +3,6 @@
 namespace Kirel.Identity.Server.Domain;
 
 /// <inheritdoc />
-public class UserRole : KirelIdentityUserRole<Guid, UserRole, User, Role>
+public class UserRole : KirelIdentityUserRole<Guid, UserRole, User, Role, UserClaim, RoleClaim>
 {
 }

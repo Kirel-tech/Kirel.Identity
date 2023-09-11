@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 namespace Kirel.Identity.Server.Core.Validators;
 
 /// <inheritdoc />
-public class UserUpdateDtoValidator : KirelUserUpdateDtoValidator<Guid, User, Role, UserRole, UserUpdateDto, ClaimUpdateDto>
+public class UserUpdateDtoValidator : KirelUserUpdateDtoValidator<Guid, User, Role, UserRole, UserClaim, RoleClaim, UserUpdateDto, ClaimUpdateDto>
 {
     /// <inheritdoc />
     public UserUpdateDtoValidator(IOptions<IdentityOptions> identityOptions, UserManager<User> userManager,

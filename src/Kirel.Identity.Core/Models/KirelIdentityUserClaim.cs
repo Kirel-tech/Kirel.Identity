@@ -9,4 +9,5 @@ namespace Kirel.Identity.Core.Models;
 public class KirelIdentityUserClaim<TKey> : IdentityUserClaim<TKey>
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
 {
+    
 }

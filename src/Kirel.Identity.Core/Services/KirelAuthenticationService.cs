@@ -11,11 +11,15 @@ namespace Kirel.Identity.Core.Services;
 /// <typeparam name="TUser"> User entity type. </typeparam>
 /// <typeparam name="TRole"> Role entity type. </typeparam>
 /// <typeparam name="TUserRole"> Role user entity type. </typeparam>
-public class KirelAuthenticationService<TKey, TUser, TRole, TUserRole>
+/// <typeparam name="TUserClaim"> User claim type. </typeparam>
+/// <typeparam name="TRoleClaim"> Role claim type. </typeparam>
+public class KirelAuthenticationService<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim>
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
-    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole>
-    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole>
-    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole>
+    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim>
+    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole, TRoleClaim, TUserClaim>
+    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole, TUserClaim, TRoleClaim>
+    where TRoleClaim : KirelIdentityRoleClaim<TKey>
+    where TUserClaim : KirelIdentityUserClaim<TKey>
 {
     /// <summary>
     /// Identity user manager

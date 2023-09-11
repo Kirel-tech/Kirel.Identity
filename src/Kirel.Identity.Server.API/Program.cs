@@ -78,9 +78,9 @@ var app = builder.Build();
 // Apply migrations to db
 await app.MigrateIdentityDbAsync();
 // Create admin user and role, do maintenance admin password reset if needed
-await app.MaintenanceAsync<Guid, User, Role, UserRole>(maintenanceConfig);
+await app.MaintenanceAsync<Guid, User, Role, UserRole, UserClaim, RoleClaim>(maintenanceConfig);
 // Apply users and roles data seeding
-await app.UsersAndRolesDataSeedAsync<Guid, User, Role, UserRole>(dataSeedConfig);
+await app.UsersAndRolesDataSeedAsync<Guid, User, Role, UserRole, UserClaim, RoleClaim>(dataSeedConfig);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
