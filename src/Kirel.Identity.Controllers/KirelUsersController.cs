@@ -21,14 +21,18 @@ namespace Kirel.Identity.Controllers;
 /// <typeparam name="TClaimCreateDto"> Claim create dto type. Must be a descendant of the KirelClaimCreateDto class </typeparam>
 /// <typeparam name="TClaimUpdateDto"> Claim update dto type. Must be a descendant of the KirelClaimUpdateDto class </typeparam>
 /// <typeparam name="TUserRole"> The user role entity type </typeparam>
-public class KirelUsersController<TUserService, TKey, TUser, TRole, TUserRole, TUserDto, TUserCreateDto, TUserUpdateDto, TClaimDto,
+/// <typeparam name="TUserClaim"> User claim type. </typeparam>
+/// <typeparam name="TRoleClaim"> Role claim type. </typeparam>
+public class KirelUsersController<TUserService, TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim, TUserDto, TUserCreateDto, TUserUpdateDto, TClaimDto,
     TClaimCreateDto, TClaimUpdateDto> : Controller
-    where TUserService : KirelUserService<TKey, TUser, TRole, TUserRole, TUserDto, TUserCreateDto, TUserUpdateDto, TClaimDto,
+    where TUserService : KirelUserService<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim, TUserDto, TUserCreateDto, TUserUpdateDto, TClaimDto,
         TClaimCreateDto, TClaimUpdateDto>
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
-    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole>
-    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole>
-    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole>
+    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim>
+    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole, TRoleClaim, TUserClaim>
+    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole, TUserClaim, TRoleClaim>
+    where TRoleClaim : KirelIdentityRoleClaim<TKey>
+    where TUserClaim : KirelIdentityUserClaim<TKey>
     where TUserDto : KirelUserDto<TKey, TKey, TClaimDto>
     where TUserCreateDto : KirelUserCreateDto<TKey, TClaimCreateDto>
     where TUserUpdateDto : KirelUserUpdateDto<TKey, TClaimUpdateDto>

@@ -14,11 +14,17 @@ public class UserMapper : Profile
     /// </summary>
     public UserMapper()
     {
-        CreateMap<User, UserDto>().ReverseMap();
-        CreateMap<User, UserCreateDto>().ReverseMap();
-        CreateMap<User, UserUpdateDto>().ReverseMap();
-        CreateMap<User, UserRegistrationDto>().ReverseMap();
-        CreateMap<User, AuthorizedUserDto>().ReverseMap();
-        CreateMap<User, AuthorizedUserUpdateDto>().ReverseMap();
+        CreateMap<User, UserDto>()
+            .ForMember(d => d.Roles, 
+            opt => opt.MapFrom(s => s.UserRoles.Select(ur => ur.RoleId)));
+        CreateMap<User, AuthorizedUserDto>();
+        CreateMap<UserCreateDto, User>().ForMember(d => d.UserRoles, opt => opt.MapFrom(
+            s => s.Roles.Select(r => new UserRole() {RoleId = r})
+        ));
+        CreateMap<UserUpdateDto, User>().ForMember(d => d.UserRoles, 
+        opt => opt.MapFrom(source => source.Roles.Select(id => new UserRole(){RoleId = id}).ToList())
+        );
+        CreateMap<UserRegistrationDto, User>();
+        CreateMap<AuthorizedUserUpdateDto, User>();
     }
 }

@@ -21,14 +21,18 @@ namespace Kirel.Identity.Controllers;
 /// <typeparam name="TClaimUpdateDto"> Claim update dto type. Must be a descendant of the KirelClaimUpdateDto class </typeparam>
 /// <typeparam name="TUser"> The user entity type </typeparam>
 /// <typeparam name="TUserRole"> The user entity type </typeparam>
-public class KirelRolesController<TRoleService, TKey, TRole, TUser, TUserRole, TRoleDto, TRoleCreateDto, TRoleUpdateDto, TClaimDto,
+/// <typeparam name="TUserClaim"> User claim type. </typeparam>
+/// <typeparam name="TRoleClaim"> Role claim type. </typeparam>
+public class KirelRolesController<TRoleService, TKey, TRole, TUser, TUserRole, TRoleClaim, TUserClaim, TRoleDto, TRoleCreateDto, TRoleUpdateDto, TClaimDto,
     TClaimCreateDto, TClaimUpdateDto> : Controller
-    where TRoleService : KirelRoleService<TKey, TRole, TUser, TUserRole, TRoleDto, TRoleCreateDto, TRoleUpdateDto, TClaimDto,
+    where TRoleService : KirelRoleService<TKey, TRole, TUser, TUserRole, TRoleClaim, TUserClaim, TRoleDto, TRoleCreateDto, TRoleUpdateDto, TClaimDto,
         TClaimCreateDto, TClaimUpdateDto>
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
-    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole>
-    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole>
-    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole>
+    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim>
+    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole, TRoleClaim, TUserClaim>
+    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole, TUserClaim, TRoleClaim>
+    where TRoleClaim : KirelIdentityRoleClaim<TKey>
+    where TUserClaim : KirelIdentityUserClaim<TKey>
     where TRoleDto : KirelRoleDto<TKey, TClaimDto>
     where TRoleCreateDto : KirelRoleCreateDto<TClaimCreateDto>
     where TRoleUpdateDto : KirelRoleUpdateDto<TClaimUpdateDto>

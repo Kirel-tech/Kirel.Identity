@@ -10,11 +10,13 @@ namespace Kirel.Identity.Core.Validators;
 /// <summary>
 /// Validation for KirelUserRegistrationDto
 /// </summary>
-public class KirelUserRegistrationDtoValidator<TKey, TUser, TRole, TUserRole> : AbstractValidator<KirelUserRegistrationDto>
+public class KirelUserRegistrationDtoValidator<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim> : AbstractValidator<KirelUserRegistrationDto>
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
-    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole>
-    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole>
-    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole>
+    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim>
+    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole, TRoleClaim, TUserClaim>
+    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole, TUserClaim, TRoleClaim>
+    where TRoleClaim : KirelIdentityRoleClaim<TKey>
+    where TUserClaim : KirelIdentityUserClaim<TKey>
 {
     private readonly UserManager<TUser> _userManager;
 

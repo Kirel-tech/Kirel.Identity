@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Identity;
 namespace Kirel.Identity.Server.Core.Services;
 
 /// <inheritdoc />
-public class JwtTokenService : KirelJwtTokenService<Guid, User, Role, UserRole>
+public class JwtTokenService : KirelJwtTokenService<Guid, User, Role, UserRole, UserClaim, RoleClaim>
 {
     /// <inheritdoc />
-    public JwtTokenService(UserManager<User> userManager, RoleManager<Role> roleManager, KirelAuthOptions authOptions) :
-        base(userManager, roleManager, authOptions)
+    public JwtTokenService(KirelAuthOptions authOptions) :
+        base(authOptions)
     {
     }
 }

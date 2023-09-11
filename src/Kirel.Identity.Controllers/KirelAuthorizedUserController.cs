@@ -4,6 +4,7 @@ using Kirel.Identity.Core.Models;
 using Kirel.Identity.Core.Services;
 using Kirel.Identity.DTOs;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Kirel.Identity.Controllers;
@@ -21,13 +22,17 @@ namespace Kirel.Identity.Controllers;
 /// <typeparam name="TAuthorizedUserUpdateDto"> Authorized user update dto </typeparam>
 /// <typeparam name="TRole"> The role entity type </typeparam>
 /// <typeparam name="TUserRole"> The user role entity type </typeparam>
-public class KirelAuthorizedUserController<TAuthorizedUserService, TKey, TUser, TRole, TUserRole, TAuthorizedUserDto,
+/// <typeparam name="TUserClaim"> User claim type. </typeparam>
+/// <typeparam name="TRoleClaim"> Role claim type. </typeparam>
+public class KirelAuthorizedUserController<TAuthorizedUserService, TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim, TAuthorizedUserDto,
     TAuthorizedUserUpdateDto> : Controller
-    where TAuthorizedUserService : KirelAuthorizedUserService<TKey, TUser, TRole, TUserRole, TAuthorizedUserDto, TAuthorizedUserUpdateDto>
+    where TAuthorizedUserService : KirelAuthorizedUserService<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim, TAuthorizedUserDto, TAuthorizedUserUpdateDto>
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
-    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole>
-    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole>
-    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole>
+    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim>
+    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole, TRoleClaim, TUserClaim>
+    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole, TUserClaim, TRoleClaim>
+    where TRoleClaim : KirelIdentityRoleClaim<TKey>
+    where TUserClaim : KirelIdentityUserClaim<TKey>
     where TAuthorizedUserDto : KirelAuthorizedUserDto
     where TAuthorizedUserUpdateDto : KirelAuthorizedUserUpdateDto
 {

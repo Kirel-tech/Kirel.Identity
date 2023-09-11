@@ -6,11 +6,13 @@ namespace Kirel.Identity.Core.Models;
 /// <summary>
 /// The default implementation of <see cref="IdentityUser{TKey}" />.
 /// </summary>
-public class KirelIdentityUser<TKey, TUser, TRole, TUserRole> : IdentityUser<TKey>, IKirelUser<TKey>
+public class KirelIdentityUser<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim> : IdentityUser<TKey>, IKirelUser<TKey>
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
-    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole>
-    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole>
-    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole>
+    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim>
+    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole, TRoleClaim, TUserClaim>
+    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole, TUserClaim, TRoleClaim>
+    where TUserClaim : IdentityUserClaim<TKey>
+    where TRoleClaim : IdentityRoleClaim<TKey>
 {
     /// <summary>
     /// First name of the user
@@ -36,4 +38,8 @@ public class KirelIdentityUser<TKey, TUser, TRole, TUserRole> : IdentityUser<TKe
     /// List of user roles
     /// </summary>
     public virtual ICollection<TUserRole> UserRoles { get; set; } = null!;
+    /// <summary>
+    /// Claims of the user
+    /// </summary>
+    public virtual ICollection<TUserClaim> Claims { get; set; } = null!;
 }

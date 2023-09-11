@@ -5,6 +5,8 @@ using Kirel.Identity.DTOs;
 using Kirel.Identity.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Kirel.Identity.Core.Services;
 
@@ -17,11 +19,16 @@ namespace Kirel.Identity.Core.Services;
 /// <typeparam name="TAuthorizedUserUpdateDto"> Authorized user update dto type </typeparam>
 /// <typeparam name="TRole"> Role entity type. </typeparam>
 /// <typeparam name="TUserRole"> User role entity type. </typeparam>
-public class KirelAuthorizedUserService<TKey, TUser, TRole, TUserRole, TAuthorizedUserDto, TAuthorizedUserUpdateDto>
+/// <typeparam name="TUserClaim"> User claim type. </typeparam>
+/// <typeparam name="TRoleClaim"> Role claim type. </typeparam>
+public class KirelAuthorizedUserService<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim, 
+    TAuthorizedUserDto, TAuthorizedUserUpdateDto>
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
-    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole>
-    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole>
-    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole>
+    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim>
+    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole, TRoleClaim, TUserClaim>
+    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole, TUserClaim, TRoleClaim>
+    where TRoleClaim : KirelIdentityRoleClaim<TKey>
+    where TUserClaim : KirelIdentityUserClaim<TKey>
     where TAuthorizedUserDto : KirelAuthorizedUserDto
     where TAuthorizedUserUpdateDto : KirelAuthorizedUserUpdateDto
 {
@@ -40,6 +47,8 @@ public class KirelAuthorizedUserService<TKey, TUser, TRole, TUserRole, TAuthoriz
     /// </summary>
     protected readonly UserManager<TUser> UserManager;
 
+    protected TUser? User { get; private set; }
+
     /// <summary>
     /// KirelAuthorizedUserService constructor
     /// </summary>
@@ -52,9 +61,10 @@ public class KirelAuthorizedUserService<TKey, TUser, TRole, TUserRole, TAuthoriz
         UserManager = userManager;
         Mapper = mapper;
         HttpContextAccessor = httpContextAccessor;
+        User = GetUser();
     }
 
-    private void CheckUser(TUser user, string login)
+    private void CheckUser(TUser? user, string login)
     {
         switch (user)
         {
@@ -64,13 +74,22 @@ public class KirelAuthorizedUserService<TKey, TUser, TRole, TUserRole, TAuthoriz
                 throw new KirelAuthenticationException($"User with login {login} is locked");
         }
     }
-
-    private string GetUserName()
+    
+    private TUser? GetUser()
     {
         var userName = HttpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimsIdentity.DefaultNameClaimType);
         if (string.IsNullOrEmpty(userName))
+            return null;
+        var user = UserManager.Users.FirstOrDefault(u => u.UserName == userName);
+        CheckUser(user, userName);
+        return user;
+    }
+
+    private string GetUserName()
+    {
+        if (User == null || User.UserName.IsNullOrEmpty())
             throw new KirelUnauthorizedException("User not authorized");
-        return userName;
+        return User.UserName;
     }
 
     /// <summary>
@@ -80,10 +99,9 @@ public class KirelAuthorizedUserService<TKey, TUser, TRole, TUserRole, TAuthoriz
     /// <exception cref="KirelNotFoundException"> If user not fount in users store </exception>
     public virtual async Task<TAuthorizedUserDto> GetDto()
     {
-        var userName = GetUserName();
-        var user = await UserManager.FindByNameAsync(userName);
-        CheckUser(user, userName);
-        return Mapper.Map<TAuthorizedUserDto>(user);
+        if (User == null || User.UserName.IsNullOrEmpty())
+            throw new KirelUnauthorizedException("User not authorized");
+        return Mapper.Map<TAuthorizedUserDto>(User);
     }
 
     /// <summary>
@@ -93,10 +111,9 @@ public class KirelAuthorizedUserService<TKey, TUser, TRole, TUserRole, TAuthoriz
     /// <exception cref="KirelNotFoundException"> If user not fount in users store </exception>
     public virtual async Task<TUser> Get()
     {
-        var userName = GetUserName();
-        var user = await UserManager.FindByNameAsync(userName);
-        CheckUser(user, userName);
-        return user;
+        if (User == null || User.UserName.IsNullOrEmpty())
+            throw new KirelUnauthorizedException("User not authorized");
+        return User;
     }
 
     /// <summary>
@@ -108,12 +125,12 @@ public class KirelAuthorizedUserService<TKey, TUser, TRole, TUserRole, TAuthoriz
     /// <exception cref="KirelIdentityStoreException"> If user or role managers fails on store based operations </exception>
     public virtual async Task<TAuthorizedUserDto> Update(TAuthorizedUserUpdateDto updateDto)
     {
-        var userName = GetUserName();
-        var user = await UserManager.FindByNameAsync(userName);
-        CheckUser(user, userName);
-        var updatedUser = Mapper.Map(updateDto, user);
+        if (User == null || User.UserName.IsNullOrEmpty())
+            throw new KirelUnauthorizedException("User not authorized");
+        var updatedUser = Mapper.Map(updateDto, User);
         var result = await UserManager.UpdateAsync(updatedUser);
         if (!result.Succeeded) throw new KirelIdentityStoreException("User manager failed to update user");
+        User = updatedUser;
         return Mapper.Map<TAuthorizedUserDto>(updatedUser);
     }
 
@@ -125,9 +142,8 @@ public class KirelAuthorizedUserService<TKey, TUser, TRole, TUserRole, TAuthoriz
     /// <exception cref="KirelNotFoundException"> If user with given id was not found </exception>
     public virtual async Task ChangeUserPassword(string currentPassword, string newPassword)
     {
-        var username = GetUserName();
-        var user = await UserManager.FindByNameAsync(username);
-        CheckUser(user, username);
-        await UserManager.ChangePasswordAsync(user, currentPassword, newPassword);
+        if (User == null || User.UserName.IsNullOrEmpty())
+            throw new KirelUnauthorizedException("User not authorized");
+        await UserManager.ChangePasswordAsync(User, currentPassword, newPassword);
     }
 }

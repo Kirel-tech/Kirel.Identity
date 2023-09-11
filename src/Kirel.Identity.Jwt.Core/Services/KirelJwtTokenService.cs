@@ -15,11 +15,15 @@ namespace Kirel.Identity.Jwt.Core.Services;
 /// <typeparam name="TUser"> User type </typeparam>
 /// <typeparam name="TRole"> Role type </typeparam>
 /// <typeparam name="TUserRole"> User role entity type </typeparam>
-public class KirelJwtTokenService<TKey, TUser, TRole, TUserRole>
+/// <typeparam name="TUserClaim"> User claim type. </typeparam>
+/// <typeparam name="TRoleClaim"> Role claim type. </typeparam>
+public class KirelJwtTokenService<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim>
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
-    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole>
-    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole>
-    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole>
+    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim>
+    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole, TRoleClaim, TUserClaim>
+    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole, TUserClaim, TRoleClaim>
+    where TRoleClaim : KirelIdentityRoleClaim<TKey>
+    where TUserClaim : KirelIdentityUserClaim<TKey>
 {
     /// <summary>
     /// Token auth options
@@ -27,33 +31,17 @@ public class KirelJwtTokenService<TKey, TUser, TRole, TUserRole>
     protected readonly KirelAuthOptions AuthOptions;
 
     /// <summary>
-    /// Identity role manager
-    /// </summary>
-    protected readonly RoleManager<TRole> RoleManager;
-
-    /// <summary>
-    /// Identity user manager
-    /// </summary>
-    protected readonly UserManager<TUser> UserManager;
-
-    /// <summary>
     /// KirelAuthenticationService constructor
     /// </summary>
-    /// <param name="userManager"> Identity user manager </param>
-    /// <param name="roleManager"> Identity role manager </param>
     /// <param name="authOptions"> Token auth options </param>
-    public KirelJwtTokenService(UserManager<TUser> userManager, RoleManager<TRole> roleManager,
-        KirelAuthOptions authOptions)
+    public KirelJwtTokenService(KirelAuthOptions authOptions)
     {
-        UserManager = userManager;
-        RoleManager = roleManager;
         AuthOptions = authOptions;
     }
 
-    private async Task<ClaimsIdentity> GetUserIdentityClaims(TUser user)
+    private Task<ClaimsIdentity> GetUserIdentityClaims(TUser user)
     {
-        var claims = await UserManager.GetClaimsAsync(user);
-        var userRoles = await UserManager.GetRolesAsync(user);
+        var claims = user.Claims.Select(c => new Claim(c.ClaimType, c.ClaimValue)).ToList();
 
         claims.Add(new Claim(ClaimsIdentity.DefaultNameClaimType, user.UserName));
         claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
@@ -61,19 +49,14 @@ public class KirelJwtTokenService<TKey, TUser, TRole, TUserRole>
         claims.Add(new Claim(JwtRegisteredClaimNames.Name, user.UserName));
         claims.Add(new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()!));
         claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
-        foreach (var roleName in userRoles)
+        foreach (var role in user.UserRoles.Select(ur => ur.Role))
         {
-            var role = await RoleManager.FindByNameAsync(roleName);
-            var roleClaims = await RoleManager.GetClaimsAsync(role);
-
-            foreach (var roleClaim in roleClaims)
-                claims.Add(roleClaim);
-
+            claims.AddRange(role.Claims.Select(c => new Claim(c.ClaimType, c.ClaimValue)));
             claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, role.Name));
+            claims.Add(new Claim("role", role.Name));
         }
-
-        return new ClaimsIdentity(claims, "JwtToken", ClaimsIdentity.DefaultNameClaimType,
-            ClaimsIdentity.DefaultRoleClaimType);
+        return Task.FromResult(new ClaimsIdentity(claims, "JwtToken", ClaimsIdentity.DefaultNameClaimType,
+        ClaimsIdentity.DefaultRoleClaimType));
     }
 
     private string CreateJwtToken(ClaimsIdentity claims, int lifetime)
@@ -102,8 +85,9 @@ public class KirelJwtTokenService<TKey, TUser, TRole, TUserRole>
         {
             new(ClaimsIdentity.DefaultNameClaimType, user.UserName),
             new(ClaimsIdentity.DefaultRoleClaimType, "RefreshToken"),
-            new(JwtRegisteredClaimNames.Name, user.UserName),
-            new(JwtRegisteredClaimNames.NameId, user.Id.ToString()!)
+            new(JwtRegisteredClaimNames.Iss, AuthOptions.Issuer),
+            new(JwtRegisteredClaimNames.NameId, user.Id.ToString()!),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
         var refreshClaims = new ClaimsIdentity(claimsList, "Token", ClaimsIdentity.DefaultNameClaimType,
             ClaimsIdentity.DefaultRoleClaimType);

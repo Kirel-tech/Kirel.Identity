@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 namespace Kirel.Identity.Server.Core.Services;
 
 /// <inheritdoc />
-public class AuthenticationService : KirelAuthenticationService<Guid, User, Role, UserRole>
+public class AuthenticationService : KirelAuthenticationService<Guid, User, Role, UserRole, UserClaim, RoleClaim>
 {
     /// <inheritdoc />
     public AuthenticationService(UserManager<User> userManager) : base(userManager)

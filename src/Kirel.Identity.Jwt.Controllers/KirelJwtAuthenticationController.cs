@@ -27,17 +27,21 @@ namespace Kirel.Identity.Jwt.Controllers;
 /// <typeparam name="TAuthorizedUserDto"> </typeparam>
 /// <typeparam name="TAuthorizedUserUpdateDto"> </typeparam>
 /// <typeparam name="TUserRole"> The user role entity type </typeparam>
+/// <typeparam name="TUserClaim"> User claim type. </typeparam>
+/// <typeparam name="TRoleClaim"> Role claim type. </typeparam>
 public class KirelJwtAuthenticationController<TTokenService, TAuthenticationService, TAuthorizedUserService,
-    TKey, TUser, TRole, TUserRole, TAuthorizedUserDto, TAuthorizedUserUpdateDto> : Controller
+    TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim, TAuthorizedUserDto, TAuthorizedUserUpdateDto> : Controller
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
-    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole>
-    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole>
-    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole>
+    where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim>
+    where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole, TRoleClaim, TUserClaim>
+    where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole, TUserClaim, TRoleClaim>
+    where TRoleClaim : KirelIdentityRoleClaim<TKey>
+    where TUserClaim : KirelIdentityUserClaim<TKey>
     where TAuthorizedUserDto : KirelAuthorizedUserDto
     where TAuthorizedUserUpdateDto : KirelAuthorizedUserUpdateDto
-    where TTokenService : KirelJwtTokenService<TKey, TUser, TRole, TUserRole>
-    where TAuthenticationService : KirelAuthenticationService<TKey, TUser, TRole, TUserRole>
-    where TAuthorizedUserService : KirelAuthorizedUserService<TKey, TUser, TRole, TUserRole, TAuthorizedUserDto, TAuthorizedUserUpdateDto>
+    where TTokenService : KirelJwtTokenService<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim>
+    where TAuthenticationService : KirelAuthenticationService<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim>
+    where TAuthorizedUserService : KirelAuthorizedUserService<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim, TAuthorizedUserDto, TAuthorizedUserUpdateDto>
 {
     /// <summary>
     /// Authentication service

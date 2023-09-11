@@ -9,7 +9,7 @@ namespace Kirel.Identity.Server.API.Controllers;
 /// <inheritdoc />
 [Route("users")]
 [ApiController]
-public class UsersController : KirelUsersController<UserService, Guid, User, Role, UserRole, UserDto, UserCreateDto, UserUpdateDto
+public class UsersController : KirelUsersController<UserService, Guid, User, Role, UserRole, UserClaim, RoleClaim, UserDto, UserCreateDto, UserUpdateDto
     , ClaimDto, ClaimCreateDto, ClaimUpdateDto>
 {
     /// <inheritdoc />

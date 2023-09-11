@@ -18,12 +18,16 @@ public static class MaintenanceExtension
     /// <typeparam name="TUser"> User entity type. </typeparam>
     /// <typeparam name="TRole"> Role entity type. </typeparam>
     /// <typeparam name="TUserRole"> Role user entity type. </typeparam>
-    public static async Task MaintenanceAsync<TKey, TUser, TRole, TUserRole>(
+    /// <typeparam name="TUserClaim"> User claim type. </typeparam>
+    /// <typeparam name="TRoleClaim"> Role claim type. </typeparam>
+    public static async Task MaintenanceAsync<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim>(
         this IApplicationBuilder app, MaintenanceConfig config)
-        where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole>, new ()
-        where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole>, new ()
         where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
-        where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole>
+        where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim>, new()
+        where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole, TRoleClaim, TUserClaim>, new()
+        where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole, TUserClaim, TRoleClaim>
+        where TRoleClaim : KirelIdentityRoleClaim<TKey>
+        where TUserClaim : KirelIdentityUserClaim<TKey>
     {
         var scopedServiceProvider = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope()
             .ServiceProvider;

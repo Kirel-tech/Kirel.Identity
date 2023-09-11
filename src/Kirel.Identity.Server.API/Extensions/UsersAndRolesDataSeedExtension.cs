@@ -18,11 +18,15 @@ public static class UsersAndRolesDataSeedExtension
     /// <typeparam name="TUser"> User entity type. </typeparam>
     /// <typeparam name="TRole"> Role entity type. </typeparam>
     /// <typeparam name="TUserRole"> Role user entity type. </typeparam>
-    public static async Task UsersAndRolesDataSeedAsync<TKey, TUser, TRole, TUserRole>(this IApplicationBuilder app, IdentityDataSeedConfig config)
-        where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole>, new ()
-        where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole>, new ()
+    /// <typeparam name="TUserClaim"> User claim type. </typeparam>
+    /// <typeparam name="TRoleClaim"> Role claim type. </typeparam>
+    public static async Task UsersAndRolesDataSeedAsync<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim>(this IApplicationBuilder app, IdentityDataSeedConfig config)
         where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
-        where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole>
+        where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim>, new()
+        where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole, TRoleClaim, TUserClaim>, new()
+        where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole, TUserClaim, TRoleClaim>
+        where TRoleClaim : KirelIdentityRoleClaim<TKey>
+        where TUserClaim : KirelIdentityUserClaim<TKey>
     {
         const string dataSeedLockfile = "identity_data_seed.lock";
         if (File.Exists(dataSeedLockfile)) return;

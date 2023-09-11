@@ -10,7 +10,7 @@ namespace Kirel.Identity.Server.API.Controllers;
 
 [ApiController]
 [Route("registration")]
-public class RegistrationController : KirelRegistrationController<RegistrationService, UserRegistrationDto, Guid, User, Role, UserRole>
+public class RegistrationController : KirelRegistrationController<RegistrationService, UserRegistrationDto, Guid, User, Role, UserRole, UserClaim, RoleClaim>
 {
     /// <inheritdoc />
     public RegistrationController(RegistrationService service) : base(service)
