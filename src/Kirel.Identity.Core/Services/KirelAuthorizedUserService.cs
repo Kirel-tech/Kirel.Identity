@@ -54,6 +54,17 @@ public class KirelAuthorizedUserService<TKey, TUser, TRole, TUserRole, TAuthoriz
         HttpContextAccessor = httpContextAccessor;
     }
 
+    private void CheckUser(TUser user, string login)
+    {
+        switch (user)
+        {
+            case null:
+                throw new KirelAuthenticationException($"User with login {login} is not found");
+            case { LockoutEnabled: true, LockoutEnd: not null } when DateTime.Now.ToUniversalTime() < user.LockoutEnd.Value.ToUniversalTime():
+                throw new KirelAuthenticationException($"User with login {login} is locked");
+        }
+    }
+
     private string GetUserName()
     {
         var userName = HttpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimsIdentity.DefaultNameClaimType);
@@ -71,8 +82,7 @@ public class KirelAuthorizedUserService<TKey, TUser, TRole, TUserRole, TAuthoriz
     {
         var userName = GetUserName();
         var user = await UserManager.FindByNameAsync(userName);
-        if (user == null)
-            throw new KirelNotFoundException($"User with username {userName} was not found");
+        CheckUser(user, userName);
         return Mapper.Map<TAuthorizedUserDto>(user);
     }
 
@@ -85,8 +95,7 @@ public class KirelAuthorizedUserService<TKey, TUser, TRole, TUserRole, TAuthoriz
     {
         var userName = GetUserName();
         var user = await UserManager.FindByNameAsync(userName);
-        if (user == null)
-            throw new KirelNotFoundException($"User with username {userName} was not found");
+        CheckUser(user, userName);
         return user;
     }
 
@@ -101,8 +110,7 @@ public class KirelAuthorizedUserService<TKey, TUser, TRole, TUserRole, TAuthoriz
     {
         var userName = GetUserName();
         var user = await UserManager.FindByNameAsync(userName);
-        if (user == null)
-            throw new KirelNotFoundException($"User with username {userName} was not found");
+        CheckUser(user, userName);
         var updatedUser = Mapper.Map(updateDto, user);
         var result = await UserManager.UpdateAsync(updatedUser);
         if (!result.Succeeded) throw new KirelIdentityStoreException("User manager failed to update user");
@@ -119,8 +127,7 @@ public class KirelAuthorizedUserService<TKey, TUser, TRole, TUserRole, TAuthoriz
     {
         var username = GetUserName();
         var user = await UserManager.FindByNameAsync(username);
-        if (user == null)
-            throw new KirelNotFoundException($"User with username {username} was not found");
+        CheckUser(user, username);
         await UserManager.ChangePasswordAsync(user, currentPassword, newPassword);
     }
 }
