@@ -44,7 +44,13 @@ public class KirelAuthenticationService<TKey, TUser, TRole, TUserRole>
         if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password))
             throw new KirelAuthenticationException("Login or password cannot be empty");
         var user = await UserManager.FindByNameAsync(login);
-        if (user == null) throw new KirelAuthenticationException($"User with login {login} is not found");
+        switch (user)
+        {
+            case null:
+                throw new KirelAuthenticationException($"User with login {login} is not found");
+            case { LockoutEnabled: true, LockoutEnd: not null } when DateTime.Now.ToUniversalTime() < user.LockoutEnd.Value.ToUniversalTime():
+                throw new KirelAuthenticationException($"User with login {login} is locked");
+        }
         var result = await UserManager.CheckPasswordAsync(user, password);
         if (!result) throw new KirelAuthenticationException("Wrong password");
         return user;
