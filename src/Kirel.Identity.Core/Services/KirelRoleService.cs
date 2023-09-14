@@ -1,11 +1,9 @@
 ﻿using System.Linq.Expressions;
-using System.Security.Claims;
 using AutoMapper;
 using Kirel.DTO;
 using Kirel.Identity.Core.Models;
 using Kirel.Identity.DTOs;
 using Kirel.Identity.Exceptions;
-using Kirel.Shared;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -138,7 +136,7 @@ public class KirelRoleService<TKey, TRole, TUser, TUserRole, TRoleClaim, TUserCl
         Func<IQueryable<TRole>, IOrderedQueryable<TRole>>? orderByFunc = null;
 
         if (!string.IsNullOrEmpty(search))
-            searchExpression = PredicateBuilder.PredicateSearchInAllFields<TRole>(search, true);
+            searchExpression = PredicateBuilder.PredicateSearchInAllFields<TRole>(search, false);
         
         if (!string.IsNullOrEmpty(orderBy)) 
             orderByFunc = ServiceHelper.GenerateOrderingMethod<TRole>(orderBy, orderDirection);
