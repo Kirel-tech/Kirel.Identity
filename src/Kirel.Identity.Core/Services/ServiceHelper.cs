@@ -1,6 +1,5 @@
 ﻿using System.Linq.Expressions;
 using Kirel.DTO;
-using Kirel.Shared;
 
 namespace Kirel.Identity.Core.Services;
 
