@@ -12,7 +12,6 @@
 		<PackageReference Include="Blazored.LocalStorage" Version="4.3.0" />
 		<PackageReference Include="CurrieTechnologies.Razor.Clipboard" Version="1.6.0" />
 		<PackageReference Include="Kirel.Blazor.Shared" Version="0.0.4" />
-		<PackageReference Include="Kirel.DTO" Version="0.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.Abstractions" Version="2.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="6.0.13" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.13" />

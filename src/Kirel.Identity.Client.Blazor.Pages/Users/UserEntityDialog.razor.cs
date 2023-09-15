@@ -192,10 +192,10 @@ public partial class UserEntityDialog<TClaimCreateDto, TClaimUpdateDto, TClaimDt
     private async Task<IEnumerable<TRoleDto>> SearchRoles(string value, CancellationToken token)
     {
         var search = !string.IsNullOrEmpty(value) ? $"search={value}" : string.Empty;
-        var paginatedListDto = await _rolesHttpClient.GetFromJsonAsync<PaginatedResult<List<TRoleDto>>>(
+        var paginatedListDto = await _rolesHttpClient.GetFromJsonAsync<PaginatedItemsDto<TRoleDto>>(
             $"{RolesHttpRelativeUrl}/{search}", token);
 
-        return paginatedListDto is { Data: not null } ? paginatedListDto.Data : new List<TRoleDto>();
+        return paginatedListDto is { Items: not null } ? paginatedListDto.Items : new List<TRoleDto>();
     }
 
     private void AddRole()

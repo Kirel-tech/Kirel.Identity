@@ -1,6 +1,5 @@
 ﻿using System.Linq.Expressions;
 using AutoMapper;
-using Kirel.DTO;
 using Kirel.Identity.Core.Models;
 using Kirel.Identity.DTOs;
 using Kirel.Identity.Exceptions;
@@ -126,8 +125,8 @@ public class KirelRoleService<TKey, TRole, TUser, TUserRole, TRoleClaim, TUserCl
     /// <param name="orderDirection"> Ascending or descending order direction </param>
     /// <returns> List of roles dto with pagination </returns>
     /// <exception cref="ArgumentOutOfRangeException"> If passed wrong sort direction </exception>
-    public virtual async Task<PaginatedResult<List<TRoleDto>>> GetRolesList(int page, int pageSize, string search,
-        string orderBy, SortDirection orderDirection)
+    public virtual async Task<PaginatedItemsDto<TRoleDto>> GetRolesList(int page, int pageSize, string search,
+        string orderBy, SortDirectionDto orderDirection)
     {
         page = page < 1 ? 1 : page;
         pageSize = pageSize < 1 ? 10 : pageSize;
@@ -145,7 +144,7 @@ public class KirelRoleService<TKey, TRole, TUser, TUserRole, TRoleClaim, TUserCl
         
         return await GetRolesList(page, pageSize, finalExpression, orderByFunc);
     }
-    internal virtual async Task<PaginatedResult<List<TRoleDto>>> GetRolesList(int page, int pageSize, 
+    internal virtual async Task<PaginatedItemsDto<TRoleDto>> GetRolesList(int page, int pageSize, 
         Expression<Func<TRole, bool>>? filterBy,
         Func<IQueryable<TRole>, IOrderedQueryable<TRole>>? orderBy)
     {
@@ -157,11 +156,11 @@ public class KirelRoleService<TKey, TRole, TUser, TUserRole, TRoleClaim, TUserCl
         
         appRoles = appRoles.Skip((page - 1) * pageSize).Take(pageSize);
         
-        var pagination = Pagination.Generate(page, pageSize, count);
-        return new PaginatedResult<List<TRoleDto>>
+        var pagination = PaginationDto.Generate(page, pageSize, count);
+        return new PaginatedItemsDto<TRoleDto>
         {
             Pagination = pagination,
-            Data = Mapper.Map<List<TRoleDto>>(appRoles)
+            Items = Mapper.Map<List<TRoleDto>>(appRoles)
         };
     }
 }

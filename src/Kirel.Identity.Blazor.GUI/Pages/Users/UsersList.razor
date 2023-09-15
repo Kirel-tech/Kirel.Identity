@@ -1,8 +1,8 @@
 ﻿@page "/users"
 @using CurrieTechnologies.Razor.Clipboard
 @using Kirel.Blazor.Shared
-@using Kirel.DTO
 @using System.Globalization
+@using Kirel.Identity.DTOs
 @inject IHttpClientFactory HttpClientFactory
 @inject IDialogService DialogService
 @inject ClipboardService Clipboard
@@ -128,10 +128,10 @@
         var request = new HttpRequestMessage(HttpMethod.Get, $"{_relativeUrl}?{uriParamsStr}");
         var response = await _httpClient.SendAsync(request);
         if (!response.IsSuccessStatusCode) return new TableData<UserDto>();
-        var paginatedList = await response.Content.ReadFromJsonAsync<PaginatedResult<List<UserDto>>>();
+        var paginatedList = await response.Content.ReadFromJsonAsync<PaginatedItemsDto<UserDto>>();
         if (paginatedList != null)
         {
-            return new TableData<UserDto> { TotalItems = paginatedList.Pagination.TotalCount, Items = paginatedList.Data };
+            return new TableData<UserDto> { TotalItems = paginatedList.Pagination.TotalCount, Items = paginatedList.Items };
         }
         return new TableData<UserDto>();
     }
