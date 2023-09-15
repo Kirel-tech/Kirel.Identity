@@ -5,7 +5,6 @@ using Kirel.Identity.DTOs;
 using Kirel.Identity.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Kirel.Identity.Core.Services;
@@ -47,7 +46,20 @@ public class KirelAuthorizedUserService<TKey, TUser, TRole, TUserRole, TUserClai
     /// </summary>
     protected readonly UserManager<TUser> UserManager;
 
-    protected TUser? User { get; private set; }
+    private readonly String? _username;
+    private TUser? _user;
+    /// <summary>
+    /// User entity
+    /// </summary>
+    protected TUser? User
+    {
+        get
+        {
+            CheckUser(_user, _username ?? "");
+            return _user;
+        }
+        private set => _user = value;
+    }
 
     /// <summary>
     /// KirelAuthorizedUserService constructor
@@ -61,7 +73,8 @@ public class KirelAuthorizedUserService<TKey, TUser, TRole, TUserRole, TUserClai
         UserManager = userManager;
         Mapper = mapper;
         HttpContextAccessor = httpContextAccessor;
-        User = GetUser();
+        _username = HttpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimsIdentity.DefaultNameClaimType);
+        _user = GetUser();
     }
 
     private void CheckUser(TUser? user, string login)
@@ -77,19 +90,10 @@ public class KirelAuthorizedUserService<TKey, TUser, TRole, TUserRole, TUserClai
     
     private TUser? GetUser()
     {
-        var userName = HttpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimsIdentity.DefaultNameClaimType);
-        if (string.IsNullOrEmpty(userName))
+        if (string.IsNullOrEmpty(_username))
             return null;
-        var user = UserManager.Users.FirstOrDefault(u => u.UserName == userName);
-        CheckUser(user, userName);
+        var user = UserManager.Users.FirstOrDefault(u => u.UserName == _username);
         return user;
-    }
-
-    private string GetUserName()
-    {
-        if (User == null || User.UserName.IsNullOrEmpty())
-            throw new KirelUnauthorizedException("User not authorized");
-        return User.UserName;
     }
 
     /// <summary>
@@ -97,11 +101,11 @@ public class KirelAuthorizedUserService<TKey, TUser, TRole, TUserRole, TUserClai
     /// </summary>
     /// <returns> User dto </returns>
     /// <exception cref="KirelNotFoundException"> If user not fount in users store </exception>
-    public virtual async Task<TAuthorizedUserDto> GetDto()
+    public virtual Task<TAuthorizedUserDto> GetDto()
     {
         if (User == null || User.UserName.IsNullOrEmpty())
             throw new KirelUnauthorizedException("User not authorized");
-        return Mapper.Map<TAuthorizedUserDto>(User);
+        return Task.FromResult(Mapper.Map<TAuthorizedUserDto>(User));
     }
 
     /// <summary>
@@ -109,11 +113,11 @@ public class KirelAuthorizedUserService<TKey, TUser, TRole, TUserRole, TUserClai
     /// </summary>
     /// <returns> </returns>
     /// <exception cref="KirelNotFoundException"> If user not fount in users store </exception>
-    public virtual async Task<TUser> Get()
+    public virtual Task<TUser> Get()
     {
         if (User == null || User.UserName.IsNullOrEmpty())
             throw new KirelUnauthorizedException("User not authorized");
-        return User;
+        return Task.FromResult(User);
     }
 
     /// <summary>
