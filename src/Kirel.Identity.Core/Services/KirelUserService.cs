@@ -1,6 +1,5 @@
 ﻿using System.Linq.Expressions;
 using AutoMapper;
-using Kirel.DTO;
 using Kirel.Identity.Core.Models;
 using Kirel.Identity.DTOs;
 using Kirel.Identity.Exceptions;
@@ -93,8 +92,8 @@ public class KirelUserService<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleCl
     /// <param name="roleIds"> Id's of the roles for users filtering </param>
     /// <returns> List of users dto with pagination </returns>
     /// <exception cref="ArgumentOutOfRangeException"> If passed wrong sort direction </exception>
-    public virtual async Task<PaginatedResult<List<TUserDto>>> GetUsersList(int page, int pageSize, string search,
-        string orderBy, SortDirection orderDirection, IEnumerable<TKey>? roleIds = null)
+    public virtual async Task<PaginatedItemsDto<TUserDto>> GetUsersList(int page, int pageSize, string search,
+        string orderBy, SortDirectionDto orderDirection, IEnumerable<TKey>? roleIds = null)
     {
         page = page < 1 ? 1 : page;
         pageSize = pageSize < 1 ? 10 : pageSize;
@@ -124,7 +123,7 @@ public class KirelUserService<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleCl
     /// <param name="orderBy"> Ordering method </param>
     /// <returns> List of users dto with pagination </returns>
     /// <exception cref="ArgumentOutOfRangeException"> If passed wrong sort direction </exception>
-    internal virtual async Task<PaginatedResult<List<TUserDto>>> GetUsersList(int page, int pageSize, 
+    internal virtual async Task<PaginatedItemsDto<TUserDto>> GetUsersList(int page, int pageSize, 
         Expression<Func<TUser, bool>>? filterBy,
         Func<IQueryable<TUser>, IOrderedQueryable<TUser>>? orderBy)
     {
@@ -136,12 +135,12 @@ public class KirelUserService<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleCl
         
         appUsers = appUsers.Skip((page - 1) * pageSize).Take(pageSize);
         
-        var pagination = Pagination.Generate(page, pageSize, count);
+        var pagination = PaginationDto.Generate(page, pageSize, count);
         var data = Mapper.Map<List<TUserDto>>(appUsers);
-        return new PaginatedResult<List<TUserDto>>
+        return new PaginatedItemsDto<TUserDto>
         {
             Pagination = pagination,
-            Data = data
+            Items = data
         };
     }
     

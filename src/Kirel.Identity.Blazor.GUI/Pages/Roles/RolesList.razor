@@ -1,7 +1,7 @@
 ﻿@page "/roles"
 @using CurrieTechnologies.Razor.Clipboard
 @using Kirel.Blazor.Shared
-@using Kirel.DTO
+@using Kirel.Identity.DTOs
 @inject IHttpClientFactory HttpClientFactory
 @inject IDialogService DialogService
 @inject ClipboardService Clipboard
@@ -40,7 +40,7 @@
             <MudIconButton Size="Size.Small" Icon="@Icons.Material.Outlined.ContentCopy" Color="Color.Info"
                            @onclick="async _ => await Clipboard.WriteTextAsync(context.Id.ToString())">
             </MudIconButton>
-            @context.Id
+            @context.Id.ToString()
         </MudTd>
         <MudTd DataLabel="Name">@context.Name</MudTd>
         <MudTd Style="white-space: nowrap; width: 1%;" DataLabel="Options">
@@ -81,10 +81,10 @@
         var request = new HttpRequestMessage(HttpMethod.Get, $"{_relativeUrl}?{uriParamsStr}");
         var response = await _httpClient.SendAsync(request);
         if (!response.IsSuccessStatusCode) return new TableData<RoleDto>();
-        var paginatedList = await response.Content.ReadFromJsonAsync<PaginatedResult<List<RoleDto>>>();
+        var paginatedList = await response.Content.ReadFromJsonAsync<PaginatedItemsDto<RoleDto>>();
         if (paginatedList != null)
         {
-            return new TableData<RoleDto> { TotalItems = paginatedList.Pagination.TotalCount, Items = paginatedList.Data };
+            return new TableData<RoleDto> { TotalItems = paginatedList.Pagination.TotalCount, Items = paginatedList.Items };
         }
         return new TableData<RoleDto>();
     }

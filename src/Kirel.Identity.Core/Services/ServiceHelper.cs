@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using Kirel.DTO;
+using Kirel.Identity.DTOs;
 
 namespace Kirel.Identity.Core.Services;
 
@@ -15,7 +15,7 @@ public static class ServiceHelper
     /// <param name="orderDirection"> Order direction </param>
     /// <typeparam name="TEntity"> Entity type </typeparam>
     /// <returns>Ordering function</returns>
-    public static Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? GenerateOrderingMethod<TEntity>(string? orderBy, SortDirection orderDirection)
+    public static Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? GenerateOrderingMethod<TEntity>(string? orderBy, SortDirectionDto orderDirection)
     {
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderingMethod = null;
         if (string.IsNullOrEmpty(orderBy)) return null;
@@ -23,10 +23,10 @@ public static class ServiceHelper
         if (orderExpression == null) return orderingMethod;
         switch (orderDirection)
         {
-            case SortDirection.Asc:
+            case SortDirectionDto.Asc:
                 orderingMethod = o => o.OrderBy(orderExpression);
                 break;
-            case SortDirection.Desc:
+            case SortDirectionDto.Desc:
                 orderingMethod = o => o.OrderByDescending(orderExpression);
                 break;
         }

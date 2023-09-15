@@ -1,5 +1,4 @@
-﻿using Kirel.DTO;
-using Kirel.Identity.Core.Models;
+﻿using Kirel.Identity.Core.Models;
 using Kirel.Identity.Core.Services;
 using Kirel.Identity.DTOs;
 using Microsoft.AspNetCore.Authorization;
@@ -106,11 +105,11 @@ public class KirelUsersController<TUserService, TKey, TUser, TRole, TUserRole, T
     /// <returns> Paginated result with list of users dto </returns>
     [HttpGet]
     [Authorize(Policy = "user_read", AuthenticationSchemes = "Bearer, APIKey")]
-    public virtual async Task<PaginatedResult<List<TUserDto>>> GetList([FromQuery] int pageNumber = 0, int pageSize = 0,
+    public virtual async Task<PaginatedItemsDto<TUserDto>> GetList([FromQuery] int pageNumber = 0, int pageSize = 0,
         string orderBy = "", string orderDirection = "asc", string search = "", [FromQuery] IEnumerable<TKey>? roleIds = null)
     {
-        var directionEnum = SortDirection.Asc;
-        if (orderDirection == "desc") directionEnum = SortDirection.Desc;
+        var directionEnum = SortDirectionDto.Asc;
+        if (orderDirection == "desc") directionEnum = SortDirectionDto.Desc;
         return await Service.GetUsersList(pageNumber, pageSize, search, orderBy, directionEnum, roleIds);
     }
 }
