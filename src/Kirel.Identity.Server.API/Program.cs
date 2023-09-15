@@ -1,3 +1,4 @@
+using Kirel.Identity.Controllers.Extensions;
 using Kirel.Identity.Middlewares;
 using Kirel.Identity.Server.API.Configs;
 using Kirel.Identity.Server.API.Controllers;
@@ -57,6 +58,7 @@ builder.Services.AddControllers(options =>
 
 // Add ASP.NET authentication configuration
 builder.Services.AddAuthenticationConfiguration(jwtConfig, apiKeys);
+builder.Services.AddClaimBasedAuthorization();
 
 // Add custom swagger configuration
 builder.Services.AddSwagger(disabledControllers);

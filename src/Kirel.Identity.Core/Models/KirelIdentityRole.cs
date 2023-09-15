@@ -20,5 +20,5 @@ where TUserClaim : IdentityUserClaim<TKey>
     /// <summary>
     /// Claims of the role
     /// </summary>
-    public virtual ICollection<TRoleClaim> Claims { get; } = null!;
+    public virtual ICollection<TRoleClaim> Claims { get; set; } = null!;
 }

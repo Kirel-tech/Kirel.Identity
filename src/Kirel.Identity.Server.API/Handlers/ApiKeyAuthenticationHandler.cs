@@ -1,6 +1,11 @@
 ﻿using System.Security.Claims;
 using System.Text.Encodings.Web;
+using Kirel.Identity.Server.API.Claims;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Options;
 
 namespace Kirel.Identity.Server.API.Handlers;
@@ -19,7 +24,8 @@ public class ApiKeysList : List<string>
 public class ApiKeyAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
 {
     private readonly ApiKeysList _apiKeys;
-
+    private readonly List<Claim> _claims;
+    
     /// <summary>
     /// Returns instance of api key authentication handler
     /// </summary>
@@ -28,9 +34,15 @@ public class ApiKeyAuthenticationHandler : AuthenticationHandler<AuthenticationS
     /// <param name="encoder">The <see cref="System.Text.Encodings.Web.UrlEncoder"/>.</param>
     /// <param name="clock">The <see cref="ISystemClock"/>.</param>
     /// <param name="apiKeys">List of API keys</param>
-    public ApiKeyAuthenticationHandler(IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock, ApiKeysList apiKeys) : base(options, logger, encoder, clock)
+    /// <param name="authorizationPolicyCollectionProvider"></param>
+    /// <param name="actionDescriptorCollectionProvider"></param>
+    public ApiKeyAuthenticationHandler(IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger, 
+        UrlEncoder encoder, ISystemClock clock, ApiKeysList apiKeys, 
+        IAuthorizationPolicyProvider authorizationPolicyCollectionProvider,
+        IActionDescriptorCollectionProvider actionDescriptorCollectionProvider) : base(options, logger, encoder, clock)
     {
         _apiKeys = apiKeys;
+        _claims = ClaimsControllersGetter.GetControllersClaimsFromPolicies(authorizationPolicyCollectionProvider, actionDescriptorCollectionProvider);
     }
 
     /// <inheritdoc />
@@ -65,17 +77,14 @@ public class ApiKeyAuthenticationHandler : AuthenticationHandler<AuthenticationS
             return AuthenticateResult.Fail("Unauthorized"); 
         }
         var identity = GetClaimsIdentity();
-        var principal = new System.Security.Principal.GenericPrincipal(identity, new []{"Microservice"});
+        var principal = new System.Security.Principal.GenericPrincipal(identity, null);
         return AuthenticateResult.Success(new AuthenticationTicket(principal, "APIKey"));
     }
     
     private ClaimsIdentity GetClaimsIdentity()
     {
-        var claims = new List<Claim>
-        {
-            new (ClaimsIdentity.DefaultNameClaimType, "Microservice"),
-        };
-        
+        var claims = new List<Claim> { new (ClaimsIdentity.DefaultNameClaimType, "Microservice")};
+        claims.AddRange(_claims);
         var claimsIdentity =
             new ClaimsIdentity(claims, "APIKey", ClaimsIdentity.DefaultNameClaimType,
                 ClaimsIdentity.DefaultRoleClaimType);

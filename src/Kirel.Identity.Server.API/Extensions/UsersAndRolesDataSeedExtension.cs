@@ -25,8 +25,8 @@ public static class UsersAndRolesDataSeedExtension
         where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim>, new()
         where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole, TRoleClaim, TUserClaim>, new()
         where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole, TUserClaim, TRoleClaim>
-        where TRoleClaim : KirelIdentityRoleClaim<TKey>
-        where TUserClaim : KirelIdentityUserClaim<TKey>
+        where TRoleClaim : KirelIdentityRoleClaim<TKey>, new()
+        where TUserClaim : KirelIdentityUserClaim<TKey>, new()
     {
         const string dataSeedLockfile = "identity_data_seed.lock";
         if (File.Exists(dataSeedLockfile)) return;
@@ -35,16 +35,23 @@ public static class UsersAndRolesDataSeedExtension
         var roleManager = scopedServiceProvider.GetRequiredService<RoleManager<TRole>>();
         var userManager = scopedServiceProvider.GetRequiredService<UserManager<TUser>>();
         
-        foreach (var roleName in config.Roles.Where(r => !r.Equals("Admin", StringComparison.OrdinalIgnoreCase)))
+        foreach (var roleConfig in config.Roles.Where(r => !r.Name.Equals("Admin", StringComparison.OrdinalIgnoreCase)))
         {
-            var roleNormalizedName = roleName.ToUpper();
-
-            var roleExist = await roleManager.RoleExistsAsync(roleName);
+            var roleExist = await roleManager.RoleExistsAsync(roleConfig.Name);
             if (roleExist) continue;
-            var role = new TRole { Name = roleName, NormalizedName = roleNormalizedName };
+            var role = new TRole
+            {
+                Name = roleConfig.Name, 
+                NormalizedName = roleConfig.Name.ToUpper(),
+                Claims = roleConfig.Claims.Select(c => new TRoleClaim()
+                {
+                    ClaimValue = c.Value,
+                    ClaimType = c.Type
+                }).ToList()
+            };
             var result = await roleManager.CreateAsync(role);
             if (result.Succeeded) continue;
-            var errorMessage = $"Error creating role {roleName}: ";
+            var errorMessage = $"Error creating role {roleConfig.Name}: ";
             foreach (var error in result.Errors)
             {
                 errorMessage += $"{error.Description}";
@@ -63,7 +70,12 @@ public static class UsersAndRolesDataSeedExtension
                 UserName = userConfig.UserName,
                 Email = userConfig.Email,
                 Name = userConfig.Name,
-                LastName = userConfig.LastName
+                LastName = userConfig.LastName,
+                Claims = userConfig.Claims.Select(c => new TUserClaim()
+                {
+                    ClaimType = c.Type,
+                    ClaimValue = c.Value
+                }).ToList()
             };
             var result = await userManager.CreateAsync(user, userConfig.Password);
             if (!result.Succeeded)

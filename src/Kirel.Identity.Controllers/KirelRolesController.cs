@@ -60,7 +60,7 @@ public class KirelRolesController<TRoleService, TKey, TRole, TUser, TUserRole, T
     /// <param name="createDto"> Role create dto </param>
     /// <returns> Role dto </returns>
     [HttpPost]
-    [Authorize(Roles = "Admin, Microservice", AuthenticationSchemes = "Bearer, APIKey")]
+    [Authorize(Policy = "role_create", AuthenticationSchemes = "Bearer, APIKey")]
     public virtual async Task<ActionResult<TRoleDto>> Create([FromBody] TRoleCreateDto createDto)
     {
         var role = await Service.CreateRole(createDto);
@@ -74,7 +74,7 @@ public class KirelRolesController<TRoleService, TKey, TRole, TUser, TUserRole, T
     /// <param name="id"> Role id </param>
     /// <returns> Role dto </returns>
     [HttpPut("{id}")]
-    [Authorize(Roles = "Admin, Microservice", AuthenticationSchemes = "Bearer, APIKey")]
+    [Authorize(Policy = "role_update", AuthenticationSchemes = "Bearer, APIKey")]
     public virtual async Task<ActionResult<TRoleDto>> Update([FromBody] TRoleUpdateDto updateDto, TKey id)
     {
         var dto = await Service.UpdateRole(id, updateDto);
@@ -87,7 +87,7 @@ public class KirelRolesController<TRoleService, TKey, TRole, TUser, TUserRole, T
     /// <param name="id"> Role id </param>
     /// <returns> Role dto </returns>
     [HttpGet("{id}")]
-    [Authorize(Roles = "Admin, Microservice", AuthenticationSchemes = "Bearer, APIKey")]
+    [Authorize(Policy = "role_read", AuthenticationSchemes = "Bearer, APIKey")]
     public virtual async Task<ActionResult<TRoleDto>> GetById(TKey id)
     {
         var result = await Service.GetRole(id);
@@ -104,7 +104,7 @@ public class KirelRolesController<TRoleService, TKey, TRole, TUser, TUserRole, T
     /// <param name="search"> Search string parameter </param>
     /// <returns> Paginated result with list of roles dto </returns>
     [HttpGet]
-    [Authorize(Roles = "Admin, Microservice", AuthenticationSchemes = "Bearer, APIKey")]
+    [Authorize(Policy = "role_read", AuthenticationSchemes = "Bearer, APIKey")]
     public virtual async Task<PaginatedResult<List<TRoleDto>>> GetList([FromQuery] int pageNumber = 0, int pageSize = 0,
         string orderBy = "", string orderDirection = "asc", string search = "")
     {

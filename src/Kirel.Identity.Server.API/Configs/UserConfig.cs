@@ -34,4 +34,8 @@ public class UserConfig
     /// Gets or sets the list of roles associated with the user.
     /// </summary>
     public List<string> Roles { get; set; } = new();
+    /// <summary>
+    /// Claims of this user
+    /// </summary>
+    public List<ClaimConfig> Claims { get; set; } = new();
 }
