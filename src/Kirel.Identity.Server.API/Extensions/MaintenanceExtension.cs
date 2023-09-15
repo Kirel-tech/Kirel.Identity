@@ -1,6 +1,9 @@
 ﻿using Kirel.Identity.Core.Models;
+using Kirel.Identity.Server.API.Claims;
 using Kirel.Identity.Server.Domain;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace Kirel.Identity.Server.API.Extensions;
 
@@ -26,18 +29,31 @@ public static class MaintenanceExtension
         where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim>, new()
         where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole, TRoleClaim, TUserClaim>, new()
         where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole, TUserClaim, TRoleClaim>
-        where TRoleClaim : KirelIdentityRoleClaim<TKey>
+        where TRoleClaim : KirelIdentityRoleClaim<TKey>, new()
         where TUserClaim : KirelIdentityUserClaim<TKey>
     {
         var scopedServiceProvider = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope()
             .ServiceProvider;
         var roleManager = scopedServiceProvider.GetRequiredService<RoleManager<TRole>>();
         var userManager = scopedServiceProvider.GetRequiredService<UserManager<TUser>>();
+        var authorizationPolicyCollectionProvider = scopedServiceProvider.GetRequiredService<IAuthorizationPolicyProvider>();
+        var actionDescriptorCollectionProvider = scopedServiceProvider.GetRequiredService<IActionDescriptorCollectionProvider>();
+        var allControllersClaims = ClaimsControllersGetter.GetControllersClaimsFromPolicies(
+                                        authorizationPolicyCollectionProvider, actionDescriptorCollectionProvider);
         var adminRoleExist = true;
         var adminRole = await roleManager.FindByNameAsync("Admin");
         if (adminRole == null)
         {
-            adminRole = new TRole { Name = "Admin", NormalizedName = "ADMIN" };
+            adminRole = new TRole
+            {
+                Name = "Admin", 
+                NormalizedName = "ADMIN",
+                Claims = allControllersClaims.Select(
+                    c => new TRoleClaim(){
+                        ClaimType = c.Type, 
+                        ClaimValue = c.Value
+                    }).ToList()
+            };
             var result = await roleManager.CreateAsync(adminRole);
             if (!result.Succeeded)
                 adminRoleExist = false;

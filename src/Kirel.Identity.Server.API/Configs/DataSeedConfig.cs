@@ -10,7 +10,7 @@ public class IdentityDataSeedConfig
     /// <summary>
     /// Gets or sets the list of role configurations.
     /// </summary>
-    public List<string> Roles { get; set; } = new();
+    public List<RoleConfig> Roles { get; set; } = new();
 
     /// <summary>
     /// Gets or sets the list of user configurations.
