@@ -24,6 +24,7 @@ namespace Kirel.Identity.Controllers;
 /// <typeparam name="TUserRole"> The user role entity type </typeparam>
 /// <typeparam name="TUserClaim"> User claim type. </typeparam>
 /// <typeparam name="TRoleClaim"> Role claim type. </typeparam>
+[Authorize(AuthenticationSchemes = "Bearer")]
 public class KirelAuthorizedUserController<TAuthorizedUserService, TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim, TAuthorizedUserDto,
     TAuthorizedUserUpdateDto> : Controller
     where TAuthorizedUserService : KirelAuthorizedUserService<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim, TAuthorizedUserDto, TAuthorizedUserUpdateDto>
@@ -62,7 +63,6 @@ public class KirelAuthorizedUserController<TAuthorizedUserService, TKey, TUser, 
     /// </summary>
     /// <returns> Authorized user dto </returns>
     [HttpGet]
-    [Authorize(AuthenticationSchemes = "Bearer")]
     public virtual async Task<ActionResult<TAuthorizedUserDto>> GetInfo()
     {
         var result = await AuthorizedUserService.GetDto();
@@ -75,7 +75,6 @@ public class KirelAuthorizedUserController<TAuthorizedUserService, TKey, TUser, 
     /// <param name="updateDto"> Authorized user update dto </param>
     /// <returns> Authorized user dto </returns>
     [HttpPut]
-    [Authorize(AuthenticationSchemes = "Bearer")]
     public virtual async Task<ActionResult<TAuthorizedUserDto>> Update([FromBody] TAuthorizedUserUpdateDto updateDto)
     {
         var dto = await AuthorizedUserService.Update(updateDto);
@@ -88,7 +87,6 @@ public class KirelAuthorizedUserController<TAuthorizedUserService, TKey, TUser, 
     /// <param name="currentPassword"> Current user password </param>
     /// <param name="newPassword"> New user password </param>
     [HttpPut("password")]
-    [Authorize(AuthenticationSchemes = "Bearer")]
     public virtual async Task<ActionResult> ChangePassword(
         [Required] string currentPassword,
         [Required] string newPassword)
