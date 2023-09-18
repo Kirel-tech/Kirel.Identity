@@ -16,6 +16,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Kirel.Identity.Core\Kirel.Identity.Core.csproj" />
+		<ProjectReference Include="..\Kirel.Identity.Server.Core\Kirel.Identity.Server.Core.csproj" />
 		<ProjectReference Include="..\Kirel.Identity.Server.Domain\Kirel.Identity.Server.Domain.csproj" />
 	</ItemGroup>
 

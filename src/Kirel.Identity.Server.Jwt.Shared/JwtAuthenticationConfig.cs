@@ -23,7 +23,7 @@ public class JwtAuthenticationConfig
     /// <summary>
     /// Token lifetime in minutes
     /// </summary>
-    public int AccessLifetime { get; set; } = 15;
+    public int AccessLifetime { get; set; } = 20;
 
     /// <summary>
     /// Refresh token lifetime in minutes

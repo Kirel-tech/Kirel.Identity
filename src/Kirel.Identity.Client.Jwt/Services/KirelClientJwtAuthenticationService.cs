@@ -41,10 +41,10 @@ public class KirelClientJwtAuthenticationService : IClientAuthenticationService
     }
 
     /// <inheritdoc />
-    public async Task LoginByPasswordAsync(string login, string password)
+    public async Task LoginByPasswordAsync(string type, string login, string password)
     {
         var tokenDto = await _httpClient.GetFromJsonAsync<JwtTokenDto>(
-            $"{_url}?login={login}&password={password}");
+            $"{_url}?type={type}&login={login}&password={password}");
         //TODO: Add logging here
         if (tokenDto == null)
             return;

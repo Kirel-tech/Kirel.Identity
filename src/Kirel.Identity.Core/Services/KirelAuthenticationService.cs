@@ -1,4 +1,5 @@
 ﻿using Kirel.Identity.Core.Models;
+using Kirel.Identity.DTOs;
 using Kirel.Identity.Exceptions;
 using Microsoft.AspNetCore.Identity;
 
@@ -11,15 +12,15 @@ namespace Kirel.Identity.Core.Services;
 /// <typeparam name="TUser"> User entity type. </typeparam>
 /// <typeparam name="TRole"> Role entity type. </typeparam>
 /// <typeparam name="TUserRole"> Role user entity type. </typeparam>
-/// <typeparam name="TUserClaim"> User claim type. </typeparam>
-/// <typeparam name="TRoleClaim"> Role claim type. </typeparam>
+/// <typeparam name="TUserClaim"> User claim type</typeparam>
+/// <typeparam name="TRoleClaim"> Role claim type</typeparam>
 public class KirelAuthenticationService<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim>
     where TKey : IComparable, IComparable<TKey>, IEquatable<TKey>
     where TUser : KirelIdentityUser<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim>
     where TRole : KirelIdentityRole<TKey, TRole, TUser, TUserRole, TRoleClaim, TUserClaim>
     where TUserRole : KirelIdentityUserRole<TKey, TUserRole, TUser, TRole, TUserClaim, TRoleClaim>
-    where TRoleClaim : KirelIdentityRoleClaim<TKey>
-    where TUserClaim : KirelIdentityUserClaim<TKey>
+    where TUserClaim : IdentityUserClaim<TKey>
+    where TRoleClaim : IdentityRoleClaim<TKey>
 {
     /// <summary>
     /// Identity user manager
@@ -38,24 +39,29 @@ public class KirelAuthenticationService<TKey, TUser, TRole, TUserRole, TUserClai
     /// <summary>
     /// Provides the ability to get the identity user after checking the login and password
     /// </summary>
-    /// <param name="login"> User login </param>
-    /// <param name="password"> User password </param>
+    /// <param name="dto"> User authentication dto </param>
     /// <returns> User class instance </returns>
     /// <exception cref="KirelAuthenticationException"> Returned if the user is not found or if the password is incorrect </exception>
     /// <exception cref="KirelIdentityStoreException"> If user or role managers fails on store based operations </exception>
-    public async Task<TUser> LoginByPassword(string login, string password)
+    public async Task<TUser> LoginByPassword(KirelUserAuthenticationDto dto)
     {
-        if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password))
-            throw new KirelAuthenticationException("Login or password cannot be empty");
-        var user = await UserManager.FindByNameAsync(login);
-        switch (user)
+        TUser? user;
+        switch (dto.Type.ToLower())
         {
-            case null:
-                throw new KirelAuthenticationException($"User with login {login} is not found");
-            case { LockoutEnabled: true, LockoutEnd: not null } when DateTime.Now.ToUniversalTime() < user.LockoutEnd.Value.ToUniversalTime():
-                throw new KirelAuthenticationException($"User with login {login} is locked");
+            case "username":
+                user = await UserManager.FindByNameAsync(dto.Login);
+                break;
+            case "phone":
+                user = UserManager.Users.FirstOrDefault(u => u.PhoneNumber == dto.Login);
+                break;
+            case "email":
+                user = await UserManager.FindByEmailAsync(dto.Login);
+                break;
+            default:
+                throw new KirelAuthenticationException("Passed authentication type does not supported");
         }
-        var result = await UserManager.CheckPasswordAsync(user, password);
+        if (user == null) throw new KirelAuthenticationException("User with passed login is not found");
+        var result = await UserManager.CheckPasswordAsync(user, dto.Password);
         if (!result) throw new KirelAuthenticationException("Wrong password");
         return user;
     }

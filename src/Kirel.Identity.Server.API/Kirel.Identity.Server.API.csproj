@@ -34,11 +34,13 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Kirel.Identity.Controllers\Kirel.Identity.Controllers.csproj" />
 		<ProjectReference Include="..\Kirel.Identity.Jwt.Controllers\Kirel.Identity.Jwt.Controllers.csproj" />
+		<ProjectReference Include="..\Kirel.Identity.Jwt.Sms.Controllers\Kirel.Identity.Jwt.Sms.Controllers.csproj" />
 		<ProjectReference Include="..\Kirel.Identity.Middlewares\Kirel.Identity.Middlewares.csproj" />
 		<ProjectReference Include="..\Kirel.Identity.Server.Core\Kirel.Identity.Server.Core.csproj" />
 		<ProjectReference Include="..\Kirel.Identity.Server.Infrastructure\Kirel.Identity.Server.Infrastructure.csproj" />
 		<ProjectReference Include="..\Kirel.Identity.Server.Infrastructure.Shared\Kirel.Identity.Server.Infrastructure.Shared.csproj" />
 		<ProjectReference Include="..\Kirel.Identity.Server.Swagger.Shared\Kirel.Identity.Server.Swagger.Shared.csproj" />
+		<ProjectReference Include="..\Kirel.Identity.Sms.Controllers\Kirel.Identity.Sms.Controllers.csproj" />
 	</ItemGroup>
 	<!-- Read docs from nuget packages for swagger documentation -->
 	<Target Name="_ResolveCopyLocalNuGetPkgXmls" AfterTargets="ResolveReferences">

@@ -3,7 +3,6 @@ using System.Security.Claims;
 using Kirel.Identity.Core.Models;
 using Kirel.Identity.Exceptions;
 using Kirel.Identity.Jwt.DTOs;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Kirel.Identity.Jwt.Core.Services;

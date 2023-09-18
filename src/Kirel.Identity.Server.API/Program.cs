@@ -9,6 +9,9 @@ using Kirel.Identity.Server.Core.Extensions;
 using Kirel.Identity.Server.Domain;
 using Kirel.Identity.Server.Infrastructure.Contexts;
 using Kirel.Identity.Server.Infrastructure.Extensions;
+using Kirel.Identity.Server.Infrastructure.Managers;
+using Kirel.Identity.Server.Infrastructure.Models;
+using Kirel.Identity.Server.Infrastructure.Providers;
 using Kirel.Identity.Server.Infrastructure.Shared.Extensions;
 using Kirel.Identity.Server.Infrastructure.Shared.Models;
 using Kirel.Identity.Server.Jwt.Shared;
@@ -22,10 +25,20 @@ var maintenanceConfig = builder.Configuration.GetSection("maintenance").Get<Main
 var dataSeedConfig = builder.Configuration.GetSection("DataSeeding").Get<IdentityDataSeedConfig>();
 var registrationDisabled = builder.Configuration.GetValue<bool>("RegistrationDisabled");
 var apiKeys = builder.Configuration.GetSection("APIKeys").Get<ApiKeysList>();
+var smsSenderConfig = builder.Configuration.GetSection("MainSms").Get<MainSmsSenderConfig>();
+var codeTokenConfig = builder.Configuration.GetSection("DisposableCodes").Get<DisposableCodesConfig>();
 
 //To disable controller add him here like disabledControllers.Add(typeof(RegistrationController));
 var disabledControllers = new DisabledControllerTypes();
 if (registrationDisabled) disabledControllers.Add(typeof(RegistrationController));
+
+
+builder.Services.AddSingleton(codeTokenConfig);
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.Tokens.ProviderMap["Code provider"] = new TokenProviderDescriptor(typeof(DisposableCodeTokenProvider));
+});
+builder.Services.AddSingleton<DisposableCodeTokenProvider>();
 
 // Add Identity framework db context based on Kirel Identity templates
 // with ability to change db driver (mssql, mysql, postgresql)
@@ -55,7 +68,7 @@ builder.Services.AddControllers(options =>
     options.Filters.Add(new EnabledControllerActionFilter(disabledControllers));
 });
 
-
+builder.Services.AddSmsAuthentication<MainSmsSenderManager>(smsSenderConfig);
 // Add ASP.NET authentication configuration
 builder.Services.AddAuthenticationConfiguration(jwtConfig, apiKeys);
 builder.Services.AddClaimBasedAuthorization();
