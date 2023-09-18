@@ -10,7 +10,7 @@ namespace Kirel.Identity.Server.API.Controllers;
 [Route("authentication/jwt")]
 [ApiController]
 public class AuthenticationController : KirelJwtAuthenticationController<JwtTokenService, AuthenticationService,
-    AuthorizedUserService, Guid, User, Role, UserRole, UserClaim, RoleClaim, AuthorizedUserDto, AuthorizedUserUpdateDto>
+    AuthorizedUserService, Guid, User, Role, UserRole, UserClaim, RoleClaim, AuthorizedUserDto, AuthorizedUserUpdateDto, UserAuthenticationDto>
 {
     /// <inheritdoc />
     public AuthenticationController(AuthenticationService authService, JwtTokenService tokenService,

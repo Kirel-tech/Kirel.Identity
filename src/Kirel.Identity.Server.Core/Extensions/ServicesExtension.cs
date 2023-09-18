@@ -24,6 +24,8 @@ public static class ServicesExtension
         services.AddScoped<UserService>();
         services.AddScoped<RoleService>();
         services.AddScoped<RegistrationService>();
+        services.AddScoped<SmsAuthenticationService>();
+        services.AddScoped<SmsConfirmationService>();
 
         // configure JWT Tokens issue
         var kirelAuthOptions = new KirelAuthOptions
