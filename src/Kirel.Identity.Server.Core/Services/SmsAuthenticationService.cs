@@ -9,7 +9,7 @@ namespace Kirel.Identity.Server.Core.Services;
 public class SmsAuthenticationService : KirelSmsAuthenticationService<Guid, User, Role, UserRole, UserClaim, RoleClaim>
 {
     /// <inheritdoc />
-    public SmsAuthenticationService(UserManager<User> userManager, ISmsSender smsSender) : base(userManager, smsSender)
+    public SmsAuthenticationService(UserManager<User> userManager, IKirelSmsSender kirelSmsSender) : base(userManager, kirelSmsSender)
     {
     }
 }

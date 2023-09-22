@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 namespace Kirel.Identity.Server.Core.Services;
 
 /// <inheritdoc />
-public class RegistrationService : KirelRegistrationService<Guid, User, Role, UserRole, UserClaim, RoleClaim, UserRegistrationDto>
+public class RegistrationService : KirelRegistrationService<Guid, User, Role, UserRole, UserClaim, RoleClaim, RegisterInvitedUserDto, UserRegistrationDto>
 {
     /// <inheritdoc />
     public RegistrationService(UserManager<User> userManager, IMapper mapper) : base(userManager, mapper)

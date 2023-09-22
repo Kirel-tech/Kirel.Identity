@@ -18,7 +18,7 @@ namespace Kirel.Identity.Sms.Controllers;
 /// <typeparam name="TUserRole"> The user role entity type </typeparam>
 /// <typeparam name="TAuthorizedUserDto">Authorized user dto type</typeparam>
 /// <typeparam name="TAuthorizedUserUpdateDto">Authorized user update dto type</typeparam>
-public class KirelAuthorizedUserSmsController<TAuthorizedUserService, TSmsConfirmationService, TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim,
+public class KirelUserPhoneConfirmationController<TAuthorizedUserService, TSmsConfirmationService, TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim,
     TAuthorizedUserDto, TAuthorizedUserUpdateDto> : Controller
     where TAuthorizedUserService : KirelAuthorizedUserService<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim, TAuthorizedUserDto, TAuthorizedUserUpdateDto>
     where TSmsConfirmationService : KirelSmsConfirmationService<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleClaim>
@@ -47,7 +47,7 @@ public class KirelAuthorizedUserSmsController<TAuthorizedUserService, TSmsConfir
     /// </summary>
     /// <param name="authorizedService"> Service for authorized user account management </param>
     /// <param name="confirmationService"> Service for phone number confirmation </param>
-    public KirelAuthorizedUserSmsController(TAuthorizedUserService authorizedService, TSmsConfirmationService confirmationService)
+    public KirelUserPhoneConfirmationController(TAuthorizedUserService authorizedService, TSmsConfirmationService confirmationService)
     {
         AuthorizedUserService = authorizedService;
         SmsConfirmationService = confirmationService;
@@ -57,11 +57,9 @@ public class KirelAuthorizedUserSmsController<TAuthorizedUserService, TSmsConfir
     /// Send confirmation code to the authorized user phone number
     /// </summary>
     [HttpPost("phone/confirm")]
-    [Authorize(AuthenticationSchemes = "Bearer")]
-    public virtual async Task<ActionResult> SendConfirmationToken()
+    public virtual async Task<ActionResult> SendConfirmationToken([FromForm] string phoneNumber)
     {
-        var user = await AuthorizedUserService.Get();
-        await SmsConfirmationService.SendConfirmationSms(user);
+        await SmsConfirmationService.SendConfirmationSms(phoneNumber);
         return NoContent();
     }
     
@@ -70,11 +68,9 @@ public class KirelAuthorizedUserSmsController<TAuthorizedUserService, TSmsConfir
     /// </summary>
     /// <param name="code"></param>
     [HttpPut("phone/confirm")]
-    [Authorize(AuthenticationSchemes = "Bearer")]
-    public virtual async Task<ActionResult> ConfirmPhoneNumber([FromQuery] string code)
+    public virtual async Task<ActionResult> ConfirmPhoneNumber([FromForm] string phoneNumber, [FromForm] string code)
     {
-        var user = await AuthorizedUserService.Get();
-        await SmsConfirmationService.ConfirmPhoneNumber(user, code);
+        await SmsConfirmationService.ConfirmPhoneNumber(phoneNumber, code);
         return NoContent();
     }
 }

@@ -3,16 +3,20 @@ using System;
 using Kirel.Identity.Server.Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Kirel.Identity.Server.Infrastructure.Migrations.Sqlite
+namespace Kirel.Identity.Server.Infrastructure.Migrations.sqlite
 {
+    /// <inheritdoc />
     [DbContext(typeof(SqliteIdentityServerDbContext))]
-    partial class SqliteIdentityServerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230922124907_AddIsRegisteredField")]
+    partial class AddIsRegisteredField
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.12");

@@ -60,7 +60,7 @@ public class KirelAuthenticationService<TKey, TUser, TRole, TUserRole, TUserClai
             default:
                 throw new KirelAuthenticationException("Passed authentication type does not supported");
         }
-        if (user == null) throw new KirelAuthenticationException("User with passed login is not found");
+        if (user == null || !user.IsRegistrationFinished) throw new KirelAuthenticationException("User with passed login is not found");
         var result = await UserManager.CheckPasswordAsync(user, dto.Password);
         if (!result) throw new KirelAuthenticationException("Wrong password");
         return user;

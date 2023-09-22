@@ -65,7 +65,7 @@ public class KirelJwtTokenService<TKey, TUser, TRole, TUserRole, TUserClaim, TRo
         var jwt = new JwtSecurityToken(
             AuthOptions.Issuer,
             AuthOptions.Audience,
-            notBefore: now,
+            notBefore: now.AddMinutes(-1),
             claims: claims.Claims,
             expires: now.AddMinutes(lifeTime),
             signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(AuthOptions.Key),

@@ -8,7 +8,7 @@ namespace Kirel.Identity.Server.Infrastructure.Managers;
 /// <summary>
 /// Manager for sms sending
 /// </summary>
-public class MainSmsSenderManager : ISmsSender
+public class MainSmsSenderManager : IKirelSmsSender
 {
     private readonly MainSmsSenderConfig _config;
     

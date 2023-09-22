@@ -1,4 +1,5 @@
 using Kirel.Identity.Controllers.Extensions;
+using Kirel.Identity.Core.Models;
 using Kirel.Identity.Middlewares;
 using Kirel.Identity.Server.API.Configs;
 using Kirel.Identity.Server.API.Controllers;
@@ -27,18 +28,23 @@ var registrationDisabled = builder.Configuration.GetValue<bool>("RegistrationDis
 var apiKeys = builder.Configuration.GetSection("APIKeys").Get<ApiKeysList>();
 var smsSenderConfig = builder.Configuration.GetSection("MainSms").Get<MainSmsSenderConfig>();
 var codeTokenConfig = builder.Configuration.GetSection("DisposableCodes").Get<DisposableCodesConfig>();
+var invitesConfig = builder.Configuration.GetSection("Invites").Get<KirelInvitesOptions>();
+var smtpEmailConfig = builder.Configuration.GetSection("Email").Get<EmailConfig>();
 
 //To disable controller add him here like disabledControllers.Add(typeof(RegistrationController));
 var disabledControllers = new DisabledControllerTypes();
 if (registrationDisabled) disabledControllers.Add(typeof(RegistrationController));
 
 
+builder.Services.AddSingleton(invitesConfig);
 builder.Services.AddSingleton(codeTokenConfig);
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.Tokens.ProviderMap["Code provider"] = new TokenProviderDescriptor(typeof(DisposableCodeTokenProvider));
 });
 builder.Services.AddSingleton<DisposableCodeTokenProvider>();
+builder.Services.AddEmailSender<SmtpEmailSenderManager>(smtpEmailConfig);
+builder.Services.AddSmsSender<MainSmsSenderManager>(smsSenderConfig);
 
 // Add Identity framework db context based on Kirel Identity templates
 // with ability to change db driver (mssql, mysql, postgresql)
@@ -68,7 +74,7 @@ builder.Services.AddControllers(options =>
     options.Filters.Add(new EnabledControllerActionFilter(disabledControllers));
 });
 
-builder.Services.AddSmsAuthentication<MainSmsSenderManager>(smsSenderConfig);
+builder.Services.AddSmsAuthentication();
 // Add ASP.NET authentication configuration
 builder.Services.AddAuthenticationConfiguration(jwtConfig, apiKeys);
 builder.Services.AddClaimBasedAuthorization();
