@@ -3,7 +3,7 @@
 /// <summary>
 /// Interface for sms sender
 /// </summary>
-public interface ISmsSender
+public interface IKirelSmsSender
 {
     /// <summary>
     /// Sends sms message to the given phone number

@@ -15,13 +15,8 @@ public static class SmsAuthenticationExtension
     /// Add sms config, manager and services
     /// </summary>
     /// <param name="services">Services collection</param>
-    /// <param name="cfg">Sms sender config</param>
-    /// <typeparam name="TSmsSenderManager">Sms sender manager type which is implementation of ISmsSender </typeparam>
-    public static void AddSmsAuthentication<TSmsSenderManager>(this IServiceCollection services, MainSmsSenderConfig cfg)
-    where TSmsSenderManager : class, ISmsSender
+    public static void AddSmsAuthentication(this IServiceCollection services)
     {
-        services.AddSingleton(cfg);
-        services.AddScoped<ISmsSender, TSmsSenderManager>();
         services.AddScoped<SmsAuthenticationService>();
         services.AddScoped<SmsConfirmationService>();
     }

@@ -68,4 +68,8 @@ public class KirelUserCreateDto<TRoleKey, TClaimCreateDto> where TClaimCreateDto
     /// List of user claims
     /// </summary>
     public List<TClaimCreateDto> Claims { get; set; } = new();
+    /// <summary>
+    /// Is user finished his registration
+    /// </summary>
+    public bool IsRegistrationFinished { get; set; } = false;
 }

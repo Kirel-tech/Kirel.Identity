@@ -26,5 +26,8 @@ public class UserMapper : Profile
         );
         CreateMap<UserRegistrationDto, User>();
         CreateMap<AuthorizedUserUpdateDto, User>();
+        CreateMap<UserInviteDto, User>();
+        CreateMap<InvitedUserDto, User>();
+        CreateMap<RegisterInvitedUserDto, User>();
     }
 }

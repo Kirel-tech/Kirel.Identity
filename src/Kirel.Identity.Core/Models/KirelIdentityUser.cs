@@ -42,4 +42,8 @@ public class KirelIdentityUser<TKey, TUser, TRole, TUserRole, TUserClaim, TRoleC
     /// Claims of the user
     /// </summary>
     public virtual ICollection<TUserClaim> Claims { get; set; } = null!;
+    /// <summary>
+    /// Display if invited user finished his registration 
+    /// </summary>
+    public virtual bool IsRegistrationFinished { get; set; } = false;
 }

@@ -63,4 +63,8 @@ public class KirelUserUpdateDto<TRoleKey, TClaimUpdateDto> where TClaimUpdateDto
     /// List of user claims
     /// </summary>
     public List<TClaimUpdateDto> Claims { get; set; } = new();
+    /// <summary>
+    /// Is user finished his registration
+    /// </summary>
+    public bool IsRegistrationFinished { get; set; } = false;
 }

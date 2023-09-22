@@ -19,7 +19,7 @@ public class KirelSmsAuthenticationService<TKey, TUser, TRole, TUserRole, TUserC
     /// <summary>
     /// ISmsSender implementation
     /// </summary>
-    protected readonly ISmsSender SmsSender;
+    protected readonly IKirelSmsSender KirelSmsSender;
     /// <summary>
     /// Identity user manager
     /// </summary>
@@ -29,11 +29,11 @@ public class KirelSmsAuthenticationService<TKey, TUser, TRole, TUserRole, TUserC
     /// Constructor for KirelSmsAuthenticationService
     /// </summary>
     /// <param name="userManager">Identity user manager</param>
-    /// <param name="smsSender">ISmsSender implementation</param>
-    public KirelSmsAuthenticationService(UserManager<TUser> userManager, ISmsSender smsSender)
+    /// <param name="kirelSmsSender">ISmsSender implementation</param>
+    public KirelSmsAuthenticationService(UserManager<TUser> userManager, IKirelSmsSender kirelSmsSender)
     {
         UserManager = userManager;
-        SmsSender = smsSender;
+        KirelSmsSender = kirelSmsSender;
     }
     
     /// <summary>
@@ -46,10 +46,12 @@ public class KirelSmsAuthenticationService<TKey, TUser, TRole, TUserRole, TUserC
     {
         var user = UserManager.Users.FirstOrDefault(u => u.PhoneNumber == phoneNumber);
         if (user == null)
-            throw new KirelNotFoundException("User with given phone number was not found");
+            throw new KirelNotFoundException("User with given phone number was not found"); //!user.IsRegistrationFinished
         var numberConfirmed = await UserManager.IsPhoneNumberConfirmedAsync(user);
         if (!numberConfirmed) 
             throw new KirelUnauthorizedException("Your phone number is not verified");
+        if (!user.IsRegistrationFinished) 
+            throw new KirelUnauthorizedException("Finish your registration before log in");
         var result = await UserManager.VerifyUserTokenAsync(user, "Code provider", "PhoneAuthentication", code);
         if (!result) throw new KirelUnauthorizedException("Invalid token");
         return user;
@@ -70,6 +72,6 @@ public class KirelSmsAuthenticationService<TKey, TUser, TRole, TUserRole, TUserC
         var code = await UserManager.GenerateUserTokenAsync(user, "Code provider", "PhoneAuthentication");
         var text = $"Please enter the following code on the login page: {code}";
 
-        await SmsSender.SendSms(text, phoneNumber);
+        await KirelSmsSender.SendSms(text, phoneNumber);
     }
 }
